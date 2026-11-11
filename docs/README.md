@@ -50,6 +50,7 @@ Mức ưu tiên theo **MoSCoW**: **M** (Must – bắt buộc cho MVP), **S** (S
 | D7 | Có giai đoạn **chạy thử thật (pilot)** với 20–30 sinh viên | Lấy số liệu thật cho phần đánh giá kinh tế |
 | D8 | **Bỏ xác thực sinh viên** (ảnh thẻ, email trường). Thay bằng **hồ sơ đầy đủ bắt buộc**: họ tên, SĐT, trường, điểm giao dịch quen thuộc | Linh hoạt, giảm rào cản tham gia; bớt khối lượng duyệt của admin |
 | D9 | **Mỗi lần đăng tin và mỗi lần mua bán đều xác nhận địa điểm giao dịch**, có thông báo cho các bên; giao dịch được quản lý bằng **lịch hẹn** | Bù lại độ tin cậy khi không xác thực; giảm bùng hẹn, tăng an toàn khi gặp mặt |
+| D10 | **Gộp Đặt mua và Chat**: mỗi cặp tin–người mua có một phòng chat, lịch hẹn hiển thị bằng thanh ghim + thẻ sự kiện ngay trong phòng chat; bỏ màn Lịch hẹn riêng, thay bằng bộ lọc trong tab Tin nhắn | Hai bên không phải chuyển màn; thương lượng và chốt hẹn ở một chỗ; có bản ghi thoả thuận; bớt một màn hình cho người làm một mình |
 
 ## 5. Lịch sử thay đổi
 
@@ -57,3 +58,4 @@ Mức ưu tiên theo **MoSCoW**: **M** (Must – bắt buộc cho MVP), **S** (S
 |---|---|---|
 | 1.0 | 10/11/2026 | Bản BA đầu tiên |
 | 1.1 | 11/11/2026 | Bỏ xác thực sinh viên (D8); thêm hồ sơ đầy đủ bắt buộc, xác nhận địa điểm khi đăng tin, đặt mua – lịch hẹn – thông báo (D9). Các mã **UC-05, UC-50, FR-05, FR-50, BR-14, BR-15, BR-32, SCR-20, SCR-25** được dùng lại với nội dung mới; xem chi tiết trong từng file |
+| 1.2 | 11/11/2026 | Gộp Đặt mua và Chat (D10): phòng chat có thanh ghim lịch hẹn và thẻ sự kiện (UC-31, mục 3.3.1–3.3.2; BR-40, BR-41); bỏ SCR-25, tab Tin nhắn có bộ lọc theo trạng thái hẹn; dữ liệu `chats` thêm trạng thái hẹn, `messages` thêm loại `event` |

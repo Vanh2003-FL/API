@@ -387,15 +387,34 @@ h1{font-size:clamp(26px,4vw,36px);line-height:1.15;margin:10px 0 8px;font-weight
 .or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px}
 .or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
 .g-mark{width:20px;height:20px;border-radius:50%;border:1.5px solid currentColor;display:grid;place-items:center;font-size:11px;font-weight:700}
+/* deal = chat + appointment */
+.pin{flex:none;background:var(--surface);border-bottom:1px solid var(--line);padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.pin.wait{background:var(--warn-bg)}
+.pin.ok{background:var(--pc);color:var(--on-pc)}
+.pin-h{display:flex;gap:8px;align-items:center;font-weight:600;font-size:13.5px;min-width:0}
+.pin-h>span{flex:1;min-width:0}
+.pin .pl{font-size:12.5px;display:flex;gap:4px 12px;flex-wrap:wrap;opacity:.9}
+.pin .pl span{display:flex;gap:4px;align-items:center}
+.pin .ml-act .btn.outline{background:var(--surface)}
+.ev{align-self:center;max-width:90%;background:var(--sunk);border:1px dashed var(--line);border-radius:12px;padding:8px 12px;font-size:12.5px;display:flex;gap:8px;align-items:flex-start;color:var(--fg)}
+.ev .ic{color:var(--info);margin-top:1px}
+.ev small{display:block;color:var(--muted);font-size:11.5px}
+.ev .btn{margin-top:6px}
+.dchip{display:inline-flex;align-self:flex-start;margin:2px 0}
+.rolesw{display:flex;gap:8px;flex-wrap:wrap}
+.rolesw button{font:inherit;font-size:13px;border:1px solid var(--rule);background:var(--page-bg);color:var(--ink);border-radius:999px;padding:6px 12px;cursor:pointer}
+.rolesw button.on{background:var(--pc);color:var(--on-pc);border-color:transparent;font-weight:600}
+.rolesw button:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+.actbar.one{grid-template-columns:1fr}
 @media (prefers-reduced-motion:reduce){.toast,.headsup{transition:none}}
 </style>
 
 <div class="wrap">
   <header class="page-head">
     <div>
-      <div class="eyebrow">Bản mẫu giao diện · v1.1 · Android</div>
+      <div class="eyebrow">Bản mẫu giao diện · v1.2 · Android</div>
       <h1>UniMarket – chợ đồ cũ sinh viên</h1>
-      <p class="lede">Bản mẫu bấm được gồm 19 màn hình và 6 bảng thao tác, dùng dữ liệu giả lập. Bản 1.1 bỏ xác thực sinh viên. Thay vào đó, người dùng phải có hồ sơ đầy đủ mới được mua bán, và mỗi lần đăng tin hay đặt mua đều phải xác nhận địa điểm giao dịch qua thông báo.</p>
+      <p class="lede">Bản mẫu bấm được gồm 18 màn hình và các bảng thao tác, dùng dữ liệu giả lập. Người dùng cần hồ sơ đầy đủ mới được mua bán. Bản 1.2 gộp Đặt mua và Chat: mỗi cuộc trao đổi là một phòng chat, có thanh ghim lịch hẹn ở trên và các thẻ sự kiện ghi lại từng bước thoả thuận.</p>
     </div>
     <div class="legend">
       <span><kbd>SCR-xx</kbd> mã màn hình trong 05-thiet-ke-giao-dien.md</span>
@@ -503,6 +522,7 @@ const I={
 const ic=(n,s,c)=>'<svg class="ic '+(c||'')+'" width="'+(s||20)+'" height="'+(s||20)+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+I[n]+'</svg>';
 
 /* ---------- data ---------- */
+const ME='Nguyễn Thị Lan';
 const SPOTS=['Cổng chính','Thư viện','Căng tin','Sảnh giảng đường'];
 const TIMES=['Hôm nay 17:00','Mai 11:30','Mai 17:00'];
 const SCHOOLS=[
@@ -524,7 +544,7 @@ const YEAR=2026;
 let LISTINGS=[
  {id:'l1',t:'Giáo trình Kinh tế vi mô – NEU',p:'books',s:'textbook',price:45000,cond:'GOOD',school:'NEU',spot:'Cổng chính',age:2,icon:'book',seller:'Trần Minh Anh',views:36,attrs:[['Môn học','Kinh tế vi mô'],['NXB','ĐH Kinh tế Quốc dân, 2022'],['Giá bìa','80.000đ']],desc:'Sách còn mới, có ghi chú bút chì vài trang đầu chương 2. Mình học xong học kỳ 1 nên pass lại.',market:[43000,47000]},
  {id:'l2',t:'Laptop Dell Inspiron 14, Core i5, RAM 8GB',p:'electronics',s:'laptop',price:7650000,cond:'GOOD',school:'NEU',spot:'Thư viện',age:20,icon:'laptop',seller:'Lê Quang Huy',views:128,boost:true,attrs:[['Hãng','Dell'],['Model','Inspiron 14 5420'],['CPU / RAM','Core i5 / 8GB'],['Năm mua','2024'],['Bảo hành','Hết']],desc:'Máy dùng học văn phòng, pin còn khoảng 4 tiếng, vài vết xước nhẹ ở nắp. Tặng kèm túi chống sốc.',market:[6500000,8800000]},
- {id:'l3',t:'Bàn học gấp gọn kèm ghế nhựa',p:'household',s:'furniture',price:300000,cond:'GOOD',school:'NEU',spot:'Sảnh giảng đường',age:30,icon:'desk',seller:'Phạm Thu Trang',views:54,boost:true,attrs:[['Chất liệu','Gỗ MDF, khung sắt'],['Kích thước','80 × 50 cm']],desc:'Bàn gấp được, hợp phòng trọ nhỏ.'},
+ {id:'l3',t:'Bàn học gấp gọn kèm ghế nhựa',p:'household',s:'furniture',price:300000,cond:'GOOD',school:'NEU',spot:'Sảnh giảng đường',age:30,icon:'desk',seller:'Phạm Thu Trang',views:54,boost:true,reserved:true,attrs:[['Chất liệu','Gỗ MDF, khung sắt'],['Kích thước','80 × 50 cm']],desc:'Bàn gấp được, hợp phòng trọ nhỏ.'},
  {id:'l4',t:'Quạt cây Senko 3 cánh',p:'household',s:'appliance',price:180000,cond:'GOOD',school:'HUST',spot:'Căng tin',age:5,icon:'fan',seller:'Đỗ Văn Nam',views:22,attrs:[['Hãng','Senko'],['Năm mua','2024']],desc:'Quạt chạy êm, đủ 3 số. Chuyển trọ nên bán lại.'},
  {id:'l5',t:'Máy tính Casio FX-580VN X',p:'electronics',s:'calculator',price:350000,cond:'LIKE_NEW',school:'FTU',spot:'Thư viện',age:24,icon:'calc',seller:'Ngô Hà My',views:41,attrs:[['Hãng','Casio'],['Model','FX-580VN X']],desc:'Mua đầu năm, dùng rất ít, còn hộp và sách hướng dẫn.'},
  {id:'l6',t:'Giáo trình Nguyên lý kế toán',p:'books',s:'textbook',price:35000,cond:'FAIR',school:'NEU',spot:'Căng tin',age:50,icon:'book',seller:'Vũ Thị Hoa',views:17,attrs:[['Môn học','Nguyên lý kế toán'],['Giá bìa','75.000đ']],desc:'Có gạch chân bút dạ quang, không rách trang.'},
@@ -544,24 +564,32 @@ let MINE=[
  {id:'m5',t:'Casio FX-570ES Plus',price:200000,status:'EXPIRED',icon:'calc',p:'electronics',spot:'Thư viện',renew:1}];
 const MYTABS=[['ACTIVE','Đang bán'],['RESERVED','Đang giao dịch'],['SOLD','Đã bán'],['EXPIRED','Hết hạn'],['HIDDEN','Bị ẩn']];
 
-/* appointments: proposedBy 'me' | 'other'; status PENDING | CONFIRMED | DONE | CANCELLED */
-let APPTS=[
- {id:'a1',mid:'m1',iAm:'seller',other:'Phạm Đức Huy',school:'NEU',spot:'Thư viện',time:'Mai 11:30',msg:'Mình lấy luôn nếu sách không rách nhé',status:'PENDING',proposedBy:'other',ago:'5 phút trước'},
- {id:'a2',mid:'m3',iAm:'seller',other:'Vũ Thị Hoa',school:'NEU',spot:'Cổng chính',time:'Hôm nay 17:00',status:'CONFIRMED',proposedBy:'other',ago:'2 giờ trước'},
- {id:'a3',lid:'l4',iAm:'buyer',other:'Đỗ Văn Nam',school:'HUST',spot:'Căng tin',time:'Mai 12:00',msg:'Bạn để quạt giúp mình nhé',status:'PENDING',proposedBy:'other',changed:true,ago:'40 phút trước'}];
+/* conversations: one per listing + buyer; the appointment lives inside (BR-40).
+   roles are absolute ('buyer' | 'seller'); myRole = Lan's role; messages: {from,t} or {ev,by,...} */
+let CONVS=[
+ {id:'c2',mid:'m1',buyer:'Phạm Đức Huy',seller:ME,myRole:'seller',time:'5 phút',unread:1,
+  appt:{status:'PENDING',proposedBy:'buyer',school:'NEU',spot:'Thư viện',time:'Mai 11:30',msg:'Mình lấy luôn nếu sách không rách nhé'},
+  msgs:[{from:'buyer',t:'Chào bạn, giáo trình Kinh tế lượng còn không?'},{ev:'request',by:'buyer',spot:'Thư viện',time:'Mai 11:30',note:'Mình lấy luôn nếu sách không rách nhé'}]},
+ {id:'c4',lid:'l4',buyer:ME,seller:'Đỗ Văn Nam',myRole:'buyer',time:'40 phút',unread:1,
+  appt:{status:'PENDING',proposedBy:'seller',school:'HUST',spot:'Căng tin',time:'Mai 12:00'},
+  msgs:[{ev:'request',by:'buyer',spot:'Cổng chính',time:'Mai 12:00'},{ev:'change',by:'seller',spot:'Căng tin',time:'Mai 12:00'},{from:'seller',t:'Mình ở gần căng tin hơn, bạn qua đó được không?'}]},
+ {id:'c1',lid:'l1',buyer:ME,seller:'Trần Minh Anh',myRole:'buyer',time:'14:20',unread:0,appt:null,
+  msgs:[{from:'buyer',t:'Chào bạn, giáo trình Kinh tế vi mô còn không?'},{from:'seller',t:'Còn bạn ơi, sách còn mới lắm'},{from:'buyer',t:'Bớt còn 40k được không bạn?'}]},
+ {id:'c3',mid:'m3',buyer:'Vũ Thị Hoa',seller:ME,myRole:'seller',time:'09:05',unread:0,
+  appt:{status:'CONFIRMED',proposedBy:'buyer',school:'NEU',spot:'Cổng chính',time:'Hôm nay 17:00'},
+  msgs:[{from:'buyer',t:'Kệ sách còn không bạn?'},{ev:'request',by:'buyer',spot:'Cổng chính',time:'Hôm nay 17:00'},{ev:'confirm',by:'seller',spot:'Cổng chính',time:'Hôm nay 17:00'},{from:'buyer',t:'Chiều nay 5 giờ mình qua nhé'}]},
+ {id:'c5',lid:'l3',buyer:ME,seller:'Phạm Thu Trang',myRole:'buyer',time:'Hôm qua',unread:0,
+  appt:{status:'PENDING',proposedBy:'buyer',school:'NEU',spot:'Sảnh giảng đường',time:'Mai 17:00',queued:true},
+  msgs:[{ev:'request',by:'buyer',spot:'Sảnh giảng đường',time:'Mai 17:00'}]}];
+const REPLIES=['Ok bạn, 40k cũng được nhé','Bạn bấm Đặt mua để chốt giờ nhé','Mình đến rồi, mặc áo xanh nhé'];
 
 let NOTIS=[
- {id:'n1',k:'req',title:'Có người muốn mua',body:'Phạm Đức Huy hỏi mua “Giáo trình Kinh tế lượng” · Thư viện NEU, mai 11:30',time:'5 phút',read:false,to:['lich-hen','me']},
- {id:'n2',k:'change',title:'Đề xuất đổi địa điểm',body:'Đỗ Văn Nam muốn gặp ở Căng tin · HUST, mai 12:00 thay vì Cổng chính',time:'40 phút',read:false,to:['lich-hen','me']},
- {id:'n3',k:'ok',title:'Đã chốt hẹn',body:'Vũ Thị Hoa · “Kệ sách gỗ 3 tầng” · Cổng chính NEU, 17:00 hôm nay',time:'2 giờ',read:true,to:['lich-hen','CONFIRMED']},
+ {id:'n1',k:'req',title:'Có người muốn mua',body:'Phạm Đức Huy hỏi mua “Giáo trình Kinh tế lượng” · Thư viện NEU, mai 11:30',time:'5 phút',read:false,to:['chat','c2']},
+ {id:'n2',k:'change',title:'Đề xuất đổi địa điểm',body:'Đỗ Văn Nam muốn gặp ở Căng tin · HUST, mai 12:00 thay vì Cổng chính',time:'40 phút',read:false,to:['chat','c4']},
+ {id:'n3',k:'ok',title:'Đã chốt hẹn',body:'Vũ Thị Hoa · “Kệ sách gỗ 3 tầng” · Cổng chính NEU, 17:00 hôm nay',time:'2 giờ',read:true,to:['chat','c3']},
  {id:'n4',k:'pub',title:'Tin đã đăng',body:'“Quạt bàn Asia 16 inch” · Địa điểm giao dịch: Căng tin, NEU',time:'Hôm qua',read:true,to:['tin-cua-toi','ACTIVE']},
  {id:'n5',k:'info',title:'Tin đã hết hạn',body:'“Casio FX-570ES Plus” hết hạn sau 30 ngày. Gia hạn để tiếp tục bán.',time:'2 ngày',read:true,to:['tin-cua-toi','EXPIRED']}];
 const NKIND={req:['cal','k-req'],change:['swap','k-change'],ok:['check','k-ok'],pub:['pin','k-pub'],info:['bell','k-info'],remind:['clock','k-change'],cancel:['close','k-info']};
-
-let CHATS=[
- {id:'c1',with:'Trần Minh Anh',lid:'l1',role:'buyer',time:'14:20',unread:0,msgs:[{me:true,t:'Chào bạn, giáo trình Kinh tế vi mô còn không?'},{me:false,t:'Còn bạn ơi, sách còn mới lắm'},{me:true,t:'Bớt còn 40k được không bạn?'}]},
- {id:'c2',with:'Vũ Thị Hoa',mine:'m3',role:'seller',time:'09:05',unread:1,msgs:[{me:false,t:'Kệ sách còn không bạn?'},{me:false,t:'Chiều nay 5 giờ mình qua cổng chính nhé'}]}];
-const REPLIES=['Ok bạn, 40k cũng được nhé','Chiều nay 5 giờ ở cổng chính được không?','Mình đến rồi, mặc áo xanh nhé'];
 
 let REPORTS=[
  {id:'r1',t:'Bán đề thi cuối kỳ Kinh tế lượng có đáp án',seller:'Nguyễn Văn T.',reasons:['Hàng cấm','Hàng cấm','Thông tin sai sự thật'],status:'Tự ẩn, chờ xử lý',icon:'book',p:'books'},
@@ -572,10 +600,10 @@ const SAMPLES=[{price:40000,cond:'GOOD',sold:true},{price:50000,cond:'LIKE_NEW',
 
 /* ---------- state ---------- */
 const state={screen:'trang-chu',hist:[],scope:'city',favs:new Set(['l5','l2']),detailId:'l1',photo:0,
- profile:{name:'Nguyễn Thị Lan',phone:'',school:'NEU',spot:'',note:''},schoolQ:'Kinh tế Quốc dân',resume:null,
+ profile:{name:ME,phone:'',school:'NEU',spot:'',note:''},schoolQ:'Kinh tế Quốc dân',resume:null,
  query:'kinh te vi mo',f:{p:null,s:null,max:null,conds:new Set()},sort:'new',sheet:null,sheetArg:null,
- myTab:'ACTIVE',apptTab:'me',chatId:'c1',draft:'',period:'7',extraSold:0,boostRev:0,catOpen:'books',soldBuyer:null,boostPkg:'3d',
- placeOk:false,sel:{spot:'',time:TIMES[0],msg:''},
+ myTab:'ACTIVE',chatId:'c2',chatFilter:'all',chatListing:null,viewAs:{},draft:'',period:'7',extraSold:0,boostRev:0,catOpen:'books',soldBuyer:null,boostPkg:'3d',
+ placeOk:false,sel:{spot:'',time:TIMES[0],msg:''},stars:5,
  post:{photos:['book','book'],p:'books',s:'textbook',title:'Giáo trình Kinh tế vi mô',cond:'GOOD',subject:'Kinh tế vi mô',cover:'80000',year:'2024',price:'',free:false,desc:'Sách còn mới, có ghi chú bút chì vài trang đầu. Giao dịch ở trường sau 17h.',place:'NEU',spot:'',note:'Sau 17h các ngày trong tuần',ship:false}};
 
 /* ---------- helpers ---------- */
@@ -589,7 +617,6 @@ const digits=s=>String(s||'').replace(/\D/g,'');
 const ago=h=>h<1?'Vừa xong':h<24?h+' giờ trước':Math.round(h/24)+' ngày trước';
 const initials=n=>n.split(' ').slice(-2).map(w=>w[0]).join('').toUpperCase();
 const condBadge=(c,inline)=>'<span class="cond'+(inline?' inline':'')+'" style="--c:var(--c-'+c+')">'+COND[c].l+'</span>';
-const unreadChats=()=>CHATS.reduce((s,c)=>s+c.unread,0);
 const unreadNotis=()=>NOTIS.filter(n=>!n.read).length;
 const scopeName=()=>({school:'Trường tôi',city:myCity(),all:'Toàn quốc'})[state.scope];
 const placeText=(sch,spot)=>spot+' · '+school(sch).id;
@@ -602,9 +629,23 @@ function profileMissing(){const p=state.profile,m=[];
  return m}
 const complete=()=>profileMissing().length===0;
 function gate(resume){if(complete())return true;state.resume=resume;state.sheet='gate';render();return false}
-function apptInfo(a){if(a.lid){const l=LISTINGS.find(x=>x.id===a.lid);return {t:l.t,p:l.p,icon:l.icon,price:l.price,l:l}}const m=MINE.find(x=>x.id===a.mid);return {t:m.t,p:m.p,icon:m.icon,price:m.price,m:m}}
-const apptTab=a=>a.status==='PENDING'?(a.proposedBy==='other'?'me':'other'):a.status;
-const waitingMe=()=>APPTS.filter(a=>apptTab(a)==='me').length;
+
+/* deal helpers */
+const conv=id=>CONVS.find(c=>c.id===id);
+const vrole=c=>state.viewAs[c.id]||c.myRole;
+const otherOf=(c,r)=>r==='buyer'?c.seller:c.buyer;
+const flipped=c=>vrole(c)!==c.myRole;
+function convInfo(c){if(c.lid){const l=LISTINGS.find(x=>x.id===c.lid);return {t:l.t,p:l.p,icon:l.icon,price:l.price,l:l,school:l.school,spot:l.spot,sold:false}}
+ const m=MINE.find(x=>x.id===c.mid);return {t:m.t,p:m.p,icon:m.icon,price:m.price,m:m,school:mySchool(),spot:m.spot,sold:m.status==='SOLD'}}
+function dealState(c,r){const a=c.appt;if(!a)return 'none';
+ if(a.status==='PENDING'){if(a.queued&&r==='buyer')return 'queue';return a.proposedBy===r?'waitother':'waitme'}
+ return {CONFIRMED:'confirmed',DONE:'done',CANCELLED:'cancelled'}[a.status]}
+const activeAppt=c=>c.appt&&(c.appt.status==='PENDING'||c.appt.status==='CONFIRMED');
+function dealChip(c,r){const s=dealState(c,r),a=c.appt;
+ const m={none:['Chưa đặt mua','off'],waitme:['Chờ bạn xác nhận','me'],waitother:['Chờ '+(r==='buyer'?'người bán':'người mua'),'other'],queue:['Đang xếp hàng','other'],confirmed:['Đã chốt · '+(a?a.time:''),'ok'],done:['Đã giao dịch','off'],cancelled:['Đã huỷ','off']}[s];
+ return '<span class="st '+m[1]+' dchip">'+m[0]+'</span>'}
+const needsMe=c=>c.unread>0||dealState(c,c.myRole)==='waitme';
+const waitingMe=()=>CONVS.filter(c=>dealState(c,c.myRole)==='waitme').length;
 
 /* price suggestion (docs/04 §4.6) */
 function median(a){const n=a.length,m=n>>1;return n%2?a[m]:(a[m-1]+a[m])/2}
@@ -642,17 +683,17 @@ function scopeChips(){return '<div class="scope" role="group" aria-label="Phạm
 function bell(){const u=unreadNotis();return '<button class="ibtn" data-go="thong-bao" aria-label="Thông báo'+(u?', '+u+' chưa đọc':'')+'">'+ic('bell',22)+(u?'<i class="bdg">'+u+'</i>':'')+'</button>'}
 function navBar(){return '<nav class="bnav" aria-label="Điều hướng chính">'+[['trang-chu','home','Trang chủ'],['danh-muc','grid','Danh mục'],['dang-tin-1','plus','Đăng tin'],['tin-nhan','chat','Tin nhắn'],['tai-khoan','user','Tài khoản']].map(([k,i,l])=>{
   if(k==='dang-tin-1')return '<button data-go="'+k+'"><span class="fab">'+ic('plus',24)+'</span><span>'+l+'</span></button>';
-  const u=k==='tin-nhan'?unreadChats():k==='tai-khoan'?waitingMe():0;
+  const u=k==='tin-nhan'?CONVS.filter(needsMe).length:0;
   return '<button class="'+(state.screen===k?'on':'')+'" data-go="'+k+'">'+ic(i,22)+'<span>'+l+'</span>'+(u?'<i class="dot">'+u+'</i>':'')+'</button>'}).join('')+'</nav>'}
 function steps(n){return '<div class="steps"><div class="row" style="justify-content:space-between"><span class="lbl">Bước '+n+'/3</span><span class="lbl">'+['Ảnh','Danh mục','Thông tin & giá'][n-1]+'</span></div><div class="bar"><i style="width:'+(n*33.4)+'%"></i></div></div>'}
 function empty(icon,title,sub,actions){return '<div class="empty">'+ic(icon,40)+'<p style="margin:0"><b>'+title+'</b>'+(sub||'')+'</p>'+(actions?'<div class="row">'+actions+'</div>':'')+'</div>'}
-function spotChips(act,current,school,sellerSpot){return '<div class="chips">'+SPOTS.map(s=>'<button class="chip'+(current===s?' on':'')+'" data-act="'+act+'" data-v="'+s+'">'+s+(sellerSpot===s?' <small>người bán chọn</small>':'')+'</button>').join('')+'</div>'}
+function spotChips(act,current,sellerSpot){return '<div class="chips">'+SPOTS.map(s=>'<button class="chip'+(current===s?' on':'')+'" data-act="'+act+'" data-v="'+s+'">'+s+(sellerSpot===s?' <small>người bán chọn</small>':'')+'</button>').join('')+'</div>'}
 
 /* ---------- screens ---------- */
 const S={};
 S['dang-nhap']=()=>'<div class="scr pad login">'+
  '<div class="brand-lg"><span class="logo">'+ic('tag',28)+'</span><div><div class="wm">UniMarket</div><div class="muted">Chợ đồ cũ của sinh viên</div></div></div>'+
- '<ul class="vp"><li>'+ic('check',16)+'Đăng tin trong 2 phút</li><li>'+ic('check',16)+'Gợi ý giá theo các tin tương tự</li><li>'+ic('check',16)+'Hẹn giao dịch có xác nhận địa điểm</li></ul>'+
+ '<ul class="vp"><li>'+ic('check',16)+'Đăng tin trong 2 phút</li><li>'+ic('check',16)+'Gợi ý giá theo các tin tương tự</li><li>'+ic('check',16)+'Nhắn tin và chốt hẹn trong cùng một chỗ</li></ul>'+
  '<label class="fld"><span>Email</span><input id="lg-email" type="email" value="lan.nguyen@gmail.com"></label>'+
  '<label class="fld"><span>Mật khẩu <button class="link sm" data-act="toast" data-msg="Đã gửi email đặt lại mật khẩu (UC-03)">Quên mật khẩu?</button></span><input id="lg-pass" type="password" value="matkhau123"></label>'+
  '<button class="btn primary block" data-go="ho-so">Đăng nhập</button>'+
@@ -685,7 +726,7 @@ S['trang-chu']=()=>{const sc=mySchool();const scoped=inScope(LISTINGS).sort((a,b
  const where=state.scope==='all'?'toàn quốc':'ở '+(state.scope==='school'?sc:myCity());
  return '<div class="tb"><div class="wm" style="padding-left:6px">'+ic('tag',20)+'UniMarket</div><div class="tb-act"><button class="ibtn" data-go="da-luu" aria-label="Đã lưu">'+ic('heart',22)+'</button>'+bell()+'</div></div>'+
  '<div class="scr"><div class="px"><button class="searchbar" data-go="tim-kiem">'+ic('search',18)+'<span>Bạn đang tìm gì?</span></button>'+scopeChips()+'</div>'+
- (waitingMe()?'<div class="px"><button class="placebox" style="width:100%" data-go="lich-hen" data-tab="me"><div>'+ic('cal',18)+'<b>'+waitingMe()+' lịch hẹn chờ bạn xác nhận địa điểm</b>'+ic('chev',16)+'</div></button></div>':'')+
+ (waitingMe()?'<div class="px"><button class="placebox" style="width:100%;padding:10px 12px;background:var(--info-bg)" data-go="tin-nhan" data-filter="me"><div>'+ic('cal',18)+'<b>'+waitingMe()+' cuộc trao đổi chờ bạn xác nhận địa điểm</b>'+ic('chev',16)+'</div></button></div>':'')+
  '<div class="cats px">'+Object.entries(CATS).map(([k,c])=>'<button class="cat t-'+k+'" data-act="open-cat" data-p="'+k+'"><span class="cat-ic">'+ic(c.icon,26)+'</span><span>'+c.name+'</span></button>').join('')+'</div>'+
  (boosted.length?'<div class="sec"><div class="sec-h px"><h3>Nổi bật</h3><span class="pill">'+ic('rocket',12)+'Đẩy tin</span></div>'+hrow(boosted)+'</div>':'')+
  (books.length?'<div class="sec"><div class="sec-h px"><h3>Sách cho sinh viên '+sc+'</h3><button class="link sm" data-act="open-sub" data-p="books" data-s="textbook">Xem tất cả</button></div>'+hrow(books)+'</div>':'')+
@@ -716,26 +757,26 @@ S['danh-muc']=()=>'<div class="tb"><div class="tb-title" style="padding-left:10p
 
 function detailView(l,preview){const n=preview?Math.max(state.post.photos.length,1):3,on=state.favs.has(l.id),idx=Math.min(state.photo,n-1);
  const sizes=[110,84,140],sim=LISTINGS.filter(x=>x.p===l.p&&x.id!==l.id).slice(0,4);const sch=school(l.school);
- const mine=preview?null:APPTS.find(a=>a.lid===l.id&&(a.status==='PENDING'||a.status==='CONFIRMED'));
+ const mc=preview?null:CONVS.find(c=>c.lid===l.id&&c.myRole==='buyer'),active=mc&&activeAppt(mc);
  return '<div class="scr" style="padding-top:0;gap:0"><div class="gallery t-'+l.p+'">'+ic(preview?(state.post.photos[idx]||l.icon):l.icon,sizes[idx%3])+
  '<div class="g-top"><button class="ibtn glass" data-act="back" aria-label="Quay lại">'+ic('back',20)+'</button><span class="sp"></span>'+
  (preview?'':'<button class="ibtn glass" data-act="toast" data-msg="Mở bảng chia sẻ của Android (UC-33)" aria-label="Chia sẻ">'+ic('share',19)+'</button><button class="ibtn glass" data-fav="'+l.id+'" aria-label="Lưu tin" style="color:'+(on?'var(--error)':'inherit')+'">'+ic('heart',19,on?'filled':'')+'</button><button class="ibtn glass" data-act="sheet" data-s="report" aria-label="Báo cáo tin">'+ic('more',19)+'</button>')+'</div>'+
  (n>1?'<button class="g-nav l" data-act="photo" data-d="-1" aria-label="Ảnh trước">'+ic('back',16)+'</button><button class="g-nav r" data-act="photo" data-d="1" aria-label="Ảnh sau">'+ic('chev',16)+'</button>':'')+
  '<div class="dots">'+Array.from({length:n},(_,i)=>'<button class="'+(i===idx?'on':'')+'" data-act="dot" data-i="'+i+'" aria-label="Ảnh '+(i+1)+'"></button>').join('')+'</div></div>'+
- (preview?'<div class="banner">Xem trước · tin chưa được đăng</div>':l.reserved&&!mine?'<div class="banner info">Đã có người hẹn mua · bạn vẫn có thể xếp hàng</div>':'')+
+ (preview?'<div class="banner">Xem trước · tin chưa được đăng</div>':l.reserved&&!active?'<div class="banner info">Đã có người hẹn mua · bạn vẫn có thể xếp hàng</div>':'')+
  '<div class="d-body"><div class="d-price">'+fmt(l.price)+'</div><h2 class="d-title">'+esc(l.t)+'</h2>'+
  '<div class="d-row">'+condBadge(l.cond,true)+'<span class="placechip">'+ic('pin',14)+esc(l.spot)+' · '+sch.id+'</span></div>'+
  '<div class="d-meta"><span>'+ic('clock',14)+ago(l.age)+'</span><span>'+ic('eye',14)+l.views+' lượt xem</span><span>'+sch.name+', '+sch.city+'</span></div>'+
  (l.market?'<div class="market">'+ic('bulb',18)+'<div><b>Giá thị trường: '+fmt(l.market[0])+' – '+fmt(l.market[1])+'</b><span>Từ các tin tương tự ở '+sch.city+' trong 90 ngày</span></div></div>':'')+
  (l.attrs&&l.attrs.length?'<h4>Thông tin chi tiết</h4><dl class="attrs">'+l.attrs.map(a=>'<dt>'+a[0]+'</dt><dd>'+esc(a[1])+'</dd>').join('')+(l.note?'<dt>Ghi chú hẹn</dt><dd>'+esc(l.note)+'</dd>':'')+'</dl>':'')+
  '<h4>Mô tả</h4><p class="desc">'+esc(l.desc)+'</p>'+
- '<div class="tip">'+ic('shield',18)+'<span>Đặt mua để hai bên xác nhận địa điểm và giờ hẹn trước. Nên gặp ở nơi đông người trong trường, kiểm tra hàng trước khi trả tiền.</span></div>'+
+ '<div class="tip">'+ic('shield',18)+'<span>Đặt mua để hai bên xác nhận địa điểm và giờ hẹn ngay trong phòng chat. Nên gặp ở nơi đông người trong trường, kiểm tra hàng trước khi trả tiền.</span></div>'+
  '<div class="seller"><span class="av">'+initials(l.seller)+'</span><span class="seller-info"><b>'+esc(l.seller)+'</b><span class="muted sm">'+l.school+' · '+ic('star',12,'filled inl')+' 4,8 (5 đánh giá) · 9 lần bán</span></span>'+
  (preview?'':'<button class="round" data-act="contact" data-m="Gọi" aria-label="Gọi người bán">'+ic('call',17)+'</button><button class="round" data-act="contact" data-m="Zalo" aria-label="Nhắn Zalo">Zalo</button>')+'</div>'+
  (!preview&&sim.length?'<h4>Tin tương tự</h4></div>'+hrow(sim):'</div>')+'</div>'+
  (preview?'<div class="actbar"><button class="btn outline" data-act="back">Sửa lại</button><button class="btn primary" data-act="sheet" data-s="confirm-place">Đăng tin</button></div>'
- :'<div class="actbar"><button class="btn outline" data-act="chat">'+ic('chat',17)+'Chat</button>'+
-  (mine?'<button class="btn tonal" data-go="lich-hen" data-tab="'+apptTab(mine)+'">'+ic('cal',17)+'Xem lịch hẹn</button>':'<button class="btn primary" data-act="buy">'+ic('cal',17)+'Đặt mua</button>')+'</div>')}
+ :active?'<div class="actbar one"><button class="btn tonal" data-act="open-chat" data-id="'+mc.id+'">'+ic('chat',17)+'Xem trao đổi · '+dealChip(mc,'buyer').replace(/<[^>]+>/g,'')+'</button></div>'
+ :'<div class="actbar"><button class="btn outline" data-act="chat">'+ic('chat',17)+'Chat</button><button class="btn primary" data-act="buy">'+ic('cal',17)+'Đặt mua</button></div>')}
 S['chi-tiet']=()=>detailView(LISTINGS.find(x=>x.id===state.detailId)||LISTINGS[0],false);
 
 S['da-luu']=()=>{const list=LISTINGS.filter(l=>state.favs.has(l.id));
@@ -801,51 +842,65 @@ S['xem-truoc']=()=>detailView(previewListing(),true);
 S['tin-cua-toi']=()=>{const list=MINE.filter(m=>m.status===state.myTab);
  return topbar('Tin của tôi')+'<div class="scr"><div class="tabs" role="tablist">'+MYTABS.map(([k,l])=>'<button class="chip'+(state.myTab===k?' on':'')+'" role="tab" aria-selected="'+(state.myTab===k)+'" data-act="my-tab" data-v="'+k+'">'+l+' ('+MINE.filter(m=>m.status===k).length+')</button>').join('')+'</div>'+
  '<div class="px" style="display:flex;flex-direction:column;gap:10px">'+(list.length?list.map(mlItem).join(''):empty(state.myTab==='HIDDEN'?'shield':'list',state.myTab==='HIDDEN'?'Không có tin nào bị ẩn':'Chưa có tin ở mục này',state.myTab==='HIDDEN'?'<br>Tin bị báo cáo nhiều lần sẽ tạm ẩn và hiện ở đây.':'',state.myTab==='ACTIVE'?'<button class="btn primary sm" data-go="dang-tin-1">Đăng tin</button>':''))+'</div></div>'};
-function mlItem(m){let meta='',acts='';const reqs=APPTS.filter(a=>a.mid===m.id&&(a.status==='PENDING'||a.status==='CONFIRMED'));
+function mlItem(m){let meta='',acts='';const reqs=CONVS.filter(c=>c.mid===m.id&&activeAppt(c));
  const place='<span class="c-meta">'+ic('pin',12)+esc(placeText(mySchool(),m.spot))+'</span>';
  if(m.status==='ACTIVE'){meta='<span class="c-meta">'+ic('eye',13)+m.views+' · '+ic('heart',13)+m.favs+' · Còn '+m.days+' ngày</span>'+place+(m.boost?'<span class="pill">'+ic('rocket',12)+'Đang đẩy tin · 3 ngày</span>':'');
   acts='<button class="btn outline sm" data-act="toast" data-msg="Mở lại form đăng tin; đổi địa điểm phải xác nhận lại (BR-14)">'+ic('edit',15)+'Sửa</button><button class="btn tonal sm" data-act="sheet" data-s="sold" data-id="'+m.id+'">'+ic('check',15)+'Đã bán</button>'+(m.boost?'':'<button class="btn outline sm" data-act="boost" data-id="'+m.id+'">'+ic('rocket',15)+'Đẩy tin</button>')}
  if(m.status==='RESERVED'){meta='<span class="c-meta">Đã chốt hẹn với người mua</span>'+place;acts='<button class="btn tonal sm" data-act="sheet" data-s="sold" data-id="'+m.id+'">'+ic('check',15)+'Đã bán</button>'}
  if(m.status==='SOLD')meta='<span class="c-meta">Bán được '+fmt(m.sold)+' · ngày '+m.soldAt+'</span>';
  if(m.status==='EXPIRED'){meta='<span class="c-meta">Hết hạn · đã gia hạn '+m.renew+'/2 lần</span>';acts=m.renew<2?'<button class="btn tonal sm" data-act="renew" data-id="'+m.id+'">Gia hạn 30 ngày</button>':'<span class="muted sm">Đã hết lượt gia hạn, hãy đăng tin mới.</span>'}
- const req=reqs.length&&m.status!=='SOLD'?'<button class="mini-link" data-go="lich-hen" data-tab="'+apptTab(reqs[0])+'">'+ic('cal',13,'inl')+' '+reqs.length+' người đang hỏi mua · xem lịch hẹn</button>':'';
+ const req=reqs.length&&m.status!=='SOLD'?'<button class="mini-link" data-go="tin-nhan" data-filter="all" data-listing="'+m.id+'">'+ic('chat',13,'inl')+' '+reqs.length+' người đang hỏi mua · xem trao đổi</button>':'';
  return '<div class="ml"><div class="ml-top"><div class="ml-thumb t-'+m.p+'">'+ic(m.icon,30)+'</div><div class="ml-info"><div class="c-title">'+esc(m.t)+'</div><div class="price">'+fmt(m.price)+'</div>'+meta+'</div></div>'+req+(acts?'<div class="ml-act">'+acts+'</div>':'')+'</div>'}
 
-/* appointments */
-function apptCard(a){const i=apptInfo(a),tab=apptTab(a),sch=school(a.school);
- const lbl={me:['Chờ bạn xác nhận','me'],other:['Chờ '+(a.iAm==='buyer'?'người bán':'người mua'),'other'],CONFIRMED:['Đã chốt hẹn','ok'],DONE:['Đã giao dịch','off'],CANCELLED:['Đã huỷ','off']}[tab];
- let acts='';
- if(tab==='me')acts=a.iAm==='seller'&&!a.changed?'<button class="btn primary sm" data-act="appt-ok" data-id="'+a.id+'">'+ic('check',15)+'Xác nhận địa điểm</button><button class="btn outline sm" data-act="sheet" data-s="counter" data-id="'+a.id+'">Đổi địa điểm/giờ</button><button class="btn outline sm danger" data-act="sheet" data-s="cancel" data-id="'+a.id+'">Từ chối</button>'
-  :'<button class="btn primary sm" data-act="appt-ok" data-id="'+a.id+'">'+ic('check',15)+'Đồng ý địa điểm này</button><button class="btn outline sm" data-act="sheet" data-s="counter" data-id="'+a.id+'">Đề xuất khác</button><button class="btn outline sm danger" data-act="sheet" data-s="cancel" data-id="'+a.id+'">Huỷ</button>';
- if(tab==='other')acts='<button class="btn outline sm" data-act="toast" data-msg="Mở phòng chat với '+esc(a.other)+'">'+ic('chat',15)+'Nhắn tin</button><button class="btn outline sm danger" data-act="sheet" data-s="cancel" data-id="'+a.id+'">Huỷ yêu cầu</button>';
- if(tab==='CONFIRMED')acts='<button class="btn outline sm" data-act="toast" data-msg="Mở phòng chat với '+esc(a.other)+'">'+ic('chat',15)+'Chat</button>'+(a.iAm==='seller'?'<button class="btn tonal sm" data-act="sheet" data-s="sold" data-id="'+a.mid+'">'+ic('check',15)+'Đã bán</button>':'')+'<button class="btn outline sm danger" data-act="sheet" data-s="cancel" data-id="'+a.id+'">Huỷ hẹn</button>';
- return '<div class="ml"><div class="ml-top"><div class="ml-thumb t-'+i.p+'" style="width:56px;height:56px">'+ic(i.icon,26)+'</div><div class="ml-info"><div class="c-title">'+esc(i.t)+'</div><div class="price" style="font-size:14px">'+fmt(i.price)+'</div><span class="c-meta">'+(a.iAm==='seller'?'Người mua: ':'Người bán: ')+esc(a.other)+' · '+a.ago+'</span></div><span class="st '+lbl[1]+'">'+lbl[0]+'</span></div>'+
- (a.changed&&tab==='me'?'<div class="hint" style="color:var(--info)">'+ic('swap',15)+'<span>'+esc(a.other)+' đã đề xuất đổi địa điểm/giờ</span></div>':'')+
- '<div class="placebox"><div>'+ic('pin',16)+'<span><b>'+esc(a.spot)+'</b> · '+sch.name+'</span></div><div>'+ic('clock',16)+'<span>'+a.time+'</span></div></div>'+
- (a.msg?'<div class="quote">“'+esc(a.msg)+'”</div>':'')+(a.reason?'<div class="quote">Lý do huỷ: '+esc(a.reason)+'</div>':'')+
- (acts?'<div class="ml-act">'+acts+'</div>':'')+
- (tab==='CONFIRMED'?'<button class="mini-link" data-act="demo-remind" data-id="'+a.id+'">'+ic('bell',13,'inl')+' Xem thử thông báo nhắc trước 1 giờ</button>':'')+'</div>'}
-S['lich-hen']=()=>{const tabs=[['me','Chờ tôi'],['other','Chờ bên kia'],['CONFIRMED','Đã chốt'],['DONE','Đã xong'],['CANCELLED','Đã huỷ']];const list=APPTS.filter(a=>apptTab(a)===state.apptTab);
- return topbar('Lịch hẹn giao dịch','',null)+'<div class="scr"><div class="tabs" role="tablist">'+tabs.map(([k,l])=>{const n=APPTS.filter(a=>apptTab(a)===k).length;return '<button class="chip'+(state.apptTab===k?' on':'')+'" role="tab" aria-selected="'+(state.apptTab===k)+'" data-act="appt-tab" data-v="'+k+'">'+l+' ('+n+')</button>'}).join('')+'</div>'+
- '<div class="px" style="display:flex;flex-direction:column;gap:10px">'+(list.length?list.map(apptCard).join(''):empty('cal','Không có lịch hẹn ở mục này',state.apptTab==='me'?'<br>Khi có người muốn mua hoặc đề xuất đổi địa điểm, lịch hẹn sẽ hiện ở đây.':''))+
- '<div class="hint">'+ic('info',16)+'<span>Lịch hẹn chỉ được chốt khi bên còn lại đồng ý đúng địa điểm và giờ mới nhất. Yêu cầu không được phản hồi sau 24 giờ sẽ tự huỷ.</span></div></div></div>'};
+/* ---------- deals: chat list + chat room with pinned appointment ---------- */
+const CFILTERS=[['all','Tất cả'],['me','Chờ tôi xác nhận'],['confirmed','Đã chốt hẹn'],['buying','Tôi đang mua'],['selling','Tôi đang bán']];
+function convMatch(c,f){const s=dealState(c,c.myRole);
+ return f==='all'||(f==='me'&&s==='waitme')||(f==='confirmed'&&s==='confirmed')||(f==='buying'&&c.myRole==='buyer')||(f==='selling'&&c.myRole==='seller')}
+function lastPreview(c,r){const m=c.msgs[c.msgs.length-1];if(!m)return 'Bắt đầu trò chuyện';
+ if(m.ev)return evText(m,c,r).replace(/<[^>]+>/g,'');return (m.from===r?'Bạn: ':'')+m.t}
+S['tin-nhan']=()=>{const list=CONVS.filter(c=>convMatch(c,state.chatFilter)&&(!state.chatListing||c.mid===state.chatListing));
+ const lt=state.chatListing?MINE.find(m=>m.id===state.chatListing):null;
+ return '<div class="tb"><div class="tb-title" style="padding-left:10px">Tin nhắn</div><div class="tb-act">'+bell()+'</div></div>'+
+ '<div class="scr" style="padding-top:10px;gap:0"><div class="tabs" style="padding-bottom:10px">'+CFILTERS.map(([k,l])=>{const n=k==='me'?waitingMe():0;return '<button class="chip'+(state.chatFilter===k?' on':'')+'" data-act="chat-filter" data-v="'+k+'">'+l+(n?' ('+n+')':'')+'</button>'}).join('')+'</div>'+
+ (lt?'<div class="px" style="padding-bottom:10px"><button class="chip on" data-act="clear-listing">'+ic('tag',14)+'Tin: '+esc(lt.t)+' '+ic('close',14)+'</button></div>':'')+
+ (list.length?list.map(c=>{const i=convInfo(c),r=c.myRole;
+  return '<button class="chat-li'+(c.unread?' unread':'')+'" data-act="open-chat" data-id="'+c.id+'"><span class="av">'+initials(otherOf(c,r))+'</span><span class="grow"><span class="top"><b>'+esc(otherOf(c,r))+'</b><span class="muted sm">'+c.time+'</span></span><span class="lt">'+(r==='buyer'?'Mua · ':'Bán · ')+esc(i.t)+'</span>'+dealChip(c,r)+'<span class="last">'+esc(lastPreview(c,r))+'</span></span>'+(c.unread?'<span class="badge">'+c.unread+'</span>':'')+'</button>'}).join('')
+ :empty('chat','Không có cuộc trao đổi nào ở mục này',''))+'</div>'};
+
+function evText(m,c,r){const who=m.by===r?'Bạn':esc(c[m.by]);const pl=m.spot?'<small>'+esc(m.spot)+' · '+esc(m.time)+'</small>':'';
+ return {request:who+' đã gửi yêu cầu mua'+pl+(m.note?'<small>“'+esc(m.note)+'”</small>':''),change:who+' đề xuất đổi địa điểm / giờ'+pl,confirm:who+' đã xác nhận · Chốt hẹn'+pl,cancel:who+' đã huỷ<small>'+esc(m.reason||'')+'</small>',
+  remind:'Nhắc hẹn: còn 1 giờ'+pl,done:'Giao dịch hoàn tất<small>'+esc(m.price||'')+'</small>',invite:who+' mời '+(m.by===r?'người mua':'bạn')+' đặt mua để chốt địa điểm và giờ'}[m.ev]}
+const EVICON={request:'cal',change:'swap',confirm:'check',cancel:'close',remind:'clock',done:'check',invite:'cal'};
+function pinBar(c,r){const s=dealState(c,r),a=c.appt,i=convInfo(c),sch=a?school(a.school):null;
+ const pl=a?'<div class="pl"><span>'+ic('pin',14)+'<b>'+esc(a.spot)+'</b> · '+sch.id+'</span><span>'+ic('clock',14)+a.time+'</span></div>':'';
+ const B=(act,label,cls,extra)=>'<button class="btn sm '+(cls||'outline')+'" data-act="'+act+'" data-id="'+c.id+'"'+(extra||'')+'>'+label+'</button>';
+ let h='',cls='',acts='';
+ if(i.sold&&s!=='done'){h='Tin không còn bán';cls='';acts=''}
+ else if(s==='none'){if(r==='buyer'){h='Chưa có lịch hẹn';acts=B('buy',ic('cal',15)+'Đặt mua','primary')}else{h='Người mua chưa đặt mua';acts=B('invite','Gửi lời mời đặt mua','tonal')}}
+ else if(s==='waitme'){cls='wait';if(r==='seller'){h=esc(c.buyer)+' muốn mua';acts=B('appt-ok',ic('check',15)+'Xác nhận','primary')+B('counter','Đổi')+B('cancel','Từ chối','outline danger')}
+  else{h='Người bán đề xuất địa điểm mới';acts=B('appt-ok',ic('check',15)+'Đồng ý','primary')+B('counter','Đề xuất khác')+B('cancel','Huỷ','outline danger')}}
+ else if(s==='waitother'){h='Chờ '+(r==='buyer'?'người bán':'người mua')+' xác nhận';acts=B('cancel',r==='buyer'?'Huỷ yêu cầu':'Huỷ','outline danger')}
+ else if(s==='queue'){h='Người bán đã hẹn với người khác · bạn đang xếp hàng';acts=B('cancel','Huỷ yêu cầu','outline danger')}
+ else if(s==='confirmed'){cls='ok';h='Đã chốt hẹn';acts=(r==='seller'&&c.mid?B('sold',ic('check',15)+'Đã bán','primary'):'')+B('cancel','Huỷ hẹn','outline danger')+'<button class="mini-link" style="align-self:center" data-act="demo-remind" data-id="'+c.id+'">'+ic('bell',13,'inl')+' Thử nhắc hẹn</button>'}
+ else if(s==='done'){h=r==='buyer'?'Đã mua':'Đã bán '+fmt(MINE.find(x=>x.id===c.mid)?MINE.find(x=>x.id===c.mid).sold:i.price);acts=r==='buyer'&&!a.reviewed?B('review',ic('star',15)+'Đánh giá người bán','primary'):''}
+ else if(s==='cancelled'){h='Đã huỷ: '+esc(a.reason||'');acts=r==='buyer'?B('buy','Đặt mua lại','tonal'):''}
+ return '<div class="pin '+cls+'"><div class="pin-h">'+ic('cal',18)+'<span>'+h+'</span>'+dealChip(c,r)+'</div>'+(s!=='none'&&s!=='cancelled'?pl:'')+(acts?'<div class="ml-act">'+acts+'</div>':'')+'</div>'}
+function quickFor(c,r){const s=dealState(c,r);
+ if(s==='none')return r==='buyer'?['Món này còn không bạn?','Có thể bớt không?','Hẹn gặp ở đâu?']:['Còn bạn nhé','Bạn bấm Đặt mua để chốt hẹn nhé'];
+ if(s==='confirmed')return ['Mình tới rồi nhé','Mình đến muộn 5 phút','Bạn mặc áo màu gì?'];
+ if(s==='done'||s==='cancelled')return ['Cảm ơn bạn!'];
+ return r==='buyer'?['Bạn xác nhận giúp mình nhé','Giờ khác được không?']:['Ok bạn','Mình đổi giờ chút nhé'];}
+S['phong-chat']=()=>{const c=conv(state.chatId)||CONVS[0],r=vrole(c),i=convInfo(c),other=otherOf(c,r);
+ return '<div class="tb"><button class="ibtn" data-act="back" aria-label="Quay lại">'+ic('back',22)+'</button><span class="av" style="width:34px;height:34px;font-size:12px">'+initials(other)+'</span><div class="tb-title" style="font-size:15px">'+esc(other)+'<div class="muted" style="font-size:11px;font-weight:500">'+(r==='buyer'?'Người bán':'Người mua')+(flipped(c)?' · đang xem dưới vai '+(r==='buyer'?'người mua':'người bán'):'')+'</div></div><button class="ibtn" data-act="sheet" data-s="report" aria-label="Tuỳ chọn">'+ic('more',20)+'</button></div>'+
+ '<button class="lstrip"'+(i.l?' data-open="'+i.l.id+'"':'')+'><div class="ml-thumb t-'+i.p+'">'+ic(i.icon,22)+'</div><span style="flex:1;min-width:0"><span class="c-title" style="min-height:0;-webkit-line-clamp:1">'+esc(i.t)+'</span><span class="price" style="font-size:13px">'+fmt(i.price)+'</span></span>'+ic('chev',16,'chev')+'</button>'+
+ pinBar(c,r)+
+ '<div class="msgs" id="msgs"><span class="day">Hôm nay</span>'+c.msgs.map(m=>m.ev?'<div class="ev">'+ic(EVICON[m.ev],16)+'<span>'+evText(m,c,r)+(m.ev==='invite'&&r==='buyer'&&dealState(c,r)==='none'?'<br><button class="btn primary sm" data-act="buy" data-id="'+c.id+'">Đặt mua</button>':'')+'</span></div>':'<div class="msg'+(m.from===r?' me':'')+'">'+esc(m.t)+'</div>').join('')+'</div>'+
+ '<div class="quick">'+quickFor(c,r).map(q=>'<button class="chip" data-act="quick" data-t="'+esc(q)+'">'+q+'</button>').join('')+'</div>'+
+ '<div class="composer"><input id="chat-in" data-input="chat" placeholder="Nhập tin nhắn…" value="'+esc(state.draft)+'" aria-label="Tin nhắn"><button class="send" data-act="send" aria-label="Gửi">'+ic('send',18)+'</button></div>'};
 
 S['thong-bao']=()=>'<div class="tb"><button class="ibtn" data-act="back" aria-label="Quay lại">'+ic('back',22)+'</button><div class="tb-title">Thông báo</div><div class="tb-act">'+(unreadNotis()?'<button class="link sm" data-act="read-all" style="padding:0 8px">Đánh dấu đã đọc</button>':'')+'</div></div>'+
  '<div class="scr" style="padding-top:0;gap:0">'+(NOTIS.length?NOTIS.map(n=>{const k=NKIND[n.k]||NKIND.info;
   return '<button class="noti'+(n.read?'':' unread')+'" data-act="open-noti" data-id="'+n.id+'"><span class="n-ic '+k[1]+'">'+ic(k[0],18)+'</span><span class="grow"><b>'+esc(n.title)+'</b><span>'+esc(n.body)+'</span></span><span style="display:flex;flex-direction:column;align-items:flex-end;gap:6px"><span class="time">'+n.time+'</span>'+(n.read?'':'<i class="udot"></i>')+'</span></button>'}).join(''):empty('bell','Chưa có thông báo',''))+'</div>';
-
-/* chat */
-function chatInfo(c){if(c.lid){const l=LISTINGS.find(x=>x.id===c.lid);return {t:l.t,p:l.p,icon:l.icon,price:l.price,lid:l.id}}const m=MINE.find(x=>x.id===c.mine);return {t:m.t,p:m.p,icon:m.icon,price:m.price}}
-S['tin-nhan']=()=>'<div class="tb"><div class="tb-title" style="padding-left:10px">Tin nhắn</div></div><div class="scr" style="padding-top:0;gap:0">'+
- (CHATS.length?CHATS.map(c=>{const i=chatInfo(c),last=c.msgs[c.msgs.length-1];
-  return '<button class="chat-li'+(c.unread?' unread':'')+'" data-act="open-chat" data-id="'+c.id+'"><span class="av">'+initials(c.with)+'</span><span class="grow"><span class="top"><b>'+esc(c.with)+'</b><span class="muted sm">'+c.time+'</span></span><span class="lt">'+(c.role==='buyer'?'Bạn hỏi mua · ':'Hỏi mua tin của bạn · ')+esc(i.t)+'</span><span class="last">'+(last?(last.me?'Bạn: ':'')+esc(last.t):'Bắt đầu trò chuyện')+'</span></span>'+(c.unread?'<span class="badge">'+c.unread+'</span>':'')+'</button>'}).join(''):empty('chat','Chưa có tin nhắn',''))+'</div>';
-S['phong-chat']=()=>{const c=CHATS.find(x=>x.id===state.chatId)||CHATS[0],i=chatInfo(c);
- const quick=c.role==='buyer'?['Món này còn không bạn?','Có thể bớt không?','Hẹn gặp ở đâu?']:['Còn bạn nhé','Chiều nay được bạn','Bạn bấm Đặt mua để chốt hẹn nhé'];
- return '<div class="tb"><button class="ibtn" data-act="back" aria-label="Quay lại">'+ic('back',22)+'</button><span class="av" style="width:34px;height:34px;font-size:12px">'+initials(c.with)+'</span><div class="tb-title" style="font-size:15px">'+esc(c.with)+'</div><button class="ibtn" data-act="sheet" data-s="report" aria-label="Tuỳ chọn">'+ic('more',20)+'</button></div>'+
- '<button class="lstrip"'+(i.lid?' data-open="'+i.lid+'"':'')+'><div class="ml-thumb t-'+i.p+'">'+ic(i.icon,22)+'</div><span style="flex:1;min-width:0"><span class="c-title" style="min-height:0;-webkit-line-clamp:1">'+esc(i.t)+'</span><span class="price" style="font-size:13px">'+fmt(i.price)+'</span></span>'+ic('chev',16,'chev')+'</button>'+
- '<div class="msgs" id="msgs"><span class="day">Hôm nay</span>'+c.msgs.map(m=>'<div class="msg'+(m.me?' me':'')+'">'+esc(m.t)+'</div>').join('')+'</div>'+
- '<div class="quick">'+quick.map(q=>'<button class="chip" data-act="quick" data-t="'+esc(q)+'">'+q+'</button>').join('')+'</div>'+
- '<div class="composer"><input id="chat-in" data-input="chat" placeholder="Nhập tin nhắn…" value="'+esc(state.draft)+'" aria-label="Tin nhắn"><button class="send" data-act="send" aria-label="Gửi">'+ic('send',18)+'</button></div>'};
 
 /* account */
 S['tai-khoan']=()=>{const sc=school(mySchool()),miss=profileMissing(),w=waitingMe();
@@ -853,7 +908,7 @@ S['tai-khoan']=()=>{const sc=school(mySchool()),miss=profileMissing(),w=waitingM
  '<div class="profile"><span class="av lg">'+initials(state.profile.name||'Bạn')+'</span><div style="display:flex;flex-direction:column;gap:4px;min-width:0"><b style="font-size:17px">'+esc(state.profile.name||'Chưa có tên')+'</b><span class="muted sm">'+sc.name+' · '+sc.city+'</span>'+
  (miss.length?'<span class="pstate miss">'+ic('info',13)+'Hồ sơ thiếu '+miss.length+' mục</span>':'<span class="pstate ok">'+ic('check',13)+'Hồ sơ đầy đủ</span>')+'</div></div>'+
  '<div class="stats"><div><b>'+MINE.filter(m=>m.status==='ACTIVE').length+'</b>Đang bán</div><div><b>'+MINE.filter(m=>m.status==='SOLD').length+'</b>Đã bán</div><div><b>4,8</b>Đánh giá</div></div>'+
- '<div class="list">'+[['lich-hen','cal','Lịch hẹn giao dịch',w?w+' lịch hẹn chờ bạn xác nhận':'Đặt mua, xác nhận địa điểm',w],['thong-bao','bell','Thông báo',unreadNotis()?unreadNotis()+' chưa đọc':'Không có thông báo mới',0],['tin-cua-toi','list','Tin của tôi','Đang bán, đã bán, hết hạn',0],['da-luu','heart','Đã lưu',state.favs.size+' tin',0],['ho-so','edit','Hồ sơ',miss.length?'Thiếu: '+miss.join(', '):'Họ tên, SĐT, trường, điểm giao dịch',0]].map(r=>'<button class="li" data-go="'+r[0]+'"'+(r[0]==='lich-hen'?' data-tab="me"':'')+'>'+ic(r[1],20)+'<span class="grow">'+r[2]+'<span class="sub">'+r[3]+'</span></span>'+(r[4]?'<span class="badge">'+r[4]+'</span>':'')+ic('chev',18,'chev')+'</button>').join('')+'</div>'+
+ '<div class="list">'+[['tin-nhan','chat','Tin nhắn & giao dịch',w?w+' cuộc trao đổi chờ bạn xác nhận':'Chat và lịch hẹn',w,'me'],['thong-bao','bell','Thông báo',unreadNotis()?unreadNotis()+' chưa đọc':'Không có thông báo mới',0],['tin-cua-toi','list','Tin của tôi','Đang bán, đã bán, hết hạn',0],['da-luu','heart','Đã lưu',state.favs.size+' tin',0],['ho-so','edit','Hồ sơ',miss.length?'Thiếu: '+miss.join(', '):'Họ tên, SĐT, trường, điểm giao dịch',0]].map(r=>'<button class="li" data-go="'+r[0]+'"'+(r[5]?' data-filter="'+r[5]+'"':'')+'>'+ic(r[1],20)+'<span class="grow">'+r[2]+'<span class="sub">'+r[3]+'</span></span>'+(r[4]?'<span class="badge">'+r[4]+'</span>':'')+ic('chev',18,'chev')+'</button>').join('')+'</div>'+
  '<div class="list"><button class="li" data-go="admin">'+ic('chart',20)+'<span class="grow">Quản trị<span class="sub">Chỉ hiện với tài khoản admin</span></span><span class="pill">Admin</span>'+ic('chev',18,'chev')+'</button></div>'+
  '<div class="list"><button class="li" data-go="dang-nhap" style="color:var(--error)">'+ic('logout',20)+'<span class="grow">Đăng xuất</span></button></div></div>'};
 
@@ -900,30 +955,33 @@ SH['confirm-place']=()=>{const p=ensureSpot(),sch=school(p.place);
  '<div class="hint">'+ic('bulb',16)+'<span>Người mua sẽ thấy địa điểm này và dùng làm mặc định khi đặt mua. Nên chọn nơi đông người trong khuôn viên trường.</span></div>'+
  '<label class="chk"><input id="place-ok" type="checkbox" data-change="place-ok"'+(state.placeOk?' checked':'')+'> Tôi xác nhận có thể giao dịch tại địa điểm này</label>'+
  '<button class="btn primary block" id="btn-publish" data-act="publish"'+(state.placeOk?'':' disabled')+'>Xác nhận & đăng tin</button><button class="btn block" data-act="change-place">Đổi địa điểm</button>'};
-function apptPicker(spotAct,timeAct,cur,sellerSpot){return '<span class="lbl">Địa điểm hẹn</span>'+spotChips(spotAct,cur.spot,null,sellerSpot)+
- '<span class="lbl">Giờ hẹn</span><div class="chips">'+TIMES.map(t=>'<button class="chip'+(cur.time===t?' on':'')+'" data-act="'+timeAct+'" data-v="'+t+'">'+t+'</button>').join('')+'<button class="chip" data-act="toast" data-msg="Mở bộ chọn ngày giờ (trong 7 ngày, sau ít nhất 30 phút)">Chọn giờ khác</button></div>'}
+function apptPicker(cur,sellerSpot){return '<span class="lbl">Địa điểm hẹn</span>'+spotChips('sel-spot',cur.spot,sellerSpot)+
+ '<span class="lbl">Giờ hẹn</span><div class="chips">'+TIMES.concat(cur.time&&TIMES.indexOf(cur.time)<0?[cur.time]:[]).map(t=>'<button class="chip'+(cur.time===t?' on':'')+'" data-act="sel-time" data-v="'+t+'">'+t+'</button>').join('')+'<button class="chip" data-act="toast" data-msg="Mở bộ chọn ngày giờ (trong 7 ngày, sau ít nhất 30 phút)">Chọn giờ khác</button></div>'}
 SH.buy=()=>{const l=LISTINGS.find(x=>x.id===state.detailId),sch=school(l.school);
  return '<div class="sheet-h"><h3>Đặt mua & hẹn địa điểm</h3><span class="sheet-code">SCR-31</span></div>'+
  '<div class="row"><div class="ml-thumb t-'+l.p+'" style="width:48px;height:48px">'+ic(l.icon,24)+'</div><div style="min-width:0;flex:1"><div class="c-title" style="min-height:0;-webkit-line-clamp:1">'+esc(l.t)+'</div><div class="price">'+fmt(l.price)+'</div></div></div>'+
- '<span class="muted sm">Tại '+sch.name+'</span>'+apptPicker('sel-spot','sel-time',state.sel,l.spot)+
+ '<span class="muted sm">Tại '+sch.name+'</span>'+apptPicker(state.sel,l.spot)+
  (state.sel.spot!==l.spot?'<div class="warn">Bạn chọn địa điểm khác với người bán, người bán cần xác nhận lại.</div>':'')+
+ (l.reserved?'<div class="warn">Người bán đã hẹn với người khác. Yêu cầu của bạn sẽ xếp hàng.</div>':'')+
  '<label class="fld"><span>Lời nhắn (tuỳ chọn)</span><input id="buy-msg" data-input="sel-msg" placeholder="Ví dụ: mình lấy luôn nếu sách ok" value="'+esc(state.sel.msg)+'"></label>'+
  '<button class="btn primary block" data-act="send-buy">Gửi yêu cầu mua</button><button class="btn block" data-act="close-sheet">Huỷ</button>'};
-SH.counter=()=>{const a=APPTS.find(x=>x.id===state.sheetArg);
+SH.counter=()=>{const c=conv(state.sheetArg),a=c.appt;
  return '<div class="sheet-h"><h3>Đề xuất địa điểm / giờ khác</h3><span class="sheet-code">SCR-32</span></div>'+
- '<div class="placebox"><div>'+ic('pin',16)+'<span>Hiện tại: <b>'+esc(a.spot)+'</b> · '+a.time+'</span></div></div>'+apptPicker('sel-spot','sel-time',state.sel)+
- '<button class="btn primary block" data-act="send-counter">Gửi đề xuất mới</button><button class="btn block" data-act="close-sheet">Huỷ</button>'};
-SH.cancel=()=>{const a=APPTS.find(x=>x.id===state.sheetArg);const pending=a.status==='PENDING'&&a.proposedBy==='other'&&a.iAm==='seller';
- return '<h3>'+(pending?'Từ chối yêu cầu mua':'Huỷ lịch hẹn')+'</h3><span class="muted sm">'+esc(a.other)+' sẽ nhận thông báo kèm lý do.</span>'+
- (pending?['Đã bán cho người khác','Không tiện giờ / địa điểm','Lý do khác']:['Có việc đột xuất','Đổi ý không mua/bán nữa','Không liên lạc được','Lý do khác']).map(r=>'<button class="opt" data-act="do-cancel" data-v="'+r+'"><span class="rad"></span>'+r+'</button>').join('')+
- '<button class="btn block" data-act="close-sheet">Quay lại</button>'};
-SH.report=()=>'<h3>Báo cáo tin này</h3><span class="muted sm">Chọn lý do. Mỗi người chỉ báo cáo một tin một lần.</span>'+['Lừa đảo','Hàng cấm','Sai danh mục','Thông tin sai sự thật','Spam'].map(r=>'<button class="opt" data-act="send-report">'+ic('flag',17)+r+'</button>').join('')+'<button class="btn block" data-act="close-sheet">Huỷ</button>';
-SH.sold=()=>{const m=MINE.find(x=>x.id===state.sheetArg)||MINE[0];const buyers=APPTS.filter(a=>a.mid===m.id&&(a.status==='PENDING'||a.status==='CONFIRMED'));
- if(state.soldBuyer==null){const c=buyers.find(a=>a.status==='CONFIRMED');state.soldBuyer=c?c.id:'other'}
+ '<div class="placebox"><div>'+ic('pin',16)+'<span>Hiện tại: <b>'+esc(a.spot)+'</b> · '+a.time+'</span></div></div>'+apptPicker(state.sel)+
+ '<button class="btn primary block" data-act="send-counter">Gửi đề xuất mới</button><button class="btn block" data-act="close-sheet">Quay lại phòng chat</button>'};
+SH.cancel=()=>{const c=conv(state.sheetArg),r=vrole(c),s=dealState(c,r),other=otherOf(c,r);const decline=s==='waitme'&&r==='seller';
+ return '<h3>'+(decline?'Từ chối yêu cầu mua':s==='confirmed'?'Huỷ lịch hẹn':'Huỷ yêu cầu')+'</h3><span class="muted sm">'+esc(other)+' sẽ thấy thẻ “đã huỷ” kèm lý do trong phòng chat và nhận thông báo.</span>'+
+ (decline?['Đã bán cho người khác','Không tiện giờ / địa điểm','Lý do khác']:['Có việc đột xuất','Đổi ý không mua/bán nữa','Không liên lạc được','Lý do khác']).map(x=>'<button class="opt" data-act="do-cancel" data-v="'+x+'"><span class="rad"></span>'+x+'</button>').join('')+
+ '<button class="btn block" data-act="close-sheet">Quay lại phòng chat</button>'};
+SH.review=()=>'<h3>Đánh giá người bán</h3><div class="chips">'+[1,2,3,4,5].map(n=>'<button class="chip'+(state.stars>=n?' on':'')+'" data-act="set-stars" data-v="'+n+'" aria-label="'+n+' sao">'+ic('star',16,state.stars>=n?'filled':'')+'</button>').join('')+'</div>'+
+ '<label class="fld"><span>Nhận xét (tuỳ chọn)</span><input id="rv-text" placeholder="Đúng hẹn, hàng như mô tả"></label><button class="btn primary block" data-act="send-review">Gửi đánh giá</button><button class="btn block" data-act="close-sheet">Để sau</button>';
+SH.report=()=>'<h3>Báo cáo</h3><span class="muted sm">Chọn lý do. Mỗi người chỉ báo cáo một lần.</span>'+['Lừa đảo','Hàng cấm','Sai danh mục','Thông tin sai sự thật','Bùng hẹn nhiều lần','Spam'].map(r=>'<button class="opt" data-act="send-report">'+ic('flag',17)+r+'</button>').join('')+'<button class="btn block" data-act="close-sheet">Huỷ</button>';
+SH.sold=()=>{const m=MINE.find(x=>x.id===state.sheetArg)||MINE[0];const buyers=CONVS.filter(c=>c.mid===m.id&&activeAppt(c));
+ if(state.soldBuyer==null){const c=buyers.find(b=>b.appt.status==='CONFIRMED');state.soldBuyer=c?c.id:'other'}
  return '<h3>Đánh dấu đã bán</h3><span class="muted sm">'+esc(m.t)+'</span>'+
  '<label class="fld"><span>Giá bán thực tế</span><div class="price-in"><input id="sold-price" inputmode="numeric" value="'+m.price+'"></div></label>'+
  '<div class="hint">'+ic('bulb',16)+'<span>Giá chốt thật giúp gợi ý giá cho người bán sau chính xác hơn.</span></div>'+
- '<span class="lbl">Bạn bán cho ai?</span>'+buyers.map(a=>'<button class="opt'+(state.soldBuyer===a.id?' on':'')+'" data-act="pick-buyer" data-v="'+a.id+'"><span class="rad"></span>'+esc(a.other)+'<span class="muted sm" style="margin-left:auto">'+(a.status==='CONFIRMED'?'đã chốt hẹn':'đang hỏi mua')+'</span></button>').join('')+
+ '<span class="lbl">Bạn bán cho ai?</span>'+buyers.map(c=>'<button class="opt'+(state.soldBuyer===c.id?' on':'')+'" data-act="pick-buyer" data-v="'+c.id+'"><span class="rad"></span>'+esc(c.buyer)+'<span class="muted sm" style="margin-left:auto">'+(c.appt.status==='CONFIRMED'?'đã chốt hẹn':'đang hỏi mua')+'</span></button>').join('')+
  '<button class="opt'+(state.soldBuyer==='other'?' on':'')+'" data-act="pick-buyer" data-v="other"><span class="rad"></span>Người khác / không nhớ</button>'+
  '<button class="btn primary block" data-act="confirm-sold">Xác nhận đã bán</button><button class="btn block" data-act="close-sheet">Huỷ</button>'};
 SH.boost=()=>'<h3>Đẩy tin lên Nổi bật</h3><span class="muted sm">Tin hiện ở mục Nổi bật đầu trang chủ trong thành phố của bạn.</span>'+
@@ -933,32 +991,35 @@ SH.boost=()=>'<h3>Đẩy tin lên Nổi bật</h3><span class="muted sm">Tin hi�
 
 /* ---------- notes ---------- */
 const NOTES={
- 'dang-nhap':{code:'SCR-03',group:'Bắt đầu',name:'Đăng nhập',purpose:'Cửa vào app. Đăng nhập bằng email hoặc Google; khách có thể bỏ qua để xem tin trước.',parts:['Logo và câu định vị cùng 3 lợi ích chính','Ô email, mật khẩu, liên kết quên mật khẩu','Nút Đăng nhập và Đăng nhập với Google','Lối “Xem tin không cần đăng nhập” cho khách'],tryit:['Bấm Đăng nhập để sang màn hình hồ sơ','Bấm “Xem tin không cần đăng nhập” để vào thẳng trang chủ'],refs:['UC-01','UC-02','UC-03','FR-01','FR-02','BR-12']},
- 'ho-so':{code:'SCR-05',group:'Bắt đầu',name:'Hồ sơ đầy đủ',purpose:'Thay cho xác thực sinh viên. Người dùng tự nhập họ tên, SĐT, trường và điểm giao dịch quen thuộc. Thiếu một mục thì chưa được đăng tin, đặt mua hay nhắn tin, nhưng vẫn xem tin bình thường.',parts:['Họ tên, số điện thoại (bắt buộc), Zalo mặc định trùng SĐT','Tìm trường không phân biệt dấu; thành phố tự điền','Điểm giao dịch quen thuộc: chọn điểm công cộng của trường hoặc tự nhập','Khi bị chặn từ bảng SCR-29, các ô còn thiếu được đánh dấu đỏ','Nút Để sau cho phép xem app trước'],tryit:['Bấm ➕ Đăng tin ở thanh dưới khi hồ sơ còn thiếu: bảng SCR-29 hiện ra','Nhập SĐT 0912345678, chọn Cổng chính rồi Lưu: app quay lại đúng thao tác đang làm dở'],refs:['UC-04','UC-05','FR-04','FR-05','BR-13','BR-17']},
- 'trang-chu':{code:'SCR-06',group:'Mua',name:'Trang chủ',purpose:'Màn hình chính. Mặc định hiện tin trong thành phố của bạn. Mỗi thẻ ghi rõ điểm giao dịch để người mua biết sẽ gặp ở đâu.',parts:['Chuông thông báo có số chưa đọc','Dải nhắc “lịch hẹn chờ bạn xác nhận địa điểm”','Bộ chuyển phạm vi: Trường tôi / Thành phố / Toàn quốc','3 danh mục, mục Nổi bật, Sách cho trường bạn','Thẻ tin: ảnh, tình trạng, giá, điểm giao dịch, thời gian'],tryit:['Bấm chuông để mở Thông báo','Bấm dải lịch hẹn để xác nhận địa điểm cho người mua','Đổi phạm vi sang Toàn quốc'],refs:['UC-20','UC-27','UC-37','FR-20','FR-25','FR-37']},
- 'tim-kiem':{code:'SCR-07 · 08',group:'Mua',name:'Tìm kiếm và bộ lọc',purpose:'Tìm không phân biệt dấu: gõ “kinh te vi mo” vẫn ra “Kinh tế vi mô”. Bộ lọc mở dạng bảng trượt.',parts:['Ô từ khoá có nút xoá','Chip phạm vi, chip Bộ lọc có đếm điều kiện, menu sắp xếp','Dòng tóm tắt số kết quả và điều kiện','Trạng thái rỗng có gợi ý mở rộng'],tryit:['Gõ “casio” hoặc “quat”','Mở Bộ lọc, chọn Dưới 50.000đ','Đổi phạm vi sang Toàn quốc'],refs:['UC-21','UC-22','FR-21','FR-22','FR-23','FR-24']},
- 'danh-muc':{code:'SCR-09',group:'Mua',name:'Danh mục',purpose:'Duyệt theo cây danh mục 2 cấp, mỗi danh mục con có số tin.',parts:['3 danh mục cha mở rộng được','Danh mục con kèm số lượng tin','Bấm danh mục con để mở kết quả đã lọc sẵn'],tryit:['Mở Đồ điện tử, chọn Máy tính cầm tay'],refs:['UC-23','FR-12']},
- 'chi-tiet':{code:'SCR-10 · 31',group:'Mua',name:'Chi tiết tin và Đặt mua',purpose:'Nút chính là “Đặt mua”: người mua chọn điểm hẹn và giờ, gửi yêu cầu, người bán nhận thông báo để xác nhận. Gọi/Zalo nằm ở thẻ người bán.',parts:['Ảnh, giá, tình trạng, chip địa điểm giao dịch','Giá thị trường, thông tin chi tiết, mô tả, nhắc an toàn','Thẻ người bán có nút Gọi, Zalo','Thanh dưới: Chat và Đặt mua (hoặc Xem lịch hẹn nếu đã gửi)','Bảng SCR-31: điểm của người bán chọn sẵn, giờ hẹn, lời nhắn'],tryit:['Bấm Đặt mua, giữ “Cổng chính” rồi gửi: vài giây sau người bán xác nhận, banner “Đã chốt hẹn” trượt xuống','Mở tin khác, chọn điểm khác với người bán: người bán sẽ đề xuất đổi lại'],refs:['UC-24','UC-30','UC-34','FR-26','FR-34','BR-33','BR-34'],flow:['Đặt mua','Người bán nhận thông báo','Xác nhận / đổi địa điểm','Đã chốt hẹn','Nhắc trước 1 giờ']},
- 'da-luu':{code:'SCR-17',group:'Mua',name:'Đã lưu',purpose:'Nơi người mua so sánh các món đang cân nhắc.',parts:['Lưới tin đã lưu','Trạng thái rỗng có lối quay về khám phá'],tryit:['Bỏ lưu một tin bằng trái tim'],refs:['UC-26','FR-27']},
- 'dang-tin-1':{code:'SCR-12',group:'Bán',name:'Đăng tin · Ảnh',purpose:'Bước 1/3. Chỉ vào được khi hồ sơ đầy đủ.',parts:['Thanh tiến trình 3 bước','Lưới 6 ô ảnh, ảnh đầu là ảnh bìa','Nút Tiếp bị khoá khi chưa có ảnh'],tryit:['Xoá hết ảnh để thấy nút Tiếp bị khoá'],refs:['UC-10','FR-10','FR-11','BR-01','BR-13']},
- 'dang-tin-2':{code:'SCR-13',group:'Bán',name:'Đăng tin · Danh mục',purpose:'Bước 2/3. Danh mục con quyết định các ô nhập ở bước 3 và nhóm so sánh khi gợi ý giá.',parts:['Danh mục cha mở ra danh mục con','Chọn danh mục con là chuyển sang bước 3'],tryit:['Chọn Đồ điện tử › Laptop để thấy bước 3 đổi sang ô Hãng, Năm mua, Giá mua gốc'],refs:['UC-10','FR-12']},
- 'dang-tin-3':{code:'SCR-14',group:'Bán',name:'Đăng tin · Thông tin, giá, địa điểm',purpose:'Bước 3/3. Gợi ý giá chạy ngay khi có tiêu đề và tình trạng. Nơi giao dịch mặc định lấy từ điểm quen thuộc trong hồ sơ.',parts:['Tình trạng 4 mức, ô riêng theo danh mục','Thẻ gợi ý giá với khoảng giá và độ tin cậy','Cảnh báo khi giá lệch hơn 50%','Nơi giao dịch: trường + điểm hẹn + ghi chú'],tryit:['Đổi tình trạng Tốt → Cũ: giá gợi ý giảm theo hệ số','Bấm “Dùng giá này”','Đổi điểm hẹn sang Thư viện'],refs:['UC-10','UC-11','FR-14','BR-17','BR-20','BR-24'],algo:true},
- 'xem-truoc':{code:'SCR-15 · 30',group:'Bán',name:'Xem trước và xác nhận địa điểm',purpose:'Bấm Đăng tin sẽ mở bảng xác nhận địa điểm giao dịch. Phải tích xác nhận mới đăng được; đăng xong có thông báo “Tin đã đăng” kèm địa điểm.',parts:['Bố cục giống Chi tiết tin, dải “Xem trước”','Bảng SCR-30: điểm hẹn, trường, ghi chú, lưu ý an toàn','Ô tích xác nhận; nút “Xác nhận & đăng tin” khoá cho tới khi tích','Lối “Đổi địa điểm” quay về bước 3'],tryit:['Bấm Đăng tin, thử bấm nút khi chưa tích','Tích xác nhận và đăng: banner thông báo trượt xuống, tin vào Tin của tôi'],refs:['UC-10','UC-19','FR-41','BR-14','BR-39']},
- 'tin-cua-toi':{code:'SCR-16',group:'Bán',name:'Tin của tôi',purpose:'Quản lý vòng đời tin. Mỗi tin hiện điểm giao dịch và số người đang hỏi mua, bấm vào là tới lịch hẹn.',parts:['Tab theo trạng thái, có số lượng','Dòng “N người đang hỏi mua · xem lịch hẹn”','Hành động: Sửa, Đã bán, Đẩy tin, Gia hạn','Bảng Đã bán: người mua trong lịch hẹn đã chốt được chọn sẵn'],tryit:['Bấm Đã bán ở “Kệ sách gỗ 3 tầng” (tab Đang giao dịch): Vũ Thị Hoa được chọn sẵn','Bấm Đẩy tin ở một tin đang bán'],refs:['UC-14','UC-15','UC-16','UC-17','FR-16','FR-18','BR-30','BR-36']},
- 'lich-hen':{code:'SCR-25 · 32',group:'Hẹn & liên hệ',name:'Lịch hẹn giao dịch',purpose:'Nơi chốt địa điểm và giờ gặp cho mỗi lần mua bán. Lịch hẹn chỉ chốt khi bên còn lại đồng ý đúng địa điểm, giờ mới nhất; mọi thay đổi đều có thông báo.',parts:['Tab: Chờ tôi / Chờ bên kia / Đã chốt / Đã xong / Đã huỷ','Thẻ: món đồ, người mua/bán, địa điểm, giờ, lời nhắn, nhãn trạng thái','Người bán: Xác nhận địa điểm, Đổi địa điểm/giờ (SCR-32), Từ chối','Người mua khi bị đổi: Đồng ý, Đề xuất khác, Huỷ','Đã chốt: Chat, Đã bán, Huỷ hẹn (phải chọn lý do)'],tryit:['Xác nhận địa điểm cho yêu cầu của Phạm Đức Huy: tin chuyển Đang giao dịch','Đồng ý đề xuất đổi địa điểm của Đỗ Văn Nam','Ở tab Đã chốt, bấm “Xem thử thông báo nhắc trước 1 giờ”'],refs:['UC-35','UC-36','UC-38','UC-62','UC-63','FR-35','FR-36','FR-39','BR-15','BR-35','BR-37','BR-38'],flow:['Chờ người bán','Đổi địa điểm → Chờ người mua','Đã chốt','Đã giao dịch / Đã huỷ']},
- 'thong-bao':{code:'SCR-20',group:'Hẹn & liên hệ',name:'Thông báo',purpose:'Mọi sự kiện mua bán đều tạo thông báo: tin đã đăng kèm địa điểm, có người muốn mua, đề xuất đổi địa điểm, đã chốt hẹn, nhắc hẹn, huỷ hẹn, tin hết hạn.',parts:['Icon và màu theo loại thông báo','Chấm xanh cho thông báo chưa đọc','Bấm vào để mở đúng lịch hẹn hoặc tin','Khi app đang mở: banner trượt xuống từ đỉnh màn hình','Khi app đóng: thông báo đẩy Android qua FCM'],tryit:['Bấm “Có người muốn mua” để tới lịch hẹn cần xác nhận','Bấm Đánh dấu đã đọc: số trên chuông về 0'],refs:['UC-37','UC-62','FR-37','FR-38','BR-39','ADR-7']},
- 'tin-nhan':{code:'SCR-21',group:'Hẹn & liên hệ',name:'Tin nhắn',purpose:'Trao đổi thêm trước khi chốt hẹn. Việc chốt địa điểm vẫn đi qua Đặt mua để có xác nhận và thông báo.',parts:['Ảnh đại diện, tên, thời gian','Dòng ngữ cảnh: bạn hỏi mua / hỏi mua tin của bạn','Số tin chưa đọc'],tryit:['Mở cuộc trò chuyện có số đỏ'],refs:['UC-31','FR-31']},
- 'phong-chat':{code:'SCR-22',group:'Hẹn & liên hệ',name:'Phòng chat',purpose:'Nhắn tin không cần lộ số điện thoại. Câu trả lời nhanh của người bán nhắc người mua bấm Đặt mua để chốt hẹn.',parts:['Thẻ tin đăng bấm được','Bong bóng tin nhắn hai phía','Câu trả lời nhanh theo vai trò','Ô nhập và nút gửi'],tryit:['Bấm một câu gợi ý nhanh, chờ người bán trả lời'],refs:['UC-31','FR-31','BR-31']},
- 'tai-khoan':{code:'SCR-18',group:'Tài khoản',name:'Tài khoản',purpose:'Trạng thái hồ sơ (đầy đủ hay thiếu mục nào) và lối vào lịch hẹn, thông báo, tin của tôi.',parts:['Nhãn “Hồ sơ đầy đủ” hoặc “Hồ sơ thiếu N mục”','Lịch hẹn giao dịch có số chờ bạn xác nhận','Thông báo, Tin của tôi, Đã lưu, Hồ sơ','Mục Quản trị chỉ hiện với admin'],tryit:['Mở Hồ sơ để xem mục còn thiếu','Mở Lịch hẹn giao dịch'],refs:['UC-04','UC-06','UC-38']},
- 'admin':{code:'SCR-24',group:'Quản trị',name:'Bảng điều khiển',purpose:'Số liệu cho phần đánh giá kinh tế, thêm chỉ số về lịch hẹn: tỷ lệ yêu cầu mua được xác nhận và tỷ lệ hẹn thành giao dịch.',parts:['8 thẻ KPI có mã tham chiếu','Biểu đồ tin đăng và tin bán theo ngày','Địa điểm giao dịch được chọn nhiều nhất','Lối vào báo cáo vi phạm và quản lý điểm giao dịch'],tryit:['Đánh dấu một tin Đã bán hoặc Đẩy tin, rồi quay lại: KPI-01 và KPI-12 tăng'],refs:['UC-50','UC-54','KPI-01','KPI-07','KPI-12','KPI-13','KPI-14']},
- 'admin-bao-cao':{code:'SCR-26',group:'Quản trị',name:'Xử lý báo cáo',purpose:'Không còn xác thực nên báo cáo vi phạm là lớp bảo vệ chính: xem lý do và quyết định giữ, ẩn hoặc khoá người bán.',parts:['Thẻ tin bị báo cáo, số lần và lý do','Ba quyết định: Giữ tin, Ẩn tin, Ẩn + khoá tài khoản'],tryit:['Xử lý cả 3 báo cáo để thấy trạng thái rỗng'],refs:['UC-51','UC-52','UC-61','BR-10','BR-11']}};
-const GROUPS=[['Bắt đầu',['dang-nhap','ho-so']],['Mua',['trang-chu','tim-kiem','danh-muc','chi-tiet','da-luu']],['Bán',['dang-tin-1','dang-tin-2','dang-tin-3','xem-truoc','tin-cua-toi']],['Hẹn & liên hệ',['lich-hen','thong-bao','tin-nhan','phong-chat']],['Tài khoản',['tai-khoan']],['Quản trị',['admin','admin-bao-cao']]];
+ 'dang-nhap':{code:'SCR-03',group:'Bắt đầu',name:'Đăng nhập',purpose:'Cửa vào app. Đăng nhập bằng email hoặc Google; khách có thể bỏ qua để xem tin trước.',parts:['Logo và câu định vị cùng 3 lợi ích chính','Ô email, mật khẩu, liên kết quên mật khẩu','Nút Đăng nhập và Đăng nhập với Google','Lối “Xem tin không cần đăng nhập” cho khách'],tryit:['Bấm Đăng nhập để sang màn hình hồ sơ'],refs:['UC-01','UC-02','UC-03','FR-01','FR-02','BR-12']},
+ 'ho-so':{code:'SCR-05',group:'Bắt đầu',name:'Hồ sơ đầy đủ',purpose:'Người dùng tự nhập họ tên, SĐT, trường và điểm giao dịch quen thuộc. Thiếu một mục thì chưa được đăng tin, đặt mua hay nhắn tin, nhưng vẫn xem tin bình thường.',parts:['Họ tên, số điện thoại (bắt buộc), Zalo mặc định trùng SĐT','Tìm trường không phân biệt dấu; thành phố tự điền','Điểm giao dịch quen thuộc: chọn điểm công cộng của trường hoặc tự nhập','Khi bị chặn từ bảng SCR-29, các ô còn thiếu được đánh dấu đỏ'],tryit:['Vào một tin, bấm Đặt mua khi hồ sơ còn thiếu: bảng SCR-29 hiện ra','Nhập SĐT 0912345678, chọn Cổng chính rồi Lưu: app quay lại đúng bảng Đặt mua'],refs:['UC-04','UC-05','FR-04','FR-05','BR-13','BR-17']},
+ 'trang-chu':{code:'SCR-06',group:'Mua',name:'Trang chủ',purpose:'Màn hình chính. Mặc định hiện tin trong thành phố của bạn; mỗi thẻ ghi rõ điểm giao dịch.',parts:['Chuông thông báo có số chưa đọc','Dải “N cuộc trao đổi chờ bạn xác nhận địa điểm” mở tab Tin nhắn đã lọc','Bộ chuyển phạm vi: Trường tôi / Thành phố / Toàn quốc','3 danh mục, Nổi bật, Sách cho trường bạn, Tin mới'],tryit:['Bấm dải chờ xác nhận để tới thẳng các cuộc trao đổi cần xử lý','Đổi phạm vi sang Toàn quốc'],refs:['UC-20','UC-27','UC-37','FR-20','FR-25']},
+ 'tim-kiem':{code:'SCR-07 · 08',group:'Mua',name:'Tìm kiếm và bộ lọc',purpose:'Tìm không phân biệt dấu: gõ “kinh te vi mo” vẫn ra “Kinh tế vi mô”.',parts:['Ô từ khoá có nút xoá','Chip phạm vi, Bộ lọc, menu sắp xếp','Trạng thái rỗng có gợi ý mở rộng'],tryit:['Gõ “casio” hoặc “quat”','Mở Bộ lọc, chọn Dưới 50.000đ'],refs:['UC-21','UC-22','FR-21','FR-22','FR-23','FR-24']},
+ 'danh-muc':{code:'SCR-09',group:'Mua',name:'Danh mục',purpose:'Duyệt theo cây danh mục 2 cấp, mỗi danh mục con có số tin.',parts:['3 danh mục cha mở rộng được','Danh mục con kèm số lượng tin'],tryit:['Mở Đồ điện tử, chọn Máy tính cầm tay'],refs:['UC-23','FR-12']},
+ 'chi-tiet':{code:'SCR-10 · 31',group:'Mua',name:'Chi tiết tin và Đặt mua',purpose:'Hai lối vào cùng một phòng chat: “Chat” để hỏi trước, “Đặt mua” để chọn địa điểm và giờ ngay. Gửi yêu cầu xong app mở thẳng phòng chat. Khi đã có lịch hẹn, thanh dưới đổi thành “Xem trao đổi”.',parts:['Ảnh, giá, tình trạng, chip địa điểm giao dịch','Thẻ người bán có nút Gọi, Zalo','Thanh dưới: Chat · Đặt mua, hoặc Xem trao đổi kèm trạng thái','Bảng SCR-31: điểm của người bán chọn sẵn, giờ hẹn, lời nhắn'],tryit:['Mở “Giáo trình Kinh tế vi mô”, bấm Đặt mua, giữ Cổng chính và gửi: bạn vào phòng chat, vài giây sau thanh ghim chuyển “Đã chốt hẹn”','Bấm quay lại: nút dưới đã thành “Xem trao đổi”','Mở “Bàn học gấp gọn”: đã có người hẹn trước nên bạn đang xếp hàng'],refs:['UC-24','UC-30','UC-31','UC-34','FR-26','FR-34','BR-33','BR-34','BR-36'],flow:['Chi tiết tin','Đặt mua (bảng)','Phòng chat · chờ người bán','Đã chốt hẹn']},
+ 'da-luu':{code:'SCR-17',group:'Mua',name:'Đã lưu',purpose:'Nơi người mua so sánh các món đang cân nhắc.',parts:['Lưới tin đã lưu'],tryit:['Bỏ lưu một tin bằng trái tim'],refs:['UC-26','FR-27']},
+ 'dang-tin-1':{code:'SCR-12',group:'Bán',name:'Đăng tin · Ảnh',purpose:'Bước 1/3. Chỉ vào được khi hồ sơ đầy đủ.',parts:['Thanh tiến trình 3 bước','Lưới 6 ô ảnh, ảnh đầu là ảnh bìa'],tryit:['Xoá hết ảnh để thấy nút Tiếp bị khoá'],refs:['UC-10','FR-10','FR-11','BR-01','BR-13']},
+ 'dang-tin-2':{code:'SCR-13',group:'Bán',name:'Đăng tin · Danh mục',purpose:'Bước 2/3. Danh mục con quyết định các ô nhập ở bước 3 và nhóm so sánh khi gợi ý giá.',parts:['Danh mục cha mở ra danh mục con'],tryit:['Chọn Đồ điện tử › Laptop'],refs:['UC-10','FR-12']},
+ 'dang-tin-3':{code:'SCR-14',group:'Bán',name:'Đăng tin · Thông tin, giá, địa điểm',purpose:'Bước 3/3. Gợi ý giá chạy ngay khi có tiêu đề và tình trạng. Nơi giao dịch mặc định lấy từ hồ sơ.',parts:['Tình trạng 4 mức, ô riêng theo danh mục','Thẻ gợi ý giá với khoảng giá và độ tin cậy','Nơi giao dịch: trường + điểm hẹn + ghi chú'],tryit:['Đổi tình trạng Tốt → Cũ: giá gợi ý giảm theo hệ số','Bấm “Dùng giá này”'],refs:['UC-10','UC-11','FR-14','BR-17','BR-20','BR-24'],algo:true},
+ 'xem-truoc':{code:'SCR-15 · 30',group:'Bán',name:'Xem trước và xác nhận địa điểm',purpose:'Bấm Đăng tin sẽ mở bảng xác nhận địa điểm giao dịch. Phải tích xác nhận mới đăng được; đăng xong có thông báo “Tin đã đăng” kèm địa điểm.',parts:['Bố cục giống Chi tiết tin, dải “Xem trước”','Bảng SCR-30: điểm hẹn, ghi chú, ô tích xác nhận'],tryit:['Bấm Đăng tin, tích xác nhận và đăng'],refs:['UC-10','UC-19','FR-41','BR-14','BR-39']},
+ 'tin-cua-toi':{code:'SCR-16',group:'Bán',name:'Tin của tôi',purpose:'Mỗi tin có dòng “N người đang hỏi mua”, bấm vào mở tab Tin nhắn đã lọc theo tin đó.',parts:['Tab theo trạng thái','Dòng “N người đang hỏi mua · xem trao đổi”','Hành động: Sửa, Đã bán, Đẩy tin, Gia hạn'],tryit:['Bấm “1 người đang hỏi mua” ở Giáo trình Kinh tế lượng'],refs:['UC-14','UC-15','UC-16','UC-17','FR-16','FR-18','FR-39']},
+ 'tin-nhan':{code:'SCR-21',group:'Trao đổi & hẹn',name:'Tin nhắn (cuộc trao đổi)',purpose:'Thay cho màn Lịch hẹn riêng. Mỗi dòng là một cuộc trao đổi theo cặp tin–người mua, có nhãn trạng thái hẹn. Bộ lọc “Chờ tôi xác nhận” chính là danh sách việc cần làm.',parts:['Bộ lọc: Tất cả / Chờ tôi xác nhận / Đã chốt hẹn / Tôi đang mua / Tôi đang bán','Mỗi dòng: người kia, Mua/Bán · tên món, nhãn trạng thái, tin nhắn cuối','Chip “Tin: …” khi mở từ Tin của tôi'],tryit:['Chọn “Chờ tôi xác nhận”: thấy yêu cầu của Phạm Đức Huy và đề xuất đổi của Đỗ Văn Nam','Chọn “Tôi đang bán”'],refs:['UC-31','UC-38','FR-39','BR-40']},
+ 'phong-chat':{code:'SCR-22',group:'Trao đổi & hẹn',name:'Phòng chat + thanh ghim lịch hẹn',purpose:'Một màn hình cho cả hai bên. Thanh ghim đổi nút theo trạng thái và vai trò; thẻ sự kiện ghi lại từng bước thoả thuận. Mọi bảng (đổi, huỷ, đã bán, đánh giá) đóng lại là về phòng chat.',parts:['Thanh tin đăng bấm được','Thanh ghim: trạng thái, địa điểm, giờ, nút hành động (bảng 3.3.1 trong 03-dac-ta-yeu-cau.md)','Thẻ sự kiện: gửi yêu cầu, đổi địa điểm, chốt hẹn, nhắc hẹn, huỷ, hoàn tất','Câu trả lời nhanh theo ngữ cảnh'],tryit:['Dùng nút “Xem dưới vai” ở dưới để xem cùng cuộc trao đổi từ phía bên kia','Vai người bán: bấm Xác nhận → thẻ “đã chốt” xuất hiện, tin chuyển Đang giao dịch','Bấm Đổi, chọn giờ khác: chuyển sang vai người mua để thấy nút Đồng ý'],refs:['UC-31','UC-34','UC-35','UC-36','UC-14','FR-31','BR-35','BR-40','BR-41'],roles:true},
+ 'thong-bao':{code:'SCR-20',group:'Trao đổi & hẹn',name:'Thông báo',purpose:'Thông báo giao dịch mở thẳng phòng chat tương ứng; thông báo về tin đăng mở Tin của tôi.',parts:['Icon và màu theo loại thông báo','Chấm xanh cho thông báo chưa đọc','Banner trượt xuống khi app đang mở'],tryit:['Bấm “Có người muốn mua”: mở phòng chat với Phạm Đức Huy'],refs:['UC-37','UC-62','FR-37','FR-38','BR-39']},
+ 'tai-khoan':{code:'SCR-18',group:'Tài khoản',name:'Tài khoản',purpose:'Trạng thái hồ sơ và lối vào Tin nhắn & giao dịch, Thông báo, Tin của tôi.',parts:['Nhãn “Hồ sơ đầy đủ” hoặc “Hồ sơ thiếu N mục”','Tin nhắn & giao dịch có số chờ bạn xác nhận','Mục Quản trị chỉ hiện với admin'],tryit:['Mở Hồ sơ để xem mục còn thiếu'],refs:['UC-04','UC-06']},
+ 'admin':{code:'SCR-24',group:'Quản trị',name:'Bảng điều khiển',purpose:'Số liệu cho phần đánh giá kinh tế, gồm tỷ lệ yêu cầu mua được xác nhận và tỷ lệ hẹn thành giao dịch.',parts:['8 thẻ KPI có mã tham chiếu','Biểu đồ tin đăng và tin bán theo ngày','Địa điểm giao dịch được chọn nhiều nhất'],tryit:['Đánh dấu một tin Đã bán rồi quay lại: KPI-01 tăng'],refs:['UC-50','UC-54','KPI-01','KPI-12','KPI-13','KPI-14']},
+ 'admin-bao-cao':{code:'SCR-26',group:'Quản trị',name:'Xử lý báo cáo',purpose:'Không có xác thực nên báo cáo vi phạm là lớp bảo vệ chính.',parts:['Thẻ tin bị báo cáo, số lần và lý do','Giữ tin, Ẩn tin, Ẩn + khoá tài khoản'],tryit:['Xử lý cả 3 báo cáo'],refs:['UC-51','UC-52','UC-61','BR-10','BR-11']}};
+const GROUPS=[['Bắt đầu',['dang-nhap','ho-so']],['Mua',['trang-chu','tim-kiem','danh-muc','chi-tiet','da-luu']],['Bán',['dang-tin-1','dang-tin-2','dang-tin-3','xem-truoc','tin-cua-toi']],['Trao đổi & hẹn',['tin-nhan','phong-chat','thong-bao']],['Tài khoản',['tai-khoan']],['Quản trị',['admin','admin-bao-cao']]];
 function renderIndex(){document.getElementById('index').innerHTML=GROUPS.map(([g,list])=>'<section><h4>'+g+'</h4>'+list.map(k=>'<button class="'+(state.screen===k?'on':'')+'" data-go="'+k+'" data-root="1"><code>'+NOTES[k].code.split(' ')[0]+'</code>'+NOTES[k].name+'</button>').join('')+'</section>').join('')}
 function renderNote(){const n=NOTES[state.screen];if(!n)return;
  let algo='';if(n.algo){const s=suggest();algo='<div class="algo"><h3 style="margin:0">Gợi ý giá đang chạy trên dữ liệu mẫu</h3><ol>'+
   '<li>Lấy 7 tin “Kinh tế vi mô” ở Hà Nội trong 90 ngày</li><li>Quy giá về mức “Như mới” bằng hệ số tình trạng</li><li>Loại giá bất thường 150.000đ bằng quy tắc IQR</li><li>Trung vị có trọng số (tin đã bán ×2) = <b>50.000đ</b></li><li>Nhân hệ số tình trạng đang chọn ('+COND[state.post.cond].l+' '+String(COND[state.post.cond].f).replace('.',',')+') → <b>'+(s.kind==='none'?'—':fmt(s.suggested))+'</b></li></ol><span class="foot-note">Công thức đầy đủ ở docs/04-thiet-ke-he-thong.md, mục 4.6.</span></div>'}
+ let roles='';if(n.roles){const c=conv(state.chatId)||CONVS[0],r=vrole(c);
+  roles='<div class="algo"><h3 style="margin:0">Xem dưới vai</h3><div class="rolesw">'+['buyer','seller'].map(x=>'<button class="'+(r===x?'on':'')+'" data-act="view-role" data-v="'+x+'">'+(x==='buyer'?'Người mua: ':'Người bán: ')+esc(c[x])+'</button>').join('')+'</div>'+
+  '<h3 style="margin:6px 0 0">Mở cuộc trao đổi mẫu</h3><div class="rolesw">'+CONVS.map(x=>'<button class="'+(x.id===c.id?'on':'')+'" data-act="open-chat" data-id="'+x.id+'">'+esc(convInfo(x).t.split(' ').slice(0,4).join(' '))+' · '+dealChip(x,vrole(x)).replace(/<[^>]+>/g,'')+'</button>').join('')+'</div>'+
+  '<span class="foot-note">Ở vai thật của bạn, phía bên kia được mô phỏng trả lời sau vài giây. Khi đổi vai, bạn tự điều khiển cả hai bên.</span></div>'}
  const flow=n.flow?'<div><h3>Luồng</h3><div class="flow">'+n.flow.map(x=>'<span>'+x+'</span>').join('<i>→</i>')+'</div></div>':'';
- document.getElementById('note').innerHTML='<div class="note-top"><span class="code">'+n.code+'</span><span class="grp">'+n.group+'</span></div><h2>'+n.name+'</h2><p>'+n.purpose+'</p>'+flow+
+ document.getElementById('note').innerHTML='<div class="note-top"><span class="code">'+n.code+'</span><span class="grp">'+n.group+'</span></div><h2>'+n.name+'</h2><p>'+n.purpose+'</p>'+flow+roles+
  '<div><h3>Bố cục và thành phần</h3><ul>'+n.parts.map(p=>'<li>'+p+'</li>').join('')+'</ul></div>'+
  '<div><h3>Thử ngay trên điện thoại</h3><ul class="try">'+n.tryit.map(p=>'<li>'+p+'</li>').join('')+'</ul></div>'+algo+
  '<div><h3>Liên kết tài liệu</h3><div class="refs">'+n.refs.map(r=>'<span class="ref">'+r+'</span>').join('')+'</div></div>'}
@@ -975,29 +1036,45 @@ function nav(n,root){if(!S[n])return;if(root||TABS[n])state.hist=[];else if(stat
  try{if(location.hash!=='#'+n)location.hash=n}catch(e){}}
 function back(to){const p=state.hist.pop()||to||'trang-chu';state.sheet=null;state.screen=p;render();try{location.hash=p}catch(e){}}
 let toastT;function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2600)}
-let huT;function push(n){const item=Object.assign({id:'n'+Date.now(),time:'Vừa xong',read:false},n);NOTIS.unshift(item);
+let huT;function push(n){const item=Object.assign({id:'n'+Date.now()+Math.random().toString(36).slice(2,5),time:'Vừa xong',read:false},n);NOTIS.unshift(item);
  const k=NKIND[item.k]||NKIND.info,h=document.getElementById('headsup');
  h.innerHTML='<span class="n-ic '+k[1]+'" style="width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex:none">'+ic(k[0],17)+'</span><span class="grow"><span class="app">'+ic('tag',11)+'UniMarket · vừa xong</span><b>'+esc(item.title)+'</b><span>'+esc(item.body)+'</span></span>';
  h.dataset.id=item.id;h.classList.add('show');clearTimeout(huT);huT=setTimeout(()=>h.classList.remove('show'),4500);render()}
+function openChat(id){const c=conv(id);if(!c)return;c.unread=0;state.chatId=id;state.draft='';if(state.screen==='phong-chat'){state.sheet=null;render()}else nav('phong-chat')}
 function openNoti(id){const n=NOTIS.find(x=>x.id===id);if(!n)return;n.read=true;document.getElementById('headsup').classList.remove('show');
- if(n.to){if(n.to[0]==='lich-hen')state.apptTab=n.to[1];if(n.to[0]==='tin-cua-toi')state.myTab=n.to[1];nav(n.to[0])}else render()}
+ if(!n.to){render();return}
+ if(n.to[0]==='chat'){openChat(n.to[1]);return}
+ if(n.to[0]==='tin-cua-toi')state.myTab=n.to[1];nav(n.to[0])}
 function openListing(id){state.detailId=id;nav('chi-tiet')}
-function sendMsg(text){const c=CHATS.find(x=>x.id===state.chatId);if(!c)return;const t=(text!=null?text:state.draft).trim();if(!t)return;
- c.msgs.push({me:true,t:t});c.time='Vừa xong';state.draft='';render();
- const reply=c.role==='buyer'?REPLIES[(c.msgs.filter(m=>!m.me).length-1)%REPLIES.length]:null;
- if(reply)setTimeout(()=>{c.msgs.push({me:false,t:reply});if(state.screen==='phong-chat'&&state.chatId===c.id)render();else c.unread++},1100)}
+function convFor(lid){const l=LISTINGS.find(x=>x.id===lid);let c=CONVS.find(x=>x.lid===lid&&x.myRole==='buyer');
+ if(!c){c={id:'c'+Date.now(),lid:lid,buyer:ME,seller:l.seller,myRole:'buyer',time:'Vừa xong',unread:0,appt:null,msgs:[]};CONVS.unshift(c)}return c}
+function addMsg(c,m){c.msgs.push(m);c.time='Vừa xong'}
+function sendMsg(text){const c=conv(state.chatId);if(!c)return;const r=vrole(c);const t=(text!=null?text:state.draft).trim();if(!t)return;
+ addMsg(c,{from:r,t:t});state.draft='';render();
+ if(!flipped(c)&&c.myRole==='buyer'&&dealState(c,'buyer')==='none'){const k=c.msgs.filter(m=>m.from==='seller').length;
+  setTimeout(()=>{addMsg(c,{from:'seller',t:REPLIES[k%REPLIES.length]});if(state.screen==='phong-chat'&&state.chatId===c.id)render();else{c.unread++;render()}},1100)}}
 function resume(){const r=state.resume;state.resume=null;
  if(!r||(!r.go&&!r.act)){nav('trang-chu');return}
  if(r.go){nav(r.go);return}
  if(r.act==='boost'){state.hist=[];nav('tin-cua-toi');state.sheet='boost';state.sheetArg=r.id;render();return}
- state.detailId=r.lid||state.detailId;state.hist=[];nav('chi-tiet');
- if(r.act==='buy')openBuy();else if(r.act==='chat')startChat()}
+ state.detailId=r.lid||state.detailId;state.hist=[];nav('chi-tiet');state.hist=[];
+ if(r.act==='buy')openBuy();else if(r.act==='chat')openChat(convFor(state.detailId).id)}
 function openBuy(){const l=LISTINGS.find(x=>x.id===state.detailId);state.sel={spot:l.spot,time:TIMES[0],msg:''};state.sheet='buy';render()}
-function startChat(){const l=LISTINGS.find(x=>x.id===state.detailId);let c=CHATS.find(x=>x.lid===l.id);
- if(!c){c={id:'c'+Date.now(),with:l.seller,lid:l.id,role:'buyer',time:'Vừa xong',unread:0,msgs:[]};CHATS.unshift(c)}
- state.chatId=c.id;nav('phong-chat')}
-function releaseListing(a){if(a.mid){const m=MINE.find(x=>x.id===a.mid);if(m&&m.status==='RESERVED'&&!APPTS.some(o=>o!==a&&o.mid===a.mid&&o.status==='CONFIRMED'))m.status='ACTIVE'}
- if(a.lid){const l=LISTINGS.find(x=>x.id===a.lid);if(l)l.reserved=false}}
+function setListingReserved(c,on){if(c.mid){const m=MINE.find(x=>x.id===c.mid);if(!m)return;if(on&&m.status==='ACTIVE')m.status='RESERVED';
+  if(!on&&m.status==='RESERVED'&&!CONVS.some(o=>o!==c&&o.mid===c.mid&&o.appt&&o.appt.status==='CONFIRMED'))m.status='ACTIVE'}
+ if(c.lid&&!on&&c.appt&&!c.appt.queued){const l=LISTINGS.find(x=>x.id===c.lid);if(l)l.reserved=false}}
+/* simulate the other party (only when viewing in your real role) */
+function simulateOther(c,what){if(flipped(c))return;
+ setTimeout(()=>{const a=c.appt;if(!a||a.status!=='PENDING'||a.proposedBy!==c.myRole||a.queued)return;
+  const other=c.myRole==='buyer'?'seller':'buyer',name=c[other];
+  if(what==='request'){const l=LISTINGS.find(x=>x.id===c.lid);
+   if(a.spot===l.spot){a.status='CONFIRMED';addMsg(c,{ev:'confirm',by:'seller',spot:a.spot,time:a.time});addMsg(c,{from:'seller',t:'Ok bạn, hẹn gặp nhé!'});
+    push({k:'ok',title:'Đã chốt hẹn',body:name+' đã xác nhận: '+a.spot+' · '+a.school+', '+a.time,to:['chat',c.id]})}
+   else{a.spot=l.spot;a.proposedBy='seller';addMsg(c,{ev:'change',by:'seller',spot:a.spot,time:a.time});addMsg(c,{from:'seller',t:'Mình chỉ tiện ở '+l.spot+' thôi bạn ơi'});
+    push({k:'change',title:'Đề xuất đổi địa điểm',body:name+' muốn gặp ở '+l.spot+' · '+a.school+', '+a.time,to:['chat',c.id]})}}
+  else{a.status='CONFIRMED';addMsg(c,{ev:'confirm',by:other,spot:a.spot,time:a.time});setListingReserved(c,true);
+   push({k:'ok',title:'Đã chốt hẹn',body:name+' đồng ý gặp ở '+a.spot+' · '+a.school+', '+a.time,to:['chat',c.id]})}
+  if(!(state.screen==='phong-chat'&&state.chatId===c.id))c.unread++;render()},what==='request'?2800:3200)}
 
 function act(a,el){const d=el.dataset;switch(a){
  case 'toast':toast(d.msg);break;
@@ -1008,9 +1085,7 @@ function act(a,el){const d=el.dataset;switch(a){
  case 'open-sub':state.f={p:d.p,s:d.s,max:null,conds:new Set()};state.query='';nav('tim-kiem');break;
  case 'toggle-cat':state.catOpen=state.catOpen===d.p?null:d.p;render();break;
  case 'clear-q':state.query='';render();{const q=document.getElementById('q');if(q)q.focus()}break;
- case 'sheet':state.sheet=d.s;state.sheetArg=d.id||null;if(d.s==='sold')state.soldBuyer=null;
-  if(d.s==='counter'){const ap=APPTS.find(x=>x.id===d.id);state.sel={spot:ap.spot,time:ap.time,msg:''}}
-  if(d.s==='confirm-place')state.placeOk=false;render();break;
+ case 'sheet':state.sheet=d.s;state.sheetArg=d.id||null;if(d.s==='sold')state.soldBuyer=null;if(d.s==='confirm-place')state.placeOk=false;render();break;
  case 'close-sheet':state.sheet=null;render();break;
  case 'set-p':state.f.p=d.v||null;state.f.s=null;render();break;
  case 'set-max':state.f.max=d.v?+d.v:null;render();break;
@@ -1019,32 +1094,44 @@ function act(a,el){const d=el.dataset;switch(a){
  case 'photo':{const n=state.screen==='xem-truoc'?Math.max(state.post.photos.length,1):3;state.photo=(state.photo+(+d.d)+n)%n;render();break}
  case 'dot':state.photo=+d.i;render();break;
  case 'contact':if(gate({act:'contact',lid:state.detailId}))toast(d.m==='Gọi'?'Mở trình quay số tới 0987 654 321':'Mở Zalo tới số 0987 654 321');break;
- case 'chat':if(gate({act:'chat',lid:state.detailId}))startChat();break;
- case 'buy':{if(!gate({act:'buy',lid:state.detailId}))break;openBuy();break}
+ /* deal actions */
+ case 'chat':if(gate({act:'chat',lid:state.detailId}))openChat(convFor(state.detailId).id);break;
+ case 'buy':{if(d.id){const c=conv(d.id);state.detailId=c.lid}if(!gate({act:'buy',lid:state.detailId}))break;openBuy();break}
  case 'sel-spot':state.sel.spot=d.v;render();break;
  case 'sel-time':state.sel.time=d.v;render();break;
- case 'send-buy':{const l=LISTINGS.find(x=>x.id===state.detailId);
-  if(APPTS.some(x=>x.lid===l.id&&(x.status==='PENDING'||x.status==='CONFIRMED'))){state.sheet=null;render();toast('Bạn đã có yêu cầu cho tin này (BR-33)');break}
-  const ap={id:'a'+Date.now(),lid:l.id,iAm:'buyer',other:l.seller,school:l.school,spot:state.sel.spot,time:state.sel.time,msg:state.sel.msg.trim(),status:'PENDING',proposedBy:'me',ago:'Vừa xong'};
-  APPTS.unshift(ap);state.sheet=null;render();toast('Đã gửi yêu cầu. Chờ người bán xác nhận địa điểm.');
-  setTimeout(()=>{if(ap.status!=='PENDING'||ap.proposedBy!=='me')return;
-   if(ap.spot===l.spot){ap.status='CONFIRMED';l.reserved=true;push({k:'ok',title:'Đã chốt hẹn',body:l.seller+' đã xác nhận: '+ap.spot+' · '+l.school+', '+ap.time,to:['lich-hen','CONFIRMED']})}
-   else{ap.spot=l.spot;ap.proposedBy='other';ap.changed=true;push({k:'change',title:'Đề xuất đổi địa điểm',body:l.seller+' muốn gặp ở '+l.spot+' · '+l.school+', '+ap.time,to:['lich-hen','me']})}},2800);break}
- case 'appt-tab':state.apptTab=d.v;render();break;
- case 'appt-ok':{const ap=APPTS.find(x=>x.id===d.id);ap.status='CONFIRMED';ap.changed=false;
-  if(ap.mid){const m=MINE.find(x=>x.id===ap.mid);if(m&&m.status==='ACTIVE')m.status='RESERVED'}
-  if(ap.lid){const l=LISTINGS.find(x=>x.id===ap.lid);if(l)l.reserved=true}
-  state.apptTab='CONFIRMED';render();toast('Đã chốt hẹn: '+ap.spot+', '+ap.time+'. '+ap.other+' đã nhận thông báo; cả hai được nhắc trước 1 giờ.');break}
- case 'send-counter':{const ap=APPTS.find(x=>x.id===state.sheetArg);ap.spot=state.sel.spot;ap.time=state.sel.time;ap.proposedBy='me';ap.changed=false;state.sheet=null;state.apptTab='other';render();
-  toast('Đã gửi đề xuất mới. Chờ '+ap.other+' xác nhận.');
-  setTimeout(()=>{if(ap.status!=='PENDING'||ap.proposedBy!=='me')return;ap.status='CONFIRMED';
-   if(ap.mid){const m=MINE.find(x=>x.id===ap.mid);if(m&&m.status==='ACTIVE')m.status='RESERVED'}if(ap.lid){const l=LISTINGS.find(x=>x.id===ap.lid);if(l)l.reserved=true}
-   push({k:'ok',title:'Đã chốt hẹn',body:ap.other+' đồng ý gặp ở '+ap.spot+' · '+ap.school+', '+ap.time,to:['lich-hen','CONFIRMED']})},3200);break}
- case 'do-cancel':{const ap=APPTS.find(x=>x.id===state.sheetArg);ap.status='CANCELLED';ap.reason=d.v;releaseListing(ap);state.sheet=null;state.apptTab='CANCELLED';render();toast('Đã huỷ. '+ap.other+' nhận được thông báo kèm lý do.');break}
- case 'demo-remind':{const ap=APPTS.find(x=>x.id===d.id);push({k:'remind',title:'Còn 1 giờ nữa',body:'Gặp '+ap.other+' ở '+ap.spot+' · '+ap.school+' lúc '+ap.time.split(' ').pop(),to:['lich-hen','CONFIRMED']});break}
+ case 'send-buy':{const l=LISTINGS.find(x=>x.id===state.detailId),c=convFor(l.id);
+  if(activeAppt(c)){state.sheet=null;openChat(c.id);toast('Bạn đã có yêu cầu cho tin này (BR-33)');break}
+  const msg=state.sel.msg.trim();c.appt={status:'PENDING',proposedBy:'buyer',school:l.school,spot:state.sel.spot,time:state.sel.time,msg:msg,queued:!!l.reserved};
+  addMsg(c,{ev:'request',by:'buyer',spot:c.appt.spot,time:c.appt.time,note:msg});
+  state.sheet=null;openChat(c.id);toast(l.reserved?'Đã gửi. Bạn đang xếp hàng sau người hẹn trước.':'Đã gửi yêu cầu. Chờ người bán xác nhận địa điểm.');
+  simulateOther(c,'request');break}
+ case 'appt-ok':{const c=conv(d.id),r=vrole(c),ap=c.appt;ap.status='CONFIRMED';addMsg(c,{ev:'confirm',by:r,spot:ap.spot,time:ap.time});setListingReserved(c,true);
+  if(c.lid&&r==='seller'){/* seller side of a buy conv (flipped view) */}
+  render();toast('Đã chốt hẹn: '+ap.spot+', '+ap.time+'. '+otherOf(c,r)+' đã nhận thông báo; cả hai được nhắc trước 1 giờ.');break}
+ case 'counter':{const c=conv(d.id);state.sel={spot:c.appt.spot,time:c.appt.time,msg:''};state.sheet='counter';state.sheetArg=c.id;render();break}
+ case 'send-counter':{const c=conv(state.sheetArg),r=vrole(c),ap=c.appt;ap.spot=state.sel.spot;ap.time=state.sel.time;ap.proposedBy=r;
+  addMsg(c,{ev:'change',by:r,spot:ap.spot,time:ap.time});state.sheet=null;render();toast('Đã gửi đề xuất mới. Chờ '+otherOf(c,r)+' đồng ý.');simulateOther(c,'counter');break}
+ case 'cancel':state.sheet='cancel';state.sheetArg=d.id;render();break;
+ case 'do-cancel':{const c=conv(state.sheetArg),r=vrole(c);setListingReserved(c,false);c.appt.status='CANCELLED';c.appt.reason=d.v;addMsg(c,{ev:'cancel',by:r,reason:d.v});
+  state.sheet=null;render();toast('Đã huỷ. '+otherOf(c,r)+' thấy thẻ “đã huỷ” và nhận thông báo.');break}
+ case 'invite':{const c=conv(d.id),r=vrole(c);addMsg(c,{ev:'invite',by:r});render();toast('Đã gửi lời mời đặt mua');break}
+ case 'sold':{const c=conv(d.id);state.sheet='sold';state.sheetArg=c.mid;state.soldBuyer=c.id;render();break}
+ case 'review':state.sheet='review';state.sheetArg=d.id;state.stars=5;render();break;
+ case 'set-stars':state.stars=+d.v;render();break;
+ case 'send-review':{const c=conv(state.sheetArg);c.appt.reviewed=true;state.sheet=null;render();toast('Đã gửi đánh giá '+state.stars+' sao cho '+c.seller);break}
+ case 'demo-remind':{const c=conv(d.id),ap=c.appt;addMsg(c,{ev:'remind',by:'buyer',spot:ap.spot,time:ap.time});
+  push({k:'remind',title:'Còn 1 giờ nữa',body:'Gặp '+otherOf(c,c.myRole)+' ở '+ap.spot+' · '+ap.school+' lúc '+ap.time.split(' ').pop(),to:['chat',c.id]});break}
+ case 'open-chat':openChat(d.id);break;
+ case 'chat-filter':state.chatFilter=d.v;render();break;
+ case 'clear-listing':state.chatListing=null;render();break;
+ case 'view-role':{const c=conv(state.chatId);state.viewAs[c.id]=d.v;state.sheet=null;render();break}
+ case 'quick':sendMsg(d.t);break;
+ case 'send':sendMsg();break;
+ /* notifications */
  case 'open-noti':openNoti(d.id);break;
  case 'open-headsup':openNoti(el.dataset.id);break;
  case 'read-all':NOTIS.forEach(n=>{n.read=true});render();break;
+ /* profile gate */
  case 'gate-go':state.sheet=null;state.hist=[];state.screen='ho-so';render();break;
  case 'gate-later':state.sheet=null;state.resume=null;render();break;
  case 'pf-spot':state.profile.spot=d.v;render();break;
@@ -1052,6 +1139,7 @@ function act(a,el){const d=el.dataset;switch(a){
  case 'save-profile':{const miss=profileMissing();if(miss.length){if(!state.resume)state.resume={go:null};render();toast('Còn thiếu: '+miss.join(', '));break}
   toast('Đã lưu hồ sơ');resume();break}
  case 'skip-profile':state.resume=null;nav('trang-chu');break;
+ /* post */
  case 'add-photo':if(state.post.photos.length<6){state.post.photos.push(SUBICON[state.post.s]||'book');render()}break;
  case 'rm-photo':state.post.photos.splice(+d.i,1);render();break;
  case 'pick-parent':state.post.p=state.post.p===d.p?null:d.p;state.post.s=null;render();break;
@@ -1067,13 +1155,14 @@ function act(a,el){const d=el.dataset;switch(a){
   MINE.unshift({id:l.id,t:l.t,price:l.price,status:'ACTIVE',icon:l.icon,p:l.p,spot:l.spot,views:0,favs:0,days:30});
   state.myTab='ACTIVE';state.scope='city';state.hist=[];state.placeOk=false;nav('tin-cua-toi');
   push({k:'pub',title:'Tin đã đăng',body:'“'+l.t+'” · Địa điểm giao dịch: '+l.spot+', '+l.school,to:['tin-cua-toi','ACTIVE']});break}
+ /* my listings */
  case 'my-tab':state.myTab=d.v;render();break;
  case 'renew':{const m=MINE.find(x=>x.id===d.id);m.status='ACTIVE';m.renew++;m.days=30;m.views=m.views||0;m.favs=m.favs||0;state.myTab='ACTIVE';render();toast('Đã gia hạn thêm 30 ngày');break}
  case 'boost':if(gate({act:'boost',id:d.id})){state.sheet='boost';state.sheetArg=d.id;render()}break;
  case 'pick-buyer':state.soldBuyer=d.v;{const v=document.getElementById('sold-price').value;render();document.getElementById('sold-price').value=v}break;
  case 'confirm-sold':{const m=MINE.find(x=>x.id===state.sheetArg);const v=+digits(document.getElementById('sold-price').value)||m.price;
-  m.status='SOLD';m.sold=v;m.soldAt='11/11';m.boost=false;state.extraSold++;
-  let others=0;APPTS.filter(x=>x.mid===m.id&&(x.status==='PENDING'||x.status==='CONFIRMED')).forEach(x=>{if(x.id===state.soldBuyer)x.status='DONE';else{x.status='CANCELLED';x.reason='Tin đã bán';others++}});
+  m.status='SOLD';m.sold=v;m.soldAt='11/11';m.boost=false;state.extraSold++;let others=0;
+  CONVS.filter(c=>c.mid===m.id&&activeAppt(c)).forEach(c=>{if(c.id===state.soldBuyer){c.appt.status='DONE';addMsg(c,{ev:'done',by:'seller',price:fmt(v)})}else{c.appt.status='CANCELLED';c.appt.reason='Tin đã bán';addMsg(c,{ev:'cancel',by:'seller',reason:'Tin đã bán'});others++}});
   state.sheet=null;state.myTab='SOLD';render();
   toast((state.soldBuyer==='other'?'Đã đánh dấu đã bán.':'Đã bán. Người mua được mời đánh giá bạn.')+(others?' '+others+' yêu cầu khác tự huỷ.':''));break}
  case 'pick-pkg':state.boostPkg=d.v;render();break;
@@ -1081,15 +1170,12 @@ function act(a,el){const d=el.dataset;switch(a){
  case 'send-report':state.sheet=null;render();toast('Cảm ơn bạn đã báo cáo. Chúng mình sẽ xem xét sớm.');break;
  case 'period':state.period=d.v;render();break;
  case 'adm':{REPORTS=REPORTS.filter(r=>r.id!==d.id);render();toast({keep:'Đã giữ tin, báo cáo được đóng',hide:'Đã ẩn tin vi phạm',ban:'Đã ẩn tin và khoá tài khoản người bán'}[d.v]);break}
- case 'open-chat':{const c=CHATS.find(x=>x.id===d.id);c.unread=0;state.chatId=c.id;nav('phong-chat');break}
- case 'quick':sendMsg(d.t);break;
- case 'send':sendMsg();break;
 }}
 
 document.addEventListener('click',e=>{const t=e.target;
  const fav=t.closest('[data-fav]');if(fav){e.stopPropagation();const id=fav.dataset.fav;state.favs.has(id)?state.favs.delete(id):state.favs.add(id);render();toast(state.favs.has(id)?'Đã lưu vào mục Đã lưu':'Đã bỏ lưu');return}
  const g=t.closest('[data-go]');if(g&&!g.disabled){const to=g.dataset.go,root=g.dataset.root==='1';
-  if(g.dataset.tab){if(to==='lich-hen')state.apptTab=g.dataset.tab}
+  if(to==='tin-nhan'){state.chatFilter=g.dataset.filter||(root?state.chatFilter:'all');state.chatListing=g.dataset.listing||null}
   if(to==='dang-tin-1'&&!root&&!g.dataset.free&&!gate({go:'dang-tin-1'}))return;
   nav(to,root);return}
  const o=t.closest('[data-open]');if(o){openListing(o.dataset.open);return}

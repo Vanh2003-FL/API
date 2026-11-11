@@ -93,9 +93,9 @@ app/src/main/java/com/unimarket/
    ├─ mylistings/  # SCR-16
    ├─ favorites/   # SCR-17
    ├─ account/     # SCR-18, 19, 29 (bổ sung hồ sơ)
-   ├─ appointment/ # SCR-25, 31, 32 (đặt mua, lịch hẹn, xác nhận địa điểm)
+   ├─ deal/        # SCR-21, 22, 31, 32: danh sách trao đổi, phòng chat + thanh ghim lịch hẹn,
+   │               #   bảng đặt mua / đổi địa điểm (chat và lịch hẹn chung một ViewModel)
    ├─ notification/# SCR-20 + NotificationListener, ReminderWorker
-   ├─ chat/        # SCR-21, 22
    └─ admin/       # SCR-24, 26
 ```
 
@@ -221,6 +221,7 @@ boosts/{boostId}
 | Trường | Kiểu | Ghi chú |
 |---|---|---|
 | listingId, listingTitle, listingCoverUrl, price | string/number | Phi chuẩn hoá để hiển thị thẻ |
+| chatId | string | `{listingId}_{buyerId}` – phòng chat chứa lịch hẹn này (BR-40) |
 | buyerId, buyerName, sellerId, sellerName | string | |
 | participants | string[] | `[buyerId, sellerId]` – dùng cho truy vấn & Rules |
 | place | map | `{schoolId, spot, note}` – địa điểm **mới nhất** đang đề xuất |
@@ -237,7 +238,7 @@ boosts/{boostId}
 |---|---|---|
 | type | string | `LISTING_PUBLISHED` \| `BUY_REQUEST` \| `PLACE_CHANGED` \| `APPOINTMENT_CONFIRMED` \| `APPOINTMENT_REMINDER` \| `APPOINTMENT_CANCELLED` \| `LISTING_EXPIRING` \| `REVIEW_INVITE` |
 | title, body | string | Nội dung hiển thị, vd. "Đã chốt hẹn" / "Cổng chính NEU · 17:00 hôm nay" |
-| refType, refId | string | `appointment`/`listing` + id để mở đúng màn hình |
+| refType, refId | string | `chat`/`listing` + id: thông báo giao dịch mở thẳng phòng chat, cuộn tới thẻ sự kiện |
 | fromUid | string? | Người gây ra sự kiện |
 | read | bool | |
 | createdAt | timestamp | |
@@ -245,9 +246,29 @@ boosts/{boostId}
 #### `reviews/{listingId}`
 `sellerId`, `buyerId`, `rating` (1–5), `comment`, `createdAt`. ID = listingId → mỗi giao dịch một đánh giá (BR-30). Điểm trung bình người bán tính khi đọc (truy vấn `reviews where sellerId == X`).
 
-#### `chats/{listingId}_{buyerUid}`
-`listingId`, `listingTitle`, `listingCoverUrl`, `sellerId`, `buyerId`, `participants: [buyerId, sellerId]`, `lastMessage`, `lastSenderId`, `updatedAt`, `unread: { uid: number }`.
-`messages/{id}`: `senderId`, `text`, `createdAt`.
+#### `chats/{listingId}_{buyerUid}` ⭐ (cuộc trao đổi = chat + lịch hẹn)
+| Trường | Kiểu | Ghi chú |
+|---|---|---|
+| listingId, listingTitle, listingCoverUrl, price | string/number | Phi chuẩn hoá cho thanh tin đăng |
+| buyerId, buyerName, sellerId, sellerName | string | |
+| participants | string[] | `[buyerId, sellerId]` |
+| appointmentId | string? | Lịch hẹn đang hoạt động hoặc gần nhất (BR-40) |
+| apptStatus | string | `NONE` \| `PENDING_SELLER` \| `PENDING_BUYER` \| `CONFIRMED` \| `DONE` \| `CANCELLED` – chép từ appointment để danh sách Tin nhắn lọc và hiện nhãn mà không cần đọc thêm |
+| apptPlace, apptMeetAt | string/timestamp? | Chép từ appointment cho thanh ghim |
+| lastMessage, lastSenderId, updatedAt | | |
+| unread | map | `{ uid: number }` |
+
+`chats/{id}/messages/{msgId}`:
+| Trường | Kiểu | Ghi chú |
+|---|---|---|
+| type | string | `text` \| `event` |
+| senderId | string | Người gửi (với `event`: người thực hiện thao tác) |
+| text | string? | Với `text` |
+| event | string? | `REQUEST` \| `CHANGE` \| `CONFIRM` \| `CANCEL` \| `REMIND` \| `DONE` \| `INVITE` |
+| place, meetAt, reason | ? | Dữ liệu của thẻ sự kiện tại thời điểm đó |
+| createdAt | timestamp | |
+
+> Mỗi thao tác lịch hẹn ghi **trong một transaction**: cập nhật `appointments/{id}` + thêm message `event` + cập nhật `apptStatus/apptPlace/apptMeetAt/lastMessage` của chat + tạo notification cho bên kia (BR-41).
 
 #### `boosts/{boostId}` (giao dịch mô phỏng)
 `listingId`, `userId`, `package` (`BOOST_3D`), `amount` (10000), `createdAt` → KPI-12.
@@ -280,7 +301,8 @@ boosts/{boostId}
 | Tin nổi bật | `status ==`, `city ==`, `boostedUntil desc` |
 | Tin của tôi | `sellerId ==`, `status ==`, `createdAt desc` |
 | Chat của tôi | `participants array-contains`, `updatedAt desc` |
-| Lịch hẹn của tôi | `participants array-contains`, `status ==`, `meetAt asc` |
+| Tab Tin nhắn lọc theo trạng thái hẹn | `participants array-contains`, `apptStatus ==`, `updatedAt desc` (trên `chats`) |
+| Tab Tin nhắn lọc theo một tin | `listingId ==`, `updatedAt desc` (trên `chats`, chỉ người bán) |
 | Yêu cầu mua của một tin | `listingId ==`, `status ==`, `createdAt asc` |
 | Thông báo của tôi | (subcollection) `createdAt desc`; đếm chưa đọc: `read == false` |
 
@@ -467,12 +489,13 @@ sequenceDiagram
     actor SL as Người bán
     B->>A: Bấm "Đặt mua", chọn điểm hẹn + giờ
     A->>A: ProfileChecker (BR-13), AppointmentRules (BR-33, BR-37)
-    A->>FS: transaction: tạo appointments/{id} (PENDING_SELLER)<br/>+ tăng listings.pendingRequests<br/>+ tạo notifications cho người bán (BUY_REQUEST)
+    A->>FS: transaction: tạo appointments/{id} (PENDING_SELLER)<br/>+ message event REQUEST trong chats/{listingId}_{buyerId}<br/>+ cập nhật chat.apptStatus + tăng listings.pendingRequests<br/>+ tạo notifications cho người bán (BUY_REQUEST, refId = chatId)
+    A-->>B: Mở phòng chat, thanh ghim "Chờ người bán xác nhận"
     FS-->>S: listener realtime → banner + số trên chuông
     FS-->>CF: onCreate notification
     CF-->>S: FCM đẩy (khi app đóng)
-    SL->>S: Mở thông báo, bấm "Xác nhận địa điểm"
-    S->>FS: transaction: appointment → CONFIRMED<br/>listing → RESERVED<br/>+ notifications cho người mua (APPOINTMENT_CONFIRMED)
+    SL->>S: Bấm thông báo → mở phòng chat, bấm "Xác nhận" trên thanh ghim
+    S->>FS: transaction: appointment → CONFIRMED<br/>+ message event CONFIRM, chat.apptStatus = CONFIRMED<br/>listing → RESERVED<br/>+ notifications cho người mua (APPOINTMENT_CONFIRMED)
     FS-->>A: listener → "Đã chốt hẹn: Cổng chính · 17:00"
     A->>A: WorkManager đặt nhắc trước 1 giờ (ADR-8)
     S->>S: WorkManager đặt nhắc trước 1 giờ
@@ -506,7 +529,7 @@ Rules sẽ được viết trong giai đoạn code và **kiểm thử bằng Fir
 | `reports` | Admin | Đã đăng nhập, ID = `{listingId}_{uid}`, không phải chủ tin | Admin | Không |
 | `appointments` | Thành viên trong `participants`; Admin | Người mua: `buyerId == uid`, `profileComplete`, không phải người bán, `status = PENDING_SELLER`, `proposedBy == uid` | Thành viên trong `participants`, chỉ theo đúng sơ đồ 3.8: người **không** phải `proposedBy` mới được chuyển sang `CONFIRMED`; đổi `place`/`meetAt` phải đặt `proposedBy = uid`; chỉ người bán chuyển `DONE` | Không |
 | `reviews/{listingId}` | Mọi người | `buyerId == uid` và `listings/{listingId}.soldToUid == uid` | Không | Không |
-| `chats/{id}` + `messages` | Thành viên trong `participants` | Người mua (`buyerId == uid`), không phải người bán | Thành viên trong `participants` | Không |
+| `chats/{id}` + `messages` | Thành viên trong `participants` | Chat: người mua (`buyerId == uid`, id = `{listingId}_{uid}`), không phải người bán. Message `text`: thành viên trong `participants`. Message `event`: chỉ khi cùng batch có cập nhật appointment tương ứng (kiểm tra bằng `getAfter()`) | Chat: thành viên trong `participants` (trường `apptStatus/apptPlace/apptMeetAt` phải khớp `getAfter(appointment)`). Message: không ai sửa | Không |
 | `boosts` | Chính chủ, Admin | Chính chủ có hồ sơ đầy đủ | Không | Không |
 
 **Storage:**

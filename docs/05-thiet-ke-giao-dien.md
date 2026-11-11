@@ -44,8 +44,10 @@ Màu nhãn tình trạng: Như mới `#2E7D32` · Tốt `#558B2F` · Khá `#F9A8
 |---|---|
 | `ListingCard` | Ảnh bìa tỷ lệ 1:1, nhãn tình trạng góc trên trái, nút ♡ góc trên phải, giá, tiêu đề (2 dòng), "Khu vực · 2 giờ trước" |
 | `ConditionBadge` | Viên thuốc nhỏ, màu theo tình trạng |
-| `PlaceChip` | Icon ghim + "Cổng chính · NEU"; dùng ở chi tiết tin, bảng đặt mua, thẻ lịch hẹn |
-| `AppointmentCard` | Ảnh tin, người mua/bán, địa điểm, giờ, nhãn trạng thái (Chờ bạn xác nhận / Chờ bên kia / Đã chốt), các nút hành động |
+| `PlaceChip` | Icon ghim + "Cổng chính · NEU"; dùng ở chi tiết tin, bảng đặt mua, thanh ghim phòng chat |
+| `DealPinnedBar` | Thanh ghim lịch hẹn trong phòng chat: trạng thái, địa điểm, giờ, nút hành động theo vai trò |
+| `EventCard` | Thẻ sự kiện trong chat (gửi yêu cầu, đổi địa điểm, đã chốt, nhắc hẹn, huỷ, hoàn tất) |
+| `DealStatusChip` | Nhãn trạng thái hẹn trên mỗi dòng của tab Tin nhắn |
 | `NotificationItem` | Icon theo loại, tiêu đề, nội dung, thời gian, chấm chưa đọc |
 | `HeadsUpBanner` | Banner trượt từ đỉnh màn hình khi có thông báo mới lúc app đang mở |
 | `PriceText` | Định dạng `1.250.000đ`; giá 0 → "Tặng miễn phí" |
@@ -81,18 +83,19 @@ flowchart TD
     CAT --> SR
     SR --> DT
     DT --> SP[SCR-11 Hồ sơ người bán]
-    DT --> CR[SCR-22 Phòng chat]
+    DT -- Chat --> CR[SCR-22 Phòng chat + thanh ghim lịch hẹn]
     DT --> RP[SCR-23 Báo cáo]
-    DT --> BUY[SCR-31 Đặt mua & hẹn địa điểm] --> AP
-    HOME --> NT[SCR-20 Thông báo] --> AP[SCR-25 Lịch hẹn giao dịch]
-    AP --> CF[SCR-32 Xác nhận / đổi địa điểm]
+    DT -- Đặt mua --> BUY[SCR-31 Đặt mua & hẹn địa điểm] -- Gửi --> CR
+    CR -- Đặt mua / Đổi --> BUY
+    CR -- Đổi địa điểm --> CF[SCR-32 Đổi địa điểm / giờ] --> CR
+    HOME --> NT[SCR-20 Thông báo] -- thông báo giao dịch --> CR
     P4 --> CP[SCR-30 Xác nhận địa điểm khi đăng]
     POST --> P2[SCR-13 Chọn danh mục] --> P3[SCR-14 Thông tin & giá] --> P4[SCR-15 Xem trước]
-    CHAT --> CR
+    CHAT -- lọc: Chờ tôi / Đã chốt / Đang mua / Đang bán --> CR
     ACC --> ML[SCR-16 Tin của tôi]
+    ML -- N người đang hỏi mua --> CHAT
     ACC --> FV[SCR-17 Đã lưu]
     ACC --> ED[SCR-19 Sửa hồ sơ]
-    ACC --> AP
     ACC --> AD[SCR-24 Admin Dashboard]
     AD --> AR[SCR-26 Xử lý báo cáo]
 ```
@@ -125,11 +128,11 @@ flowchart TD
 | SCR-18 | Tài khoản | UC-06 | M |
 | SCR-19 | Sửa hồ sơ | UC-04 | M |
 | SCR-20 | Thông báo | UC-37 | M |
-| SCR-21 | Danh sách tin nhắn | UC-31 | S |
-| SCR-22 | Phòng chat | UC-31 | S |
+| SCR-21 | Tin nhắn (danh sách cuộc trao đổi, lọc theo trạng thái hẹn) | UC-31, 38 | M |
+| SCR-22 | Phòng chat + thanh ghim lịch hẹn | UC-31, 34, 35, 36 | M |
 | SCR-23 | Báo cáo tin (bottom sheet) | UC-40 | S |
 | SCR-24 | Admin – Dashboard | UC-54 | S |
-| SCR-25 | Lịch hẹn giao dịch | UC-35, 36, 38 | M |
+| ~~SCR-25~~ | ~~Lịch hẹn giao dịch~~ – bỏ ở v1.2, gộp vào SCR-21/22 | – | – |
 | SCR-26 | Admin – Xử lý báo cáo | UC-51, 52 | M |
 | SCR-27 | Đẩy tin (mô phỏng thanh toán) | UC-17 | C |
 | SCR-28 | Đánh giá người bán (dialog) | UC-32 | C |
@@ -334,7 +337,7 @@ Bước 3/3 – Thông tin & giá ⭐
 - Tab Hết hạn: nút [Gia hạn] (ẩn khi đã gia hạn 2 lần).
 - Tab Bị ẩn: hiển thị lý do ("Đang chờ xem xét do bị báo cáo").
 - Dialog **Đã bán**: ô "Giá bán thực tế" (mặc định = giá rao), danh sách "Bạn bán cho ai?" (người trong lịch hẹn đã chốt được chọn sẵn, sau đó là những người đã gửi yêu cầu mua) + "Người khác/không nhớ".
-- Thẻ tin có dòng "2 người đang hỏi mua" → bấm vào mở SCR-25 lọc theo tin đó.
+- Thẻ tin có dòng "2 người đang hỏi mua" → bấm vào mở tab Tin nhắn (SCR-21) đã lọc theo tin đó.
 
 ### SCR-29 – Bổ sung hồ sơ (bottom sheet)
 ```
@@ -390,7 +393,8 @@ Bước 3/3 – Thông tin & giá ⭐
 └──────────────────────────────┘
 ```
 - Điểm của người bán được chọn sẵn và ghi rõ "người bán chọn"; chọn điểm khác thì người bán cần xác nhận lại.
-- Gửi xong: toast "Đã gửi, chờ người bán xác nhận địa điểm"; lịch hẹn hiện ở SCR-25 tab "Chờ bên kia".
+- Gửi xong: app **mở thẳng phòng chat** (SCR-22) với người bán; thanh ghim "Chờ người bán xác nhận", có thẻ sự kiện "Bạn đã gửi yêu cầu mua".
+- Mở từ thanh ghim trong phòng chat thì đóng bảng là về lại phòng chat.
 
 ### SCR-20 – Thông báo
 ```
@@ -409,52 +413,58 @@ Bước 3/3 – Thông tin & giá ⭐
 │                      Hôm qua │
 └──────────────────────────────┘
 ```
-- Chấm xanh = chưa đọc. Bấm thông báo → mở đúng lịch hẹn/tin.
+- Chấm xanh = chưa đọc. Thông báo về giao dịch → mở **phòng chat** tương ứng, cuộn tới thẻ sự kiện; thông báo về tin đăng → mở Tin của tôi.
 - Khi app đang mở, thông báo mới hiện **banner** trượt từ đỉnh màn hình trong 4 giây.
 
-### SCR-25 – Lịch hẹn giao dịch
+### SCR-21 – Tin nhắn (danh sách cuộc trao đổi)
 ```
 ┌──────────────────────────────┐
-│ ←  Lịch hẹn                  │
-│ (Chờ tôi xác nhận 1)(Chờ bên kia)(Đã chốt)(Đã xong)(Đã huỷ)│
+│ Tin nhắn                     │
+│ (Tất cả)(Chờ tôi ²)(Đã chốt)(Tôi đang mua)(Tôi đang bán)│
 │ ┌──────────────────────────┐ │
-│ │[ảnh] Giáo trình KT lượng │ │
-│ │ Phạm Đức Huy muốn mua    │ │
-│ │ 📍 Thư viện · ĐH KTQD     │ │
-│ │ 🕑 Mai 11:30              │ │
-│ │ "Mình lấy luôn nếu ok"   │ │
-│ │ [Xác nhận địa điểm]      │ │
-│ │ [Đổi địa điểm/giờ][Từ chối]│ │
+│ │(PH) Phạm Đức Huy   5 phút│ │
+│ │ Bán · Giáo trình KT lượng│ │
+│ │ [Chờ bạn xác nhận]     ①│ │  ← nhãn trạng thái hẹn
+│ │ Muốn mua · Thư viện 11:30│ │
+│ ├──────────────────────────┤ │
+│ │(MA) Trần Minh Anh   14:20│ │
+│ │ Mua · Giáo trình KT vi mô│ │
+│ │ [Chưa đặt mua]           │ │
+│ │ Bạn: Bớt còn 40k được ko?│ │
 │ └──────────────────────────┘ │
 └──────────────────────────────┘
 ```
-| Trạng thái thẻ | Nút |
-|---|---|
-| Chờ tôi xác nhận | Xác nhận địa điểm · Đổi địa điểm/giờ (SCR-32) · Từ chối |
-| Chờ bên kia | Nhắn tin · Huỷ yêu cầu |
-| Đã chốt | Chat · Huỷ hẹn (chọn lý do) · (người bán) Đã bán |
-| Đã xong / Đã huỷ | Chỉ xem; "Đánh giá người bán" nếu được mời |
+- Thay cho màn Lịch hẹn cũ (SCR-25): bộ lọc "Chờ tôi xác nhận" chính là danh sách việc cần làm.
+- Mở từ "N người đang hỏi mua" ở Tin của tôi: hiện thêm chip "Tin: Giáo trình KT lượng ✕".
+
+### SCR-22 – Phòng chat + thanh ghim lịch hẹn ⭐
+```
+NGƯỜI MUA                                NGƯỜI BÁN
+┌──────────────────────────────┐        ┌──────────────────────────────┐
+│ ←  Trần Minh Anh          ⋮  │        │ ←  Nguyễn Văn Minh        ⋮  │
+│ [ảnh] Giáo trình KT vi mô 45k│        │ [ảnh] Giáo trình KT vi mô 45k│
+├──────────────────────────────┤        ├──────────────────────────────┤
+│📅 Chờ người bán xác nhận      │◄ ghim ►│📅 Minh muốn mua               │
+│   Cổng chính NEU · 17:00     │        │   Cổng chính NEU · 17:00     │
+│   [Huỷ yêu cầu]              │        │ [Xác nhận][Đổi][Từ chối]     │
+├──────────────────────────────┤        ├──────────────────────────────┤
+│        Còn không bạn?  ▌     │        │ ▌Còn không bạn?              │
+│ ▌Còn nhé                     │        │                Còn nhé ▌     │
+│  ┌ Bạn đã gửi yêu cầu mua ┐  │        │  ┌ Minh gửi yêu cầu mua ─┐   │
+│  │ Cổng chính · 17:00     │  │◄ thẻ ►│  │ Cổng chính · 17:00     │   │
+│  └────────────────────────┘  │ sự kiện│  └────────────────────────┘  │
+│ (Bớt được không?)(Hẹn ở đâu?)│        │ (Còn bạn nhé)(Chiều nay ok) │
+│ [Nhập tin nhắn…]          ➤  │        │ [Nhập tin nhắn…]          ➤  │
+└──────────────────────────────┘        └──────────────────────────────┘
+```
+- **Thanh ghim** đổi nội dung và nút theo bảng 3.3.1 (03-dac-ta-yeu-cau.md). Nút chính tô màu, nút phụ viền.
+- **Thẻ sự kiện** căn giữa, nền nhạt, có icon theo loại: gửi yêu cầu · đổi địa điểm · đã chốt · nhắc hẹn · huỷ · hoàn tất. Không sửa/xoá được.
+- **Câu trả lời nhanh** theo ngữ cảnh: người mua chưa đặt mua → "Hẹn gặp ở đâu?"; người bán khi người mua chưa đặt mua → "Bạn bấm Đặt mua để chốt hẹn nhé"; đã chốt → "Mình tới rồi nhé".
+- Bảng SCR-31 / SCR-32 / huỷ / đã bán / đánh giá mở **đè lên** phòng chat; đóng bảng là về lại phòng chat.
 
 ### SCR-32 – Đổi địa điểm / giờ hẹn (bottom sheet)
 - Giống phần chọn địa điểm & giờ của SCR-31, thêm dòng "Đề xuất hiện tại: Thư viện · Mai 11:30".
-- Nút "Gửi đề xuất mới" → lịch hẹn chuyển "Chờ bên kia", bên kia nhận thông báo "Đề xuất đổi địa điểm".
-
-### SCR-22 – Phòng chat
-```
-┌──────────────────────────────┐
-│ ←  (👤) Nguyễn Thị Lan  ✔    │
-│ ┌──────────────────────────┐ │
-│ │[ảnh] Giáo trình KT vi mô │ │  ← thẻ tin đăng, chạm để mở
-│ │      45.000đ             │ │
-│ └──────────────────────────┘ │
-│            Món này còn không bạn? ▌│
-│ ▌Còn bạn ơi                   │
-│            Bớt 40k được không? ▌│
-│                              │
-│ (Còn không?)(Bớt được không?)(Hẹn ở đâu?)│
-│ [ Nhập tin nhắn...      ] ➤  │
-└──────────────────────────────┘
-```
+- Nút "Gửi đề xuất mới" → thanh ghim chuyển "Chờ người mua/bán đồng ý", thêm thẻ sự kiện "đề xuất đổi", bên kia nhận thông báo.
 
 ### SCR-24 – Admin Dashboard
 ```

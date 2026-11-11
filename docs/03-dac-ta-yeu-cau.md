@@ -43,7 +43,7 @@
 | UC-27 | Đổi phạm vi xem (Trường / Thành phố / Toàn quốc) | Khách | M |
 | **Liên hệ & tin cậy** ||||
 | UC-30 | Liên hệ qua gọi điện / Zalo | Thành viên | M |
-| UC-31 | Chat với người bán | Thành viên | S |
+| UC-31 | Trao đổi trong phòng chat gắn lịch hẹn | Người mua, Người bán | M |
 | UC-32 | Đánh giá người bán | Thành viên (người mua) | C |
 | UC-33 | Chia sẻ tin ra ngoài (link) | Khách | C |
 | UC-40 | Báo cáo tin vi phạm | Thành viên | S |
@@ -52,7 +52,7 @@
 | UC-35 | Xác nhận / đổi / từ chối địa điểm hẹn | Người bán (và người mua khi bị đổi) | M |
 | UC-36 | Huỷ lịch hẹn | Người mua, Người bán | S |
 | UC-37 | Xem thông báo | Thành viên | M |
-| UC-38 | Xem "Lịch hẹn của tôi" | Thành viên | M |
+| UC-38 | Lọc các cuộc trao đổi theo trạng thái hẹn (trong tab Tin nhắn) | Thành viên | M |
 | **Quản trị** ||||
 | UC-50 | Quản lý điểm giao dịch theo trường | Admin | C |
 | UC-51 | Xử lý tin bị báo cáo | Admin | M |
@@ -191,7 +191,7 @@ Admin --> UC54
 | Actor | Chủ tin |
 | Tiền điều kiện | Tin ở `ACTIVE` hoặc `RESERVED` |
 | Hậu điều kiện | `status = SOLD`, có `soldPrice`, `soldAt`; tin biến mất khỏi kết quả tìm kiếm |
-| Luồng chính | 1. Tại "Tin của tôi", chi tiết tin hoặc thẻ lịch hẹn đã xác nhận, bấm "Đã bán" → 2. Hộp thoại: nhập **giá bán thực tế** (mặc định = giá rao) → 3. Chọn người mua: mặc định là người mua trong lịch hẹn đã xác nhận; có thể chọn người khác trong các yêu cầu mua của tin (tuỳ chọn) → 4. Xác nhận |
+| Luồng chính | 1. Tại "Tin của tôi" hoặc thanh ghim "Đã chốt" trong phòng chat, bấm "Đã bán" → 2. Hộp thoại: nhập **giá bán thực tế** (mặc định = giá rao) → 3. Chọn người mua: mặc định là người mua trong lịch hẹn đã xác nhận; có thể chọn người khác trong các yêu cầu mua của tin (tuỳ chọn) → 4. Xác nhận |
 | Luồng thay thế | 3a. Chọn "Người khác / không nhớ" → không phát sinh quyền đánh giá |
 | Hậu quả nghiệp vụ | Lịch hẹn liên quan chuyển `DONE`, các yêu cầu mua khác của tin tự huỷ và người gửi nhận thông báo. Người mua được chọn nhận quyền đánh giá người bán (UC-32). `soldPrice` được dùng làm dữ liệu gợi ý giá (trọng số cao) |
 | BR | BR-06, BR-21, BR-30 |
@@ -205,22 +205,46 @@ Admin --> UC54
 | Ghi chú | Lưu 10 từ khoá gần nhất trên máy (C) |
 | BR | BR-05, BR-09 |
 
-### UC-31 – Chat với người bán
+### UC-31 – Trao đổi với người bán / người mua (phòng chat gắn lịch hẹn) ⭐
 | Mục | Nội dung |
 |---|---|
-| Actor | Thành viên (người mua) |
-| Tiền điều kiện | Đã đăng nhập, hồ sơ đầy đủ (nếu thiếu → UC-05), không phải chủ tin |
-| Luồng chính | 1. Tại chi tiết tin, bấm "Chat" → 2. Hệ thống mở phòng chat có id `{listingId}_{buyerUid}` (tạo mới nếu chưa có) với thẻ thông tin tin đăng ở đầu → 3. Gửi tin nhắn văn bản; có các câu gợi ý nhanh: "Món này còn không bạn?", "Có thể bớt không?", "Hẹn gặp ở đâu?" → 4. Người bán thấy trong danh sách chat (SCR-21), có chấm đỏ chưa đọc |
-| Ngoại lệ | Tin đã bán/bị xoá → phòng chat vẫn xem được nhưng hiện nhãn "Tin không còn bán" |
-| BR | BR-31 |
+| Actor | Người mua, người bán |
+| Tiền điều kiện | Đã đăng nhập, hồ sơ đầy đủ (nếu thiếu → UC-05), người mua không phải chủ tin |
+| Nguyên tắc | Mỗi cặp *tin đăng + người mua* có **đúng một phòng chat** `{listingId}_{buyerUid}`; lịch hẹn của cặp đó hiển thị **ngay trong phòng chat** (BR-40). Không có màn lịch hẹn riêng |
+| Bố cục | (1) Thanh tin đăng; (2) **Thanh ghim lịch hẹn** – trạng thái, địa điểm, giờ và nút hành động theo vai trò (bảng 3.3.1); (3) Tin nhắn xen **thẻ sự kiện** (gửi yêu cầu, đổi địa điểm, chốt hẹn, nhắc hẹn, huỷ, hoàn tất); (4) Câu trả lời nhanh theo ngữ cảnh; (5) Ô nhập |
+| Luồng chính | 1. Người mua bấm "Chat" ở chi tiết tin, hoặc người bán mở từ thông báo / tab Tin nhắn / dòng "N người đang hỏi mua" ở Tin của tôi → 2. Hệ thống mở phòng chat (tạo mới nếu chưa có) → 3. Hai bên nhắn tin; mọi thao tác đặt mua, xác nhận, đổi, huỷ, đã bán thực hiện ngay trên thanh ghim (UC-34 → UC-36, UC-14) → 4. Mỗi thao tác thêm một thẻ sự kiện vào cuộc trò chuyện và gửi thông báo cho bên kia |
+| Luồng thay thế | 1a. Người bán thấy người mua chỉ chat mà chưa đặt mua → bấm "Gửi lời mời đặt mua" → người mua nhận tin nhắn có nút Đặt mua |
+| Ngoại lệ | Tin đã bán/bị xoá → phòng chat vẫn xem được, thanh ghim hiện "Tin không còn bán". Người bán đã chốt với người khác → thanh ghim của người mua hiện "Bạn đang xếp hàng" |
+| BR | BR-31, BR-36, BR-40, BR-41 |
+
+#### 3.3.1. Thanh ghim lịch hẹn theo trạng thái và vai trò
+| Trạng thái | Người mua thấy | Người bán thấy |
+|---|---|---|
+| Chưa đặt mua | "Chưa có lịch hẹn" · **Đặt mua** | "Người mua chưa đặt mua" · **Gửi lời mời đặt mua** |
+| Chờ người bán (`PENDING_SELLER`) | "Chờ người bán xác nhận" · Huỷ yêu cầu | "Muốn mua · <địa điểm, giờ>" · **Xác nhận** · Đổi · Từ chối |
+| Chờ người mua (`PENDING_BUYER`) | "Người bán đề xuất <địa điểm, giờ>" · **Đồng ý** · Đề xuất khác · Huỷ | "Chờ người mua đồng ý" · Huỷ |
+| Đã chốt (`CONFIRMED`) | "Đã chốt · <địa điểm, giờ>" · Huỷ hẹn | "Đã chốt · <địa điểm, giờ>" · **Đã bán** · Huỷ hẹn |
+| Đã giao dịch (`DONE`) | "Đã mua" · **Đánh giá người bán** | "Đã bán <giá>" |
+| Đã huỷ (`CANCELLED`) | "Đã huỷ: <lý do>" · Đặt mua lại (nếu tin còn bán) | "Đã huỷ: <lý do>" |
+| Tin đã chốt với người khác | "Người bán đã hẹn với người khác, bạn đang xếp hàng" · Huỷ yêu cầu | – (mỗi người mua là một phòng riêng) |
+
+#### 3.3.2. Chuyển màn
+| Từ | Thao tác | Đến |
+|---|---|---|
+| Chi tiết tin (người mua) | Chat | Phòng chat |
+| Chi tiết tin (người mua) | Đặt mua → gửi trong bảng SCR-31 | **Phòng chat** (không quay về chi tiết tin); quay lại từ phòng chat → chi tiết tin, nút chính đổi thành "Xem trao đổi" |
+| Phòng chat | Đặt mua / Đổi / Huỷ / Đã bán / Đánh giá | Bảng tương ứng (SCR-31, 32, huỷ, đã bán, đánh giá) → đóng bảng là **về lại phòng chat** |
+| Thông báo bất kỳ về giao dịch | Bấm | Phòng chat, cuộn tới thẻ sự kiện tương ứng |
+| Tin của tôi (người bán) | "N người đang hỏi mua" | Tab Tin nhắn đã lọc theo tin đó → chọn người → phòng chat |
+| Tab Tin nhắn | Bộ lọc: Tất cả / Chờ tôi xác nhận / Đã chốt hẹn / Tôi đang mua / Tôi đang bán | Phòng chat |
 
 ### UC-34 – Đặt mua và đề xuất địa điểm ⭐
 | Mục | Nội dung |
 |---|---|
 | Actor | Người mua |
 | Tiền điều kiện | Đã đăng nhập, hồ sơ đầy đủ (nếu thiếu → UC-05), tin `ACTIVE` hoặc `RESERVED`, không phải chủ tin, chưa có yêu cầu đang hoạt động cho tin này (BR-33) |
-| Hậu điều kiện | Tạo lịch hẹn `PENDING_SELLER`; người bán nhận thông báo "Có người muốn mua" kèm địa điểm và giờ |
-| Luồng chính | 1. Tại chi tiết tin, bấm "Đặt mua" → 2. Bảng "Đặt mua & hẹn địa điểm" (SCR-31) mở ra, chọn sẵn **điểm giao dịch của tin** → 3. Người mua giữ nguyên hoặc chọn điểm khác trong danh sách điểm của trường / tự nhập → 4. Chọn giờ hẹn (gợi ý: hôm nay 17:00, mai 11:30, mai 17:00, hoặc tự chọn) → 5. Thêm lời nhắn (tuỳ chọn) → 6. Bấm "Gửi yêu cầu" → 7. Thông báo "Đã gửi, chờ người bán xác nhận địa điểm" |
+| Hậu điều kiện | Tạo lịch hẹn `PENDING_SELLER` gắn với phòng chat của cặp tin–người mua; thêm thẻ sự kiện "gửi yêu cầu mua"; người bán nhận thông báo "Có người muốn mua" kèm địa điểm và giờ |
+| Luồng chính | 1. Tại chi tiết tin **hoặc thanh ghim trong phòng chat**, bấm "Đặt mua" → 2. Bảng "Đặt mua & hẹn địa điểm" (SCR-31) mở ra, chọn sẵn **điểm giao dịch của tin** → 3. Người mua giữ nguyên hoặc chọn điểm khác trong danh sách điểm của trường / tự nhập → 4. Chọn giờ hẹn (gợi ý: hôm nay 17:00, mai 11:30, mai 17:00, hoặc tự chọn) → 5. Thêm lời nhắn (tuỳ chọn) → 6. Bấm "Gửi yêu cầu" → 7. App **mở phòng chat** với người bán; thanh ghim hiện "Chờ người bán xác nhận", cuộc trò chuyện có thẻ "Bạn đã gửi yêu cầu mua" |
 | Luồng thay thế | 1a. Tin đang `RESERVED` → hiện cảnh báo "Đã có người hẹn trước, yêu cầu của bạn sẽ xếp hàng" (BR-36) |
 | Ngoại lệ | Đã có 5 yêu cầu đang chờ → chặn, gợi ý huỷ bớt (BR-33). Giờ hẹn trong quá khứ hoặc quá 7 ngày → báo lỗi |
 | BR | BR-13, BR-15, BR-33, BR-34, BR-36 |
@@ -229,8 +253,8 @@ Admin --> UC54
 | Mục | Nội dung |
 |---|---|
 | Actor | Người bán (với lịch hẹn `PENDING_SELLER`); người mua (với lịch hẹn `PENDING_BUYER`) |
-| Kích hoạt | Nhận thông báo yêu cầu mua / đề xuất đổi, hoặc mở "Lịch hẹn của tôi" (SCR-25) |
-| Luồng chính (xác nhận) | 1. Mở thông báo → thẻ lịch hẹn: người mua, món đồ, địa điểm, giờ, lời nhắn → 2. Bấm "Xác nhận địa điểm" → 3. Lịch hẹn `CONFIRMED`, tin chuyển `RESERVED` → 4. Hai bên nhận thông báo "Đã chốt hẹn: <địa điểm>, <giờ>"; hệ thống đặt nhắc trước 1 giờ |
+| Kích hoạt | Nhận thông báo yêu cầu mua / đề xuất đổi, hoặc mở phòng chat từ tab Tin nhắn (lọc "Chờ tôi xác nhận") |
+| Luồng chính (xác nhận) | 1. Mở thông báo → phòng chat, thanh ghim hiện người mua, địa điểm, giờ, lời nhắn → 2. Bấm "Xác nhận" trên thanh ghim → 3. Lịch hẹn `CONFIRMED`, tin chuyển `RESERVED` → 4. Hai bên nhận thông báo "Đã chốt hẹn: <địa điểm>, <giờ>"; hệ thống đặt nhắc trước 1 giờ |
 | Luồng thay thế (đổi) | 2a. Bấm "Đổi địa điểm/giờ" → chọn lại (SCR-32) → gửi → lịch hẹn chuyển sang chờ bên kia (`PENDING_BUYER` hoặc ngược lại) → bên kia nhận thông báo và lặp lại UC-35 |
 | Luồng thay thế (từ chối) | 2b. Bấm "Từ chối" → chọn lý do (đã bán, không tiện giờ, khác) → lịch hẹn `CANCELLED`, người mua nhận thông báo |
 | BR | BR-35, BR-36, BR-37 |
@@ -239,7 +263,7 @@ Admin --> UC54
 | Mục | Nội dung |
 |---|---|
 | Actor | Người mua hoặc người bán trong lịch hẹn |
-| Luồng chính | 1. Tại thẻ lịch hẹn bấm "Huỷ hẹn" → 2. Chọn lý do (bắt buộc với lịch đã xác nhận) → 3. Lịch hẹn `CANCELLED`, bên kia nhận thông báo → 4. Nếu tin không còn lịch hẹn `CONFIRMED` nào → tin trở về `ACTIVE` |
+| Luồng chính | 1. Tại thanh ghim trong phòng chat bấm "Huỷ hẹn" / "Huỷ yêu cầu" → 2. Chọn lý do (bắt buộc với lịch đã xác nhận) → 3. Lịch hẹn `CANCELLED`, bên kia nhận thông báo → 4. Nếu tin không còn lịch hẹn `CONFIRMED` nào → tin trở về `ACTIVE` |
 | BR | BR-38 |
 
 ### UC-37 – Xem thông báo
@@ -283,7 +307,7 @@ Admin --> UC54
 | US-06 | người mua | chỉ xem tin trong thành phố của mình | dễ gặp trực tiếp | UC-27 | M |
 | US-07 | người mua | đặt mua kèm địa điểm và giờ hẹn, được người bán xác nhận | không đi gặp vô ích, gặp ở nơi an toàn | UC-34, UC-35 | M |
 | US-08 | người mua | lưu các tin quan tâm | so sánh trước khi mua | UC-26 | S |
-| US-09 | người mua | nhắn tin trong app | không phải lộ SĐT cá nhân | UC-31 | S |
+| US-09 | người mua / người bán | nhắn tin và chốt hẹn trong cùng một màn hình | không phải chuyển qua lại, luôn thấy trạng thái hẹn | UC-31 | M |
 | US-10 | người dùng | báo cáo tin lừa đảo | bảo vệ cộng đồng | UC-40 | S |
 | US-11 | người bán | gia hạn tin hết hạn | không phải đăng lại | UC-15 | S |
 | US-12 | người mua | đánh giá người bán sau khi mua | giúp người khác chọn người bán uy tín | UC-32 | C |
@@ -310,7 +334,8 @@ Admin --> UC54
 
 **US-07 / US-15**
 - Khi tôi gửi yêu cầu mua, người bán nhận thông báo trong ≤ 5 giây (app đang mở) với đúng địa điểm và giờ tôi chọn.
-- Khi người bán xác nhận, tôi nhận thông báo "Đã chốt hẹn", lịch hẹn hiện ở mục "Đã xác nhận" và tin chuyển "Đang giao dịch".
+- Khi người bán xác nhận, tôi nhận thông báo "Đã chốt hẹn"; thanh ghim trong phòng chat chuyển "Đã chốt", có thẻ sự kiện "đã xác nhận", và tin chuyển "Đang giao dịch".
+- Sau khi gửi yêu cầu mua, app mở thẳng phòng chat với người bán; bấm quay lại thì về chi tiết tin, nút chính là "Xem trao đổi".
 - Khi người bán đổi địa điểm, lịch hẹn chưa được xác nhận cho tới khi tôi đồng ý địa điểm mới.
 
 **US-16**
@@ -348,7 +373,7 @@ Admin --> UC54
 | FR-27 | Lưu / bỏ lưu tin; danh sách "Đã lưu" | UC-26 | S |
 | FR-28 | Hồ sơ người bán: thông tin, trường, điểm đánh giá, số giao dịch thành công, các tin đang bán | UC-25 | S |
 | FR-30 | Nút Gọi điện (mở trình quay số) và Zalo (mở `zalo.me/{sđt}`), chỉ cho thành viên có hồ sơ đầy đủ | UC-30 | M |
-| FR-31 | Chat văn bản thời gian thực, câu gợi ý nhanh, trạng thái đã đọc | UC-31 | S |
+| FR-31 | Phòng chat thời gian thực theo cặp tin–người mua: thanh ghim lịch hẹn (bảng 3.3.1), thẻ sự kiện, câu trả lời nhanh theo ngữ cảnh, trạng thái đã đọc | UC-31 | M |
 | FR-32 | Đánh giá 1–5 sao + nhận xét, chỉ khi được chọn là người mua | UC-32 | C |
 | FR-33 | Chia sẻ tin qua Android Share Sheet | UC-33 | C |
 | FR-34 | Đặt mua: chọn điểm hẹn (danh sách điểm của trường hoặc tự nhập), giờ hẹn, lời nhắn | UC-34 | M |
@@ -356,7 +381,7 @@ Admin --> UC54
 | FR-36 | Huỷ lịch hẹn kèm lý do; tự trả tin về `ACTIVE` khi không còn hẹn đã xác nhận | UC-36 | S |
 | FR-37 | Trung tâm thông báo: danh sách, đánh dấu đã đọc, số chưa đọc trên biểu tượng chuông, banner khi app đang mở | UC-37 | M |
 | FR-38 | Thông báo đẩy Android khi app đóng; nhắc lịch hẹn trước 1 giờ | UC-62 | M (đẩy khi app đóng: S) |
-| FR-39 | "Lịch hẹn của tôi": tab Chờ tôi xác nhận / Chờ bên kia / Đã xác nhận / Đã xong / Đã huỷ | UC-38 | M |
+| FR-39 | Tab Tin nhắn: mỗi dòng có nhãn trạng thái hẹn; bộ lọc Tất cả / Chờ tôi xác nhận / Đã chốt hẹn / Tôi đang mua / Tôi đang bán; lọc theo một tin | UC-38 | M |
 | FR-40 | Báo cáo tin với lý do | UC-40 | S |
 | FR-41 | Bảng xác nhận địa điểm khi đăng tin, gửi thông báo "Tin đã đăng" kèm địa điểm | UC-19 | M |
 | FR-50 | Thêm/sửa/ẩn điểm giao dịch của từng trường | UC-50 | C |
@@ -421,6 +446,8 @@ Admin --> UC54
 | BR-37 | Giờ hẹn phải sau thời điểm hiện tại ít nhất 30 phút và không quá 7 ngày. Hệ thống nhắc cả hai bên **trước 1 giờ** |
 | BR-38 | Huỷ lịch hẹn đã xác nhận phải chọn lý do; tin trở về `ACTIVE` nếu không còn lịch hẹn `CONFIRMED` nào |
 | BR-39 | Mọi sự kiện đăng tin, yêu cầu mua, đổi địa điểm, xác nhận, huỷ, nhắc hẹn đều tạo một thông báo cho đúng người liên quan |
+| BR-40 | Mỗi cặp tin–người mua có đúng một phòng chat và tối đa một lịch hẹn đang hoạt động; lịch hẹn luôn hiển thị trong phòng chat đó |
+| BR-41 | Mỗi thay đổi lịch hẹn tạo một **thẻ sự kiện** trong phòng chat, ghi cùng lúc với thay đổi (transaction); thẻ sự kiện không sửa/xoá được, dùng làm bằng chứng khi tranh chấp |
 
 ## 3.7. Danh mục và thuộc tính riêng
 
