@@ -3,7 +3,7 @@
 ## 5.1. Nguyên tắc thiết kế
 
 1. **Nhanh** – đăng tin theo từng bước, mỗi bước một việc; mặc định thông minh (khu vực = trường của tôi, Zalo = SĐT).
-2. **Tin cậy** – luôn hiển thị huy hiệu xác thực, tình trạng chuẩn hoá, giá tham khảo.
+2. **Tin cậy** – luôn hiển thị địa điểm giao dịch, tình trạng chuẩn hoá, giá tham khảo; mọi cuộc hẹn đều được xác nhận và có thông báo.
 3. **Gần gũi sinh viên** – ngôn ngữ thân thiện ("bạn"), màu tươi sáng.
 4. **Nhất quán** – theo Material Design 3, dùng lại một bộ component.
 
@@ -20,7 +20,7 @@
 | `onSurface` | `#1B1F1B` | Chữ chính |
 | `onSurfaceVariant` | `#5F6B60` | Chữ phụ (khu vực, thời gian) |
 | `error` | `#C62828` | Lỗi, nút báo cáo |
-| `verified` | `#1E88E5` | Huy hiệu "SV đã xác thực" |
+| `info` | `#1E88E5` | Thông báo, địa điểm hẹn, trạng thái "chờ xác nhận" |
 
 Màu nhãn tình trạng: Như mới `#2E7D32` · Tốt `#558B2F` · Khá `#F9A825` · Cũ `#8D6E63`.
 
@@ -44,7 +44,10 @@ Màu nhãn tình trạng: Như mới `#2E7D32` · Tốt `#558B2F` · Khá `#F9A8
 |---|---|
 | `ListingCard` | Ảnh bìa tỷ lệ 1:1, nhãn tình trạng góc trên trái, nút ♡ góc trên phải, giá, tiêu đề (2 dòng), "Khu vực · 2 giờ trước" |
 | `ConditionBadge` | Viên thuốc nhỏ, màu theo tình trạng |
-| `VerifiedBadge` | Icon ✔ xanh + "SV đã xác thực" |
+| `PlaceChip` | Icon ghim + "Cổng chính · NEU"; dùng ở chi tiết tin, bảng đặt mua, thẻ lịch hẹn |
+| `AppointmentCard` | Ảnh tin, người mua/bán, địa điểm, giờ, nhãn trạng thái (Chờ bạn xác nhận / Chờ bên kia / Đã chốt), các nút hành động |
+| `NotificationItem` | Icon theo loại, tiêu đề, nội dung, thời gian, chấm chưa đọc |
+| `HeadsUpBanner` | Banner trượt từ đỉnh màn hình khi có thông báo mới lúc app đang mở |
 | `PriceText` | Định dạng `1.250.000đ`; giá 0 → "Tặng miễn phí" |
 | `PriceSuggestionCard` | Thẻ nền `primaryContainer`: 💡 giá đề xuất, khoảng giá, số mẫu, nhãn độ tin cậy, nút "Dùng giá này" |
 | `ScopeSwitcher` | Chip chọn: Trường tôi / Thành phố / Toàn quốc |
@@ -80,18 +83,23 @@ flowchart TD
     DT --> SP[SCR-11 Hồ sơ người bán]
     DT --> CR[SCR-22 Phòng chat]
     DT --> RP[SCR-23 Báo cáo]
-    POST --> P2[SCR-13 Chọn danh mục] --> P3[SCR-14 Thông tin & giá] --> P4[SCR-15 Xem trước] --> DT
+    DT --> BUY[SCR-31 Đặt mua & hẹn địa điểm] --> AP
+    HOME --> NT[SCR-20 Thông báo] --> AP[SCR-25 Lịch hẹn giao dịch]
+    AP --> CF[SCR-32 Xác nhận / đổi địa điểm]
+    P4 --> CP[SCR-30 Xác nhận địa điểm khi đăng]
+    POST --> P2[SCR-13 Chọn danh mục] --> P3[SCR-14 Thông tin & giá] --> P4[SCR-15 Xem trước]
     CHAT --> CR
     ACC --> ML[SCR-16 Tin của tôi]
     ACC --> FV[SCR-17 Đã lưu]
     ACC --> ED[SCR-19 Sửa hồ sơ]
-    ACC --> VF[SCR-20 Xác thực SV]
+    ACC --> AP
     ACC --> AD[SCR-24 Admin Dashboard]
-    AD --> AV[SCR-25 Duyệt xác thực]
     AD --> AR[SCR-26 Xử lý báo cáo]
 ```
 
-> Thanh điều hướng dưới có 5 mục: **Trang chủ · Danh mục · ➕ Đăng tin · Tin nhắn · Tài khoản**. "Đã lưu" nằm trong Tài khoản và có lối tắt ♡ trên thanh tiêu đề trang chủ. Mục "Admin" chỉ hiện với `role = admin`.
+> Mọi nút Đăng tin, Đặt mua, Chat, Gọi/Zalo đều đi qua bước kiểm tra hồ sơ; nếu thiếu thì mở **SCR-29 Bổ sung hồ sơ** trước.
+>
+> Thanh điều hướng dưới có 5 mục: **Trang chủ · Danh mục · ➕ Đăng tin · Tin nhắn · Tài khoản**. Chuông thông báo nằm trên thanh tiêu đề trang chủ, có số chưa đọc. "Đã lưu" nằm trong Tài khoản và có lối tắt ♡ trên thanh tiêu đề trang chủ. Mục "Admin" chỉ hiện với `role = admin`.
 
 ## 5.4. Danh sách màn hình
 
@@ -116,15 +124,19 @@ flowchart TD
 | SCR-17 | Đã lưu | UC-26 | S |
 | SCR-18 | Tài khoản | UC-06 | M |
 | SCR-19 | Sửa hồ sơ | UC-04 | M |
-| SCR-20 | Xác thực sinh viên | UC-05 | S |
+| SCR-20 | Thông báo | UC-37 | M |
 | SCR-21 | Danh sách tin nhắn | UC-31 | S |
 | SCR-22 | Phòng chat | UC-31 | S |
 | SCR-23 | Báo cáo tin (bottom sheet) | UC-40 | S |
 | SCR-24 | Admin – Dashboard | UC-54 | S |
-| SCR-25 | Admin – Duyệt xác thực | UC-50 | S |
+| SCR-25 | Lịch hẹn giao dịch | UC-35, 36, 38 | M |
 | SCR-26 | Admin – Xử lý báo cáo | UC-51, 52 | M |
 | SCR-27 | Đẩy tin (mô phỏng thanh toán) | UC-17 | C |
 | SCR-28 | Đánh giá người bán (dialog) | UC-32 | C |
+| SCR-29 | Bổ sung hồ sơ (bottom sheet) | UC-05 | M |
+| SCR-30 | Xác nhận địa điểm khi đăng tin (bottom sheet) | UC-19 | M |
+| SCR-31 | Đặt mua & hẹn địa điểm (bottom sheet) | UC-34 | M |
+| SCR-32 | Đổi địa điểm / giờ hẹn (bottom sheet) | UC-35 | M |
 
 ## 5.5. Đặc tả & wireframe các màn hình chính
 
@@ -145,12 +157,18 @@ flowchart TD
 │  Số điện thoại *             │
 │  [ 0912 345 678            ] │
 │  Zalo  ☑ Giống số điện thoại │
+│  Điểm giao dịch quen thuộc * │
+│  (•Cổng chính)(Thư viện)     │
+│  (Căng tin)(Sảnh GĐ)(Khác…)  │
 │                              │
-│  [        Bắt đầu         ]  │
+│  [        Lưu hồ sơ       ]  │
+│         Để sau               │
 └──────────────────────────────┘
 ```
 - Danh sách trường có tìm kiếm không dấu ("bach khoa" → Bách khoa).
 - Có lựa chọn "Không thấy trường của bạn?" → nhập tay.
+- Danh sách điểm giao dịch đổi theo trường đã chọn; "Khác…" mở ô tự nhập (≥ 10 ký tự).
+- "Để sau" cho phép vào app xem tin ngay; các ô còn thiếu sẽ được nhắc lại ở SCR-29 khi người dùng muốn mua/bán.
 
 ### SCR-06 – Trang chủ
 ```
@@ -196,7 +214,7 @@ flowchart TD
 │ └───────────┘ └───────────┘  │       │ ●━━━━━━━━━━━━○                │
 │ ┌───────────┐ ┌───────────┐  │       │ Tình trạng                   │
 │ │           │ │           │  │       │ [Như mới][•Tốt][•Khá][Cũ]    │
-│ └───────────┘ └───────────┘  │       │ ☑ Chỉ người bán đã xác thực  │
+│ └───────────┘ └───────────┘  │       │                              │
 │                              │       │ ☐ Có thể ship                │
 │                              │       │ [   Xem 23 kết quả   ]       │
 └──────────────────────────────┘       └──────────────────────────────┘
@@ -213,7 +231,7 @@ flowchart TD
 │ └──────────────────────────┘ │
 │ 45.000đ                      │
 │ Giáo trình Kinh tế vi mô     │
-│ (Tốt)  📍 ĐH KTQD, Hà Nội    │
+│ (Tốt) 📍 Cổng chính · ĐH KTQD │
 │ 🕑 2 giờ trước · 👁 36 lượt xem│
 │ ──────────────────────────── │
 │ 💡 Giá thị trường: 43k – 47k │
@@ -226,16 +244,17 @@ flowchart TD
 │ Sách còn mới, có ghi chú bút │
 │ chì vài trang…   Xem thêm    │
 │ ──────────────────────────── │
-│ (👤) Nguyễn Thị Lan  ✔SV     │
-│      NEU · ⭐ 4,8 (5) · 12 tin  › │
+│ (👤) Trần Minh Anh   (📞)(Zalo)│
+│      NEU · ⭐ 4,8 (5) · 9 lần bán│
 │ ──────────────────────────── │
 │ Tin tương tự                 │
 │ ┌────┐ ┌────┐ ┌────┐         │
 ├──────────────────────────────┤
-│ [📞 Gọi] [Zalo] [💬 Chat   ] │  ← thanh cố định dưới
+│ [ 💬 Chat ] [   Đặt mua    ] │  ← thanh cố định dưới
 └──────────────────────────────┘
 ```
-- Khách bấm Gọi/Zalo/Chat → yêu cầu đăng nhập.
+- Khách bấm Gọi/Zalo/Chat/Đặt mua → yêu cầu đăng nhập; thành viên hồ sơ chưa đủ → SCR-29.
+- "Đặt mua" là nút chính, mở SCR-31. Nếu tin đang có lịch hẹn đã chốt: dải "Đã có người hẹn mua, bạn vẫn có thể xếp hàng".
 - Chủ tin xem tin của chính mình: thanh dưới đổi thành [Sửa] [Đã bán] [⋮ Đẩy tin / Ẩn / Xoá].
 - Tin đã bán: dải xám "Tin này đã bán" trên ảnh, ẩn nút liên hệ.
 - Menu ⋮: Báo cáo, Chia sẻ.
@@ -279,8 +298,10 @@ Bước 3/3 – Thông tin & giá ⭐
 │ ☐ Tặng miễn phí              │
 │ Mô tả *                      │
 │ [                          ] │
-│ Nơi giao dịch                │
+│ Nơi giao dịch *              │
 │ [ ĐH KTQD, Hà Nội        ▾ ] │
+│ (•Cổng chính)(Thư viện)(Căng tin)│
+│ [ Ghi chú: sau 17h        ] │
 │ ☐ Có thể ship                │
 │ [        Xem trước       ]   │
 └──────────────────────────────┘
@@ -292,7 +313,7 @@ Bước 3/3 – Thông tin & giá ⭐
   - **Ước tính**: "Ước tính theo khấu hao từ giá gốc 15.000.000đ (mua 2024)".
   - **Không đủ dữ liệu**: "Chưa đủ dữ liệu để gợi ý. Nhập giá gốc/giá bìa để nhận ước tính."
 - Giá lệch > 50% so với gợi ý: dòng cảnh báo vàng dưới ô giá, không chặn.
-- **SCR-15 Xem trước**: hiển thị y như SCR-10 với nhãn "Xem trước", hai nút [Sửa lại] [Đăng tin].
+- **SCR-15 Xem trước**: hiển thị y như SCR-10 với nhãn "Xem trước", hai nút [Sửa lại] [Đăng tin]. Bấm Đăng tin mở **SCR-30** để xác nhận địa điểm.
 
 ### SCR-16 – Tin của tôi
 ```
@@ -312,12 +333,111 @@ Bước 3/3 – Thông tin & giá ⭐
 ```
 - Tab Hết hạn: nút [Gia hạn] (ẩn khi đã gia hạn 2 lần).
 - Tab Bị ẩn: hiển thị lý do ("Đang chờ xem xét do bị báo cáo").
-- Dialog **Đã bán**: ô "Giá bán thực tế" (mặc định = giá rao), danh sách "Bạn bán cho ai?" (người đã chat) + "Người khác/không nhớ".
+- Dialog **Đã bán**: ô "Giá bán thực tế" (mặc định = giá rao), danh sách "Bạn bán cho ai?" (người trong lịch hẹn đã chốt được chọn sẵn, sau đó là những người đã gửi yêu cầu mua) + "Người khác/không nhớ".
+- Thẻ tin có dòng "2 người đang hỏi mua" → bấm vào mở SCR-25 lọc theo tin đó.
 
-### SCR-20 – Xác thực sinh viên
-- Hai tab: **Email trường** (nhập email → gửi link) | **Ảnh thẻ SV** (chụp ảnh, nhập MSSV, gửi).
-- Hiển thị trạng thái hiện tại: Chưa xác thực / Đang chờ duyệt / Đã xác thực ✔ / Bị từ chối (lý do + thời điểm gửi lại được).
-- Dòng cam kết: "Ảnh thẻ chỉ dùng để xác thực và sẽ bị xoá sau khi duyệt."
+### SCR-29 – Bổ sung hồ sơ (bottom sheet)
+```
+┌──────────────────────────────┐
+│            ───               │
+│ Bổ sung thông tin để tiếp tục│
+│ Bạn cần hồ sơ đầy đủ để đăng │
+│ tin, đặt mua và nhắn tin.    │
+│  ✓ Họ và tên                 │
+│  ✓ Trường · Thành phố        │
+│  ✗ Số điện thoại             │
+│  ✗ Điểm giao dịch quen thuộc │
+│ [      Bổ sung ngay       ]  │
+│           Để sau             │
+└──────────────────────────────┘
+```
+
+### SCR-30 – Xác nhận địa điểm khi đăng tin (bottom sheet)
+```
+┌──────────────────────────────┐
+│ Xác nhận địa điểm giao dịch  │
+│ ┌──────────────────────────┐ │
+│ │ 📍 Cổng chính            │ │
+│ │ ĐH Kinh tế Quốc dân, HN  │ │
+│ │ Ghi chú: sau 17h         │ │
+│ └──────────────────────────┘ │
+│ 💡 Nên chọn nơi đông người   │
+│    trong khuôn viên trường.  │
+│ ☑ Tôi xác nhận có thể giao   │
+│   dịch tại địa điểm này      │
+│ [  Xác nhận & đăng tin    ]  │
+│        Đổi địa điểm          │
+└──────────────────────────────┘
+```
+- Nút chính bị vô hiệu cho tới khi tích ô xác nhận (BR-14).
+- Đăng xong: thông báo "Tin đã đăng · Địa điểm giao dịch: Cổng chính, ĐH KTQD" xuất hiện trong SCR-20.
+
+### SCR-31 – Đặt mua & hẹn địa điểm (bottom sheet)
+```
+┌──────────────────────────────┐
+│ Đặt mua                      │
+│ [ảnh] Giáo trình KT vi mô    │
+│       45.000đ                │
+│ Địa điểm hẹn                 │
+│ (•Cổng chính – người bán chọn)│
+│ (Thư viện)(Căng tin)(Khác…)  │
+│ Giờ hẹn                      │
+│ (•Hôm nay 17:00)(Mai 11:30)  │
+│ (Mai 17:00)(Chọn giờ khác)   │
+│ Lời nhắn                     │
+│ [ Mình lấy luôn nếu sách ok ]│
+│ [     Gửi yêu cầu mua     ]  │
+└──────────────────────────────┘
+```
+- Điểm của người bán được chọn sẵn và ghi rõ "người bán chọn"; chọn điểm khác thì người bán cần xác nhận lại.
+- Gửi xong: toast "Đã gửi, chờ người bán xác nhận địa điểm"; lịch hẹn hiện ở SCR-25 tab "Chờ bên kia".
+
+### SCR-20 – Thông báo
+```
+┌──────────────────────────────┐
+│ ←  Thông báo   Đánh dấu đã đọc│
+│ Hôm nay                      │
+│ ● 📅 Có người muốn mua        │
+│   Phạm Đức Huy hỏi mua "Giáo │
+│   trình KT lượng" · Thư viện,│
+│   mai 11:30          5 phút  │
+│ ● ✓ Đã chốt hẹn              │
+│   Cổng chính NEU · 17:00     │
+│                      1 giờ   │
+│   📍 Tin đã đăng              │
+│   "Quạt bàn Asia" · Căng tin │
+│                      Hôm qua │
+└──────────────────────────────┘
+```
+- Chấm xanh = chưa đọc. Bấm thông báo → mở đúng lịch hẹn/tin.
+- Khi app đang mở, thông báo mới hiện **banner** trượt từ đỉnh màn hình trong 4 giây.
+
+### SCR-25 – Lịch hẹn giao dịch
+```
+┌──────────────────────────────┐
+│ ←  Lịch hẹn                  │
+│ (Chờ tôi xác nhận 1)(Chờ bên kia)(Đã chốt)(Đã xong)(Đã huỷ)│
+│ ┌──────────────────────────┐ │
+│ │[ảnh] Giáo trình KT lượng │ │
+│ │ Phạm Đức Huy muốn mua    │ │
+│ │ 📍 Thư viện · ĐH KTQD     │ │
+│ │ 🕑 Mai 11:30              │ │
+│ │ "Mình lấy luôn nếu ok"   │ │
+│ │ [Xác nhận địa điểm]      │ │
+│ │ [Đổi địa điểm/giờ][Từ chối]│ │
+│ └──────────────────────────┘ │
+└──────────────────────────────┘
+```
+| Trạng thái thẻ | Nút |
+|---|---|
+| Chờ tôi xác nhận | Xác nhận địa điểm · Đổi địa điểm/giờ (SCR-32) · Từ chối |
+| Chờ bên kia | Nhắn tin · Huỷ yêu cầu |
+| Đã chốt | Chat · Huỷ hẹn (chọn lý do) · (người bán) Đã bán |
+| Đã xong / Đã huỷ | Chỉ xem; "Đánh giá người bán" nếu được mời |
+
+### SCR-32 – Đổi địa điểm / giờ hẹn (bottom sheet)
+- Giống phần chọn địa điểm & giờ của SCR-31, thêm dòng "Đề xuất hiện tại: Thư viện · Mai 11:30".
+- Nút "Gửi đề xuất mới" → lịch hẹn chuyển "Chờ bên kia", bên kia nhận thông báo "Đề xuất đổi địa điểm".
 
 ### SCR-22 – Phòng chat
 ```
@@ -360,7 +480,7 @@ Bước 3/3 – Thông tin & giá ⭐
 │ [ biểu đồ thanh ngang ]      │
 │ ──────────────────────────── │
 │ ⚠ Báo cáo chờ xử lý (3)    › │
-│ 🪪 Xác thực chờ duyệt (5)  › │
+│ 📅 Lịch hẹn hôm nay (8)    › │
 └──────────────────────────────┘
 ```
 
@@ -376,6 +496,13 @@ Bước 3/3 – Thông tin & giá ⭐
 | Báo cáo thành công | "Cảm ơn bạn đã báo cáo. Chúng mình sẽ xem xét sớm nhất." |
 | Tin sắp hết hạn | "Tin 'Quạt Senko' sẽ hết hạn sau 3 ngày. Gia hạn ngay?" |
 | An toàn giao dịch (chi tiết tin) | "💡 Nên gặp trực tiếp ở nơi công cộng trong trường, kiểm tra hàng trước khi trả tiền." |
+| Hồ sơ thiếu | "Bổ sung số điện thoại và điểm giao dịch để đăng tin." |
+| Gửi yêu cầu mua | "Đã gửi yêu cầu. Chờ người bán xác nhận địa điểm." |
+| Thông báo cho người bán | "Phạm Đức Huy muốn mua “Giáo trình Kinh tế lượng” · Thư viện, mai 11:30" |
+| Đã chốt hẹn | "Đã chốt hẹn: Cổng chính ĐH KTQD, 17:00 hôm nay." |
+| Đổi địa điểm | "Người bán đề xuất đổi sang Thư viện, 17:30. Bạn đồng ý không?" |
+| Nhắc hẹn | "Còn 1 giờ nữa: gặp Trần Minh Anh ở Cổng chính lúc 17:00." |
+| Yêu cầu quá hạn | "Người bán chưa phản hồi sau 24 giờ, yêu cầu đã tự huỷ." |
 | Xoá tin | "Xoá tin này? Bạn không thể khôi phục lại." [Huỷ] [Xoá] |
 
 ## 5.7. Gợi ý quy trình thiết kế

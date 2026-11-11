@@ -14,14 +14,14 @@
 | **S2** – Nền tảng | App chạy được, đăng nhập được | Tạo project, theme/design system, điều hướng, Firebase; SCR-01→05; UC-01→04, 06 | APK đăng ký/đăng nhập/thiết lập hồ sơ |
 | **S3** – Đăng tin | Đăng được tin | SCR-12→15, nén & tải ảnh, KeywordGenerator, validation, BR-04, BR-07 | Đăng tin thật lên Firestore |
 | **S4** – Xem & tìm | Tìm được tin | SCR-06→10, phạm vi xem, tìm kiếm, lọc, sắp xếp, phân trang | Luồng mua cơ bản |
-| **S5** – Quản lý tin | **MVP hoàn chỉnh** | SCR-16, sửa/xoá/đã bán/gia hạn, hết hạn, liên hệ Gọi/Zalo, Security Rules v1 | **MVP** – có thể cho bạn bè dùng thử |
+| **S5** – Quản lý tin & hẹn | **MVP hoàn chỉnh** | SCR-16, sửa/xoá/đã bán/gia hạn, hết hạn, liên hệ Gọi/Zalo, kiểm tra hồ sơ đầy đủ (SCR-29), xác nhận địa điểm khi đăng (SCR-30), **đặt mua – lịch hẹn – thông báo trong app** (SCR-20, 25, 31, 32), Security Rules v1 | **MVP** – có thể cho bạn bè dùng thử |
 | **S6** – Gợi ý giá | Tính năng nâng cao | PriceSuggester + unit test, thẻ gợi ý, dữ liệu gieo 100–200 tin | Gợi ý giá hoạt động |
-| **S7** – Tin cậy & tương tác | Hoàn thiện | Chat, đã lưu, báo cáo, xác thực SV, hồ sơ người bán, đánh giá | Bản beta |
+| **S7** – Tin cậy & tương tác | Hoàn thiện | Chat, đã lưu, báo cáo, hồ sơ người bán, đánh giá, nhắc hẹn (WorkManager), thông báo đẩy khi app đóng (FCM + Cloud Function) | Bản beta |
 | **S8** – Admin & KPI | Vận hành & đo lường | SCR-24→26, dashboard KPI, đẩy tin mô phỏng, Rules hoàn chỉnh + test | Bản release candidate |
 | **S9** – Pilot | Dữ liệu thật | Chạy thử 2 tuần (6.5), sửa lỗi nóng | Số liệu KPI, phản hồi, SUS |
 | **S10** – Báo cáo | Bảo vệ | Phân tích số liệu pilot, hiệu chỉnh tham số gợi ý giá, viết báo cáo, slide, video demo | Báo cáo + slide + APK |
 
-**Nguyên tắc cắt giảm khi trễ:** giữ nguyên S2→S6 (MVP + gợi ý giá) và S9 (pilot); cắt theo thứ tự: đẩy tin (C) → đánh giá (C) → chat (S, thay bằng Gọi/Zalo) → xác thực bằng ảnh thẻ (S, chỉ giữ email trường).
+**Nguyên tắc cắt giảm khi trễ:** giữ nguyên S2→S6 (MVP + gợi ý giá) và S9 (pilot); cắt theo thứ tự: đẩy tin (C) → đánh giá (C) → chat (S, thay bằng Gọi/Zalo) → thông báo đẩy khi app đóng (S, chỉ giữ thông báo trong app). **Không cắt** xác nhận địa điểm và lịch hẹn (D9).
 
 ## 6.3. Kế hoạch kiểm thử
 
@@ -48,6 +48,18 @@
 | UT-09 | Làm tròn: 42.500 / 342.000 / 7.630.000 | 43.000 / 340.000 / 7.650.000 |
 | UT-10 | Tất cả mẫu cùng giá (IQR = 0) | Không loại mẫu nào, suggested = giá đó × f |
 
+### 6.3.2b. Unit test cho hồ sơ & lịch hẹn
+| Mã | Tình huống | Kỳ vọng |
+|---|---|---|
+| UT-20 | `ProfileChecker` với hồ sơ thiếu SĐT và điểm giao dịch | `complete = false`, `missing = [phone, defaultSpot]` |
+| UT-21 | Điểm giao dịch tự nhập 6 ký tự | Không hợp lệ (BR-34) |
+| UT-22 | `AppointmentRules`: người đề xuất tự xác nhận đề xuất của mình | Bị từ chối (chỉ bên kia được xác nhận) |
+| UT-23 | `PENDING_SELLER` → người bán đổi địa điểm | `PENDING_BUYER`, `proposedBy = seller`, history + 1 |
+| UT-24 | `CONFIRMED` → huỷ không có lý do | Bị từ chối (BR-38) |
+| UT-25 | Giờ hẹn = hiện tại + 10 phút / + 8 ngày | Không hợp lệ (BR-37) |
+| UT-26 | Người mua đã có 5 yêu cầu chờ, gửi yêu cầu thứ 6 | Bị chặn (BR-33) |
+| UT-27 | Yêu cầu tạo lúc T, kiểm tra lúc T + 25 giờ | `CANCELLED` do quá hạn (BR-15) |
+
 ### 6.3.3. Test case chức năng (trích – các luồng mức M)
 | Mã | UC | Bước | Kết quả mong đợi |
 |---|---|---|---|
@@ -56,6 +68,8 @@
 | TC-03 | UC-02 | Đăng nhập sai mật khẩu | "Email hoặc mật khẩu không đúng" |
 | TC-04 | UC-02 | Đăng nhập tài khoản bị khoá | Bị đăng xuất, thông báo bị khoá |
 | TC-05 | UC-04 | Gõ "bach khoa" trong ô chọn trường | Hiện "Đại học Bách khoa Hà Nội" |
+| TC-06 | UC-05 | Hồ sơ thiếu SĐT, bấm ➕ Đăng tin | Hiện SCR-29 liệt kê "Số điện thoại"; bổ sung xong quay lại bước 1 đăng tin |
+| TC-07 | UC-05 | Hồ sơ thiếu, bấm "Đặt mua" ở chi tiết tin | Hiện SCR-29; không tạo lịch hẹn |
 | TC-10 | UC-10 | Đăng tin đủ thông tin, 3 ảnh | Tin ACTIVE, xuất hiện đầu "Tin mới" |
 | TC-11 | UC-10 | Không chọn ảnh | Nút "Tiếp" bị vô hiệu |
 | TC-12 | UC-10 | Tiêu đề 5 ký tự | Báo lỗi tại ô tiêu đề |
@@ -64,6 +78,8 @@
 | TC-15 | UC-10 | Tắt mạng khi bấm Đăng | Báo lỗi, dữ liệu form còn nguyên, Thử lại được |
 | TC-16 | UC-11 | Đổi tình trạng Tốt → Cũ | Giá gợi ý giảm theo hệ số |
 | TC-17 | UC-11 | Bấm "Dùng giá này" | Ô giá được điền giá đề xuất |
+| TC-18 | UC-19 | Ở Xem trước bấm Đăng tin, không tích ô xác nhận | Nút "Xác nhận & đăng tin" bị vô hiệu |
+| TC-19 | UC-19 | Tích xác nhận và đăng | Tin ACTIVE có `placeConfirmedAt`; thông báo "Tin đã đăng" kèm địa điểm |
 | TC-20 | UC-21 | Tìm "kinh te vi mo" (không dấu) | Ra tin "Giáo trình Kinh tế vi mô" |
 | TC-21 | UC-22 | Lọc giá 0–50.000, tình trạng Tốt | Chỉ hiện tin thoả cả hai điều kiện |
 | TC-22 | UC-22 | Sắp xếp giá tăng dần | Thứ tự giá không giảm |
@@ -75,6 +91,13 @@
 | TC-33 | UC-15 | Gia hạn lần 3 | Nút Gia hạn bị ẩn |
 | TC-40 | UC-30 | Khách bấm "Gọi" | Yêu cầu đăng nhập |
 | TC-41 | UC-30 | Thành viên bấm "Zalo" | Mở Zalo/trình duyệt tới `zalo.me/{sđt}` |
+| TC-42 | UC-34 | Người mua (máy A) đặt mua, giữ điểm của người bán, chọn 17:00 hôm nay | Lịch hẹn PENDING_SELLER; máy B (người bán) nhận banner ≤ 5 giây |
+| TC-43 | UC-35 | Máy B bấm "Xác nhận địa điểm" | Lịch hẹn CONFIRMED, tin RESERVED; máy A nhận "Đã chốt hẹn" |
+| TC-44 | UC-35 | Máy B đổi sang Thư viện 17:30 | Máy A nhận "Đề xuất đổi địa điểm"; lịch hẹn PENDING_BUYER; máy B không tự xác nhận được |
+| TC-45 | UC-36 | Máy A huỷ lịch hẹn đã chốt, chọn lý do | CANCELLED; máy B nhận thông báo; tin về ACTIVE |
+| TC-46 | UC-62 | Lịch hẹn đã chốt lúc 17:00 | 16:00 cả hai máy nhận thông báo nhắc (kể cả khi app đóng) |
+| TC-47 | UC-14 | Người bán đánh dấu Đã bán khi tin có 2 yêu cầu chờ khác | Lịch hẹn đã chốt → DONE; 2 yêu cầu còn lại CANCELLED, người gửi nhận thông báo |
+| TC-48 | UC-37 | Bấm một thông báo chưa đọc | Mở đúng lịch hẹn; số trên chuông giảm 1 |
 | TC-50 | UC-40 | 3 tài khoản khác nhau báo cáo một tin | Tin chuyển HIDDEN |
 | TC-51 | UC-40 | Một tài khoản báo cáo 2 lần | Lần 2 bị từ chối/thông báo đã báo cáo |
 | TC-52 | UC-51 | Admin chọn "Giữ tin" | Tin về ACTIVE, báo cáo DISMISSED |
@@ -97,8 +120,8 @@ Mỗi chỉ số đo 10 lần trên máy thật, mạng 4G, ghi trung bình & l�
 | Người tham gia | 20–30 sinh viên, ưu tiên 1–2 trường, cả người bán và người mua |
 | Phân phối app | APK qua Google Drive hoặc Firebase App Distribution (hoặc Google Play kênh thử nghiệm nội bộ) |
 | Nhiệm vụ tuần 1 | Mỗi người đăng ≥ 2 món đồ thật muốn bán; dùng thử tìm kiếm, lưu tin, chat |
-| Nhiệm vụ tuần 2 | Giao dịch thật nếu được; đánh dấu "Đã bán" và nhập giá thực tế |
-| Kiểm thử khả dụng | Với 5 người: giao 3 nhiệm vụ có bấm giờ (đăng tin, tìm & lưu 1 món, đánh dấu đã bán), ghi lại tỷ lệ hoàn thành và thời gian |
+| Nhiệm vụ tuần 2 | Đặt mua qua app, hẹn địa điểm và xác nhận; giao dịch thật nếu được; đánh dấu "Đã bán" và nhập giá thực tế |
+| Kiểm thử khả dụng | Với 5 người: giao 4 nhiệm vụ có bấm giờ (đăng tin, tìm & lưu 1 món, đặt mua & chốt hẹn, đánh dấu đã bán), ghi lại tỷ lệ hoàn thành và thời gian |
 | Thu thập | KPI từ dashboard; khảo sát sau pilot (phụ lục B: SUS + câu hỏi mở); log lỗi |
 | Đầu ra cho báo cáo | So sánh KPI thực tế với mục tiêu O1–O5 (01, mục 1.3); MAPE gợi ý giá; điểm SUS; trích dẫn phản hồi |
 

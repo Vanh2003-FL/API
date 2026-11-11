@@ -15,11 +15,14 @@ flowchart LR
         AUTH["Authentication<br/>Email + Google"]
         FS[("Cloud Firestore")]
         ST[("Cloud Storage<br/>Ảnh")]
-        FCM["Cloud Messaging<br/>(tuỳ chọn)"]
+        FCM["Cloud Messaging<br/>(thông báo đẩy)"]
+        CF["Cloud Functions<br/>(gửi đẩy, tác vụ hẹn giờ)"]
     end
     DATA --> AUTH
     DATA --> FS
     DATA --> ST
+    FS -. "tạo notification" .-> CF
+    CF -.-> FCM
     FCM -.-> App
 ```
 
@@ -53,6 +56,9 @@ flowchart LR
 | ADR-4 | Phi chuẩn hoá thông tin người bán vào tin đăng | Join khi đọc | Firestore không có join; giảm số lần đọc khi hiển thị danh sách |
 | ADR-5 | Xoá mềm tin đăng | Xoá cứng | Giữ dữ liệu cho gợi ý giá & KPI |
 | ADR-6 | Tham số nghiệp vụ (hệ số, từ khoá cấm) để trong `config/app` | Hard-code | Điều chỉnh không cần cập nhật app |
+| ADR-7 | Thông báo 2 tầng: (1) **trong app** – mỗi người có collection `users/{uid}/notifications`, app lắng nghe realtime để hiện banner + số trên chuông; (2) **đẩy khi app đóng** – Cloud Function `onCreate` của notification gửi FCM | Chỉ dùng FCM gửi từ máy người dùng | Không thể gửi FCM an toàn từ client (lộ khoá server). Tầng (1) chạy được không cần Cloud Functions; tầng (2) cần gói Blaze – làm ở mức S |
+| ADR-8 | Nhắc lịch hẹn trước 1 giờ bằng **WorkManager** đặt trên máy của mỗi bên khi lịch hẹn được xác nhận | Cloud Function hẹn giờ | Không phụ thuộc server, vẫn chạy khi app đóng |
+| ADR-9 | Bỏ xác thực sinh viên; thay bằng cờ `profileComplete` tính từ các trường bắt buộc | Xác thực ảnh thẻ / email trường | Quyết định D8: giảm rào cản, bớt dữ liệu nhạy cảm |
 
 > ⚠️ **Lưu ý Firebase:** theo thông tin tại thời điểm viết, dự án Firebase mới cần gói **Blaze** (gắn thẻ, vẫn có hạn mức miễn phí) để dùng Cloud Storage. Kiểm tra lại chính sách hiện hành; đặt **cảnh báo ngân sách** (vd. 1 USD). Phương án thay thế lưu ảnh: Cloudinary (gói miễn phí).
 
@@ -67,12 +73,15 @@ app/src/main/java/com/unimarket/
 │  └─ ui/               # Theme, component dùng chung: ListingCard, ConditionBadge, PriceText, EmptyState
 ├─ data/
 │  ├─ repository/       # AuthRepository, UserRepository, ListingRepository, ChatRepository,
+│  │                    # AppointmentRepository, NotificationRepository,
 │  │                    # ReportRepository, AdminRepository, ConfigRepository
 │  └─ remote/           # Wrapper Firestore/Storage, mapper document ↔ model
 ├─ domain/
 │  ├─ KeywordGenerator.kt     # 4.5
 │  ├─ PriceSuggester.kt       # 4.6  (thuần Kotlin → dễ unit test)
-│  └─ ListingValidator.kt     # 3.9
+│  ├─ ListingValidator.kt     # 3.9
+│  ├─ ProfileChecker.kt       # BR-13: hồ sơ đầy đủ? thiếu mục nào?
+│  └─ AppointmentRules.kt     # 4.7: chuyển trạng thái lịch hẹn hợp lệ (BR-33…38)
 └─ feature/
    ├─ auth/        # SCR-03, 04
    ├─ onboarding/  # SCR-01, 02, 05
@@ -83,9 +92,11 @@ app/src/main/java/com/unimarket/
    ├─ post/        # SCR-12 → 15 (đăng/sửa tin)
    ├─ mylistings/  # SCR-16
    ├─ favorites/   # SCR-17
-   ├─ account/     # SCR-18, 19, 20
+   ├─ account/     # SCR-18, 19, 29 (bổ sung hồ sơ)
+   ├─ appointment/ # SCR-25, 31, 32 (đặt mua, lịch hẹn, xác nhận địa điểm)
+   ├─ notification/# SCR-20 + NotificationListener, ReminderWorker
    ├─ chat/        # SCR-21, 22
-   └─ admin/       # SCR-24, 25, 26
+   └─ admin/       # SCR-24, 26
 ```
 
 ## 4.4. Thiết kế dữ liệu
@@ -103,7 +114,9 @@ erDiagram
     LISTING ||--o{ FAVORITE : "được lưu"
     USER ||--o{ REPORT : "báo cáo"
     LISTING ||--o{ REPORT : "bị báo cáo"
-    USER ||--o| VERIFICATION : "gửi"
+    LISTING ||--o{ APPOINTMENT : "được đặt mua"
+    USER ||--o{ APPOINTMENT : "mua / bán"
+    USER ||--o{ NOTIFICATION : "nhận"
     LISTING ||--o{ CHAT : "về"
     USER ||--o{ CHAT : "tham gia"
     CHAT ||--o{ MESSAGE : "chứa"
@@ -111,13 +124,14 @@ erDiagram
     USER ||--o{ REVIEW : "viết/nhận"
     LISTING ||--o{ BOOST : "được đẩy"
 
-    USER { string uid PK  string displayName  string phone  string schoolId FK  string city  string role  string verifyStatus  bool isBanned }
-    SCHOOL { string id PK  string name  string shortName  string city }
+    USER { string uid PK  string displayName  string phone  string schoolId FK  string city  string defaultSpot  bool profileComplete  string role  bool isBanned }
+    SCHOOL { string id PK  string name  string shortName  string city  string meetingSpots }
     CATEGORY { string id PK  string parentId FK  string name }
     LISTING { string id PK  string sellerId FK  string categoryId FK  string title  long price  string condition  string status  long soldPrice  timestamp expiresAt }
     FAVORITE { string userId FK  string listingId FK }
     REPORT { string id PK  string listingId FK  string reporterId FK  string reason  string status }
-    VERIFICATION { string uid PK  string method  string status }
+    APPOINTMENT { string id PK  string listingId FK  string buyerId FK  string sellerId FK  string place  timestamp meetAt  string status }
+    NOTIFICATION { string id PK  string toUid FK  string type  string refId  bool read }
     CHAT { string id PK  string listingId FK  string buyerId FK  string sellerId FK }
     MESSAGE { string id PK  string senderId FK  string text }
     REVIEW { string listingId PK  string sellerId FK  string buyerId FK  int rating }
@@ -134,9 +148,10 @@ categories/{categoryId}
 config/app
 users/{uid}
 users/{uid}/favorites/{listingId}
+users/{uid}/notifications/{notificationId}
 listings/{listingId}
+appointments/{appointmentId}
 reports/{listingId}_{reporterUid}
-verifications/{uid}
 reviews/{listingId}
 chats/{listingId}_{buyerUid}
 chats/{chatId}/messages/{messageId}
@@ -153,14 +168,16 @@ boosts/{boostId}
 | schoolId, schoolName | string | `schoolName` phi chuẩn hoá để hiển thị |
 | city | string | Theo danh mục tỉnh/thành hiện hành (34 đơn vị từ 07/2025) |
 | role | string | `user` \| `admin` (admin đặt thủ công trên Console) |
-| verifyStatus | string | `NONE` \| `PENDING` \| `VERIFIED` \| `REJECTED` |
+| defaultSpot | map? | Điểm giao dịch quen thuộc `{schoolId, spot, note}` (BR-17) |
+| profileComplete | bool | App tính lại mỗi lần lưu hồ sơ: đủ họ tên, SĐT, trường, thành phố, `defaultSpot` (BR-13). Rules cũng kiểm tra lại các trường này |
+| fcmToken | string? | Token thiết bị để nhận thông báo đẩy |
 | isBanned | bool | |
 | createdAt, lastActiveAt | timestamp | `lastActiveAt` cập nhật tối đa 1 lần/ngày → KPI-04 |
 
 > Không lưu email trong Firestore (đã có trong Firebase Auth) để tránh lộ thông tin.
 
 #### `schools/{schoolId}`
-`name`, `shortName` (vd. "NEU"), `city`, `emailDomains: string[]` (vd. `["st.neu.edu.vn"]`), `active: bool`. Nhập sẵn từ file JSON khi khởi tạo.
+`name`, `shortName` (vd. "NEU"), `city`, `meetingSpots: string[]` (điểm giao dịch công cộng, vd. `["Cổng chính", "Thư viện", "Căng tin", "Sảnh giảng đường"]`), `active: bool`. Nhập sẵn từ file JSON khi khởi tạo; admin sửa `meetingSpots` qua UC-50.
 
 #### `categories/{categoryId}`
 `name`, `parentId` (null nếu là danh mục cha), `icon`, `order`, `active`, `attributes: [{key, label, type, required}]` (định nghĩa trường riêng ở 3.7), `depreciationRate` (dùng cho 4.6).
@@ -169,7 +186,7 @@ boosts/{boostId}
 | Trường | Kiểu | Ghi chú |
 |---|---|---|
 | sellerId | string | |
-| sellerName, sellerAvatarUrl, sellerVerified | string/bool | Phi chuẩn hoá (ADR-4); cập nhật hàng loạt khi người dùng đổi hồ sơ |
+| sellerName, sellerAvatarUrl | string | Phi chuẩn hoá (ADR-4); cập nhật hàng loạt khi người dùng đổi hồ sơ |
 | schoolId, schoolName, city | string | Khu vực giao dịch |
 | parentCategoryId, categoryId | string | |
 | title, description | string | |
@@ -180,7 +197,9 @@ boosts/{boostId}
 | images | string[] | URL ảnh, phần tử 0 = ảnh bìa |
 | keywords | string[] | Sinh bởi KeywordGenerator (4.5) |
 | shippable | bool | |
-| meetingPlace | string? | "Cổng chính ĐH Kinh tế Quốc dân" |
+| meetingPlace | map | `{schoolId, spot, note}`, vd. `{NEU, "Cổng chính", "Sau 17h các ngày trong tuần"}` |
+| placeConfirmedAt | timestamp | Thời điểm người bán xác nhận địa điểm (BR-14) |
+| pendingRequests | number | Số yêu cầu mua đang chờ, hiển thị "3 người đang hỏi mua" |
 | status | string | `DRAFT` \| `ACTIVE` \| `RESERVED` \| `SOLD` \| `EXPIRED` \| `HIDDEN` \| `DELETED` |
 | suggestedPrice, suggestionLow, suggestionHigh | number? | Kết quả gợi ý tại thời điểm đăng → KPI-07, KPI-08 |
 | suggestionConfidence | string? | `HIGH` \| `MEDIUM` \| `LOW` \| `ESTIMATE` |
@@ -198,8 +217,30 @@ boosts/{boostId}
 `listingId`, `reporterId`, `reason` (`SCAM` \| `PROHIBITED` \| `WRONG_CATEGORY` \| `FALSE_INFO` \| `SPAM` \| `OTHER`), `note`, `status` (`PENDING` \| `RESOLVED` \| `DISMISSED`), `createdAt`, `handledBy`, `handledAt`.
 → ID ghép giúp **mỗi người chỉ báo cáo một tin một lần** (BR-11) mà không cần truy vấn kiểm tra.
 
-#### `verifications/{uid}`
-`method` (`CARD` \| `EMAIL`), `studentId`, `cardImagePath`, `schoolEmail`, `status`, `rejectReason`, `createdAt`, `reviewedBy`, `reviewedAt`.
+#### `appointments/{appointmentId}` ⭐ (lịch hẹn giao dịch)
+| Trường | Kiểu | Ghi chú |
+|---|---|---|
+| listingId, listingTitle, listingCoverUrl, price | string/number | Phi chuẩn hoá để hiển thị thẻ |
+| buyerId, buyerName, sellerId, sellerName | string | |
+| participants | string[] | `[buyerId, sellerId]` – dùng cho truy vấn & Rules |
+| place | map | `{schoolId, spot, note}` – địa điểm **mới nhất** đang đề xuất |
+| meetAt | timestamp | Giờ hẹn mới nhất |
+| message | string? | Lời nhắn của người mua |
+| status | string | `PENDING_SELLER` \| `PENDING_BUYER` \| `CONFIRMED` \| `DONE` \| `CANCELLED` (sơ đồ 3.8) |
+| proposedBy | string | uid của người đề xuất địa điểm/giờ hiện tại; người còn lại mới được xác nhận |
+| history | array | `[{by, action, place, meetAt, at}]` – nhật ký đề xuất/đổi/xác nhận, phục vụ tranh chấp & KPI |
+| cancelReason, cancelledBy | string? | |
+| createdAt, respondedAt, confirmedAt, expiresAt | timestamp | `expiresAt = createdAt + 24h` khi còn chờ (BR-15); `respondedAt` → KPI-15 |
+
+#### `users/{uid}/notifications/{id}`
+| Trường | Kiểu | Ghi chú |
+|---|---|---|
+| type | string | `LISTING_PUBLISHED` \| `BUY_REQUEST` \| `PLACE_CHANGED` \| `APPOINTMENT_CONFIRMED` \| `APPOINTMENT_REMINDER` \| `APPOINTMENT_CANCELLED` \| `LISTING_EXPIRING` \| `REVIEW_INVITE` |
+| title, body | string | Nội dung hiển thị, vd. "Đã chốt hẹn" / "Cổng chính NEU · 17:00 hôm nay" |
+| refType, refId | string | `appointment`/`listing` + id để mở đúng màn hình |
+| fromUid | string? | Người gây ra sự kiện |
+| read | bool | |
+| createdAt | timestamp | |
 
 #### `reviews/{listingId}`
 `sellerId`, `buyerId`, `rating` (1–5), `comment`, `createdAt`. ID = listingId → mỗi giao dịch một đánh giá (BR-30). Điểm trung bình người bán tính khi đọc (truy vấn `reviews where sellerId == X`).
@@ -239,6 +280,9 @@ boosts/{boostId}
 | Tin nổi bật | `status ==`, `city ==`, `boostedUntil desc` |
 | Tin của tôi | `sellerId ==`, `status ==`, `createdAt desc` |
 | Chat của tôi | `participants array-contains`, `updatedAt desc` |
+| Lịch hẹn của tôi | `participants array-contains`, `status ==`, `meetAt asc` |
+| Yêu cầu mua của một tin | `listingId ==`, `status ==`, `createdAt asc` |
+| Thông báo của tôi | (subcollection) `createdAt desc`; đếm chưa đọc: `read == false` |
 
 > Mẹo: khi chạy một truy vấn thiếu chỉ mục, Logcat in ra **đường link tạo chỉ mục** — bấm vào là tạo được.
 
@@ -250,7 +294,7 @@ boosts/{boostId}
 |---|---|
 | `status`, phạm vi (`city`/`schoolId`), danh mục, sắp xếp, từ khoá chính | **Firestore** |
 | Khoảng giá (khi sắp xếp theo giá) | **Firestore** |
-| Khoảng giá (khi sắp xếp mới nhất), tình trạng, đã xác thực, có thể ship, `expiresAt > now`, các từ khoá phụ | **Trên máy**, sau khi tải trang |
+| Khoảng giá (khi sắp xếp mới nhất), tình trạng, có thể ship, `expiresAt > now`, các từ khoá phụ | **Trên máy**, sau khi tải trang |
 
 Hệ quả: một trang có thể ít hơn 20 tin sau khi lọc → app tự tải thêm trang cho tới khi đủ hoặc hết dữ liệu.
 
@@ -396,17 +440,44 @@ sequenceDiagram
     VM->>PS: suggest(mẫu, tin đang đăng)
     PS-->>VM: giá đề xuất, khoảng, độ tin cậy
     VM-->>U: Hiển thị thẻ gợi ý
-    U->>VM: Bấm "Đăng tin"
+    U->>VM: Bấm "Đăng tin" (ở Xem trước)
     VM->>VM: Validate (3.9), kiểm tra từ khoá cấm, đếm tin đang bán (BR-04)
-    VM->>R: createListing()
+    VM-->>U: Bảng "Xác nhận địa điểm giao dịch" (SCR-30)
+    U->>VM: Tích xác nhận, bấm "Xác nhận & đăng tin" (BR-14)
+    VM->>R: createListing(placeConfirmedAt = now)
     R->>R: Nén ảnh, sinh keywords
     R->>ST: Tải ảnh lên listings/{id}/
     ST-->>R: URL ảnh
     R->>FS: set(listings/{id})
+    R->>FS: add(users/{uid}/notifications) "Tin đã đăng · <địa điểm>"
     FS-->>R: OK
     R-->>VM: Thành công
-    VM-->>U: Chuyển tới chi tiết tin
+    VM-->>U: Chuyển tới "Tin của tôi"
 ```
+> Trước bước nhập tiêu đề, khi người dùng bấm ➕, ViewModel gọi `ProfileChecker`; nếu hồ sơ thiếu thì mở SCR-29 (UC-05) thay vì vào luồng đăng tin.
+
+### Đặt mua & xác nhận địa điểm
+```mermaid
+sequenceDiagram
+    actor B as Người mua
+    participant A as App người mua
+    participant FS as Firestore
+    participant CF as Cloud Function (tuỳ chọn)
+    participant S as App người bán
+    actor SL as Người bán
+    B->>A: Bấm "Đặt mua", chọn điểm hẹn + giờ
+    A->>A: ProfileChecker (BR-13), AppointmentRules (BR-33, BR-37)
+    A->>FS: transaction: tạo appointments/{id} (PENDING_SELLER)<br/>+ tăng listings.pendingRequests<br/>+ tạo notifications cho người bán (BUY_REQUEST)
+    FS-->>S: listener realtime → banner + số trên chuông
+    FS-->>CF: onCreate notification
+    CF-->>S: FCM đẩy (khi app đóng)
+    SL->>S: Mở thông báo, bấm "Xác nhận địa điểm"
+    S->>FS: transaction: appointment → CONFIRMED<br/>listing → RESERVED<br/>+ notifications cho người mua (APPOINTMENT_CONFIRMED)
+    FS-->>A: listener → "Đã chốt hẹn: Cổng chính · 17:00"
+    A->>A: WorkManager đặt nhắc trước 1 giờ (ADR-8)
+    S->>S: WorkManager đặt nhắc trước 1 giờ
+```
+Nếu người bán chọn "Đổi địa điểm/giờ": cập nhật `place`, `meetAt`, `proposedBy = sellerId`, `status = PENDING_BUYER`, thêm một dòng `history`, gửi `PLACE_CHANGED` cho người mua — luồng lặp lại theo chiều ngược.
 
 ### Các nghiệp vụ "tự động" khi không có server
 
@@ -415,7 +486,10 @@ sequenceDiagram
 | Hết hạn tin (UC-60) | Truy vấn công khai lọc `expiresAt > now` trên máy nên tin quá hạn không hiển thị. Khi chủ tin mở "Tin của tôi", app chuyển các tin quá hạn sang `EXPIRED`. (Nếu dùng gói Blaze: có thể thay bằng Cloud Function chạy hằng ngày.) |
 | Tự ẩn khi bị báo cáo (UC-61) | Người báo cáo chạy **transaction**: tạo `reports/{listingId}_{uid}`, tăng `reportCount`; nếu `reportCount` mới ≥ 3 thì đặt `status = HIDDEN`. Rules chỉ cho phép thay đổi đúng hai trường này theo đúng điều kiện. |
 | Đếm lượt xem | `viewCount += 1` khi mở chi tiết (không tính chủ tin, tối đa 1 lần/phiên). |
-| Đồng bộ thông tin người bán | Khi đổi tên/ảnh/xác thực → batch update các tin của người đó. |
+| Đồng bộ thông tin người bán | Khi đổi tên/ảnh → batch update các tin của người đó. |
+| Tự huỷ yêu cầu mua quá 24h (UC-63) | Khi người mua hoặc người bán mở danh sách lịch hẹn, app chuyển các yêu cầu có `expiresAt < now` sang `CANCELLED` và gửi thông báo. (Gói Blaze: Cloud Function chạy mỗi giờ.) |
+| Nhắc lịch hẹn (UC-62) | WorkManager trên máy mỗi bên, đặt khi lịch hẹn `CONFIRMED`, huỷ khi lịch hẹn bị huỷ (ADR-8) |
+| Tin bán xong → huỷ các yêu cầu còn lại (BR-36) | Trong cùng transaction "Đã bán": các appointment khác của tin chuyển `CANCELLED`, tạo thông báo cho từng người mua |
 | Khoá tài khoản (UC-52) | Admin đặt `isBanned = true` và batch chuyển tin ACTIVE của người đó sang `HIDDEN`. |
 
 ## 4.8. Bảo mật – Security Rules (đặc tả)
@@ -425,14 +499,15 @@ Rules sẽ được viết trong giai đoạn code và **kiểm thử bằng Fir
 | Collection | Đọc | Tạo | Cập nhật | Xoá |
 |---|---|---|---|---|
 | `schools`, `categories`, `config` | Mọi người | Admin | Admin | Admin |
-| `users/{uid}` | Người đã đăng nhập | Chính chủ, `role = user`, `verifyStatus = NONE`, `isBanned = false` | Chính chủ (không được sửa `role`, `verifyStatus`, `isBanned`); Admin (mọi trường) | Không |
+| `users/{uid}` | Người đã đăng nhập | Chính chủ, `role = user`, `isBanned = false` | Chính chủ (không được sửa `role`, `isBanned`; `profileComplete` chỉ được `true` khi đủ các trường BR-13); Admin (mọi trường) | Không |
+| `users/{uid}/notifications` | Chính chủ | Người đã đăng nhập, khi `fromUid == auth.uid` và thông báo gắn với một appointment/listing mà người tạo là một bên liên quan | Chính chủ (chỉ trường `read`) | Chính chủ |
 | `users/{uid}/favorites` | Chính chủ | Chính chủ | Chính chủ | Chính chủ |
-| `listings` | Tin `ACTIVE`/`RESERVED`/`SOLD`: mọi người; trạng thái khác: chủ tin & admin | Đã đăng nhập, không bị khoá, `sellerId == uid`, `status ∈ {DRAFT, ACTIVE}`, dữ liệu hợp lệ (độ dài, giá, số ảnh) | Chủ tin (không đổi `sellerId`, `createdAt`, `reportCount`; chuyển trạng thái theo sơ đồ 3.8); Người khác: chỉ `viewCount`/`favoriteCount` ±1, hoặc `reportCount + 1` (và `status → HIDDEN` khi ≥ 3); Admin | Không (xoá mềm) |
+| `listings` | Tin `ACTIVE`/`RESERVED`/`SOLD`: mọi người; trạng thái khác: chủ tin & admin | Đã đăng nhập, không bị khoá, **`profileComplete == true`**, `sellerId == uid`, `status ∈ {DRAFT, ACTIVE}`, có `meetingPlace` và `placeConfirmedAt` khi ACTIVE, dữ liệu hợp lệ (độ dài, giá, số ảnh) | Chủ tin (không đổi `sellerId`, `createdAt`, `reportCount`; chuyển trạng thái theo sơ đồ 3.8); Người khác: chỉ `viewCount`/`favoriteCount`/`pendingRequests` ±1, hoặc `reportCount + 1` (và `status → HIDDEN` khi ≥ 3); Admin | Không (xoá mềm) |
 | `reports` | Admin | Đã đăng nhập, ID = `{listingId}_{uid}`, không phải chủ tin | Admin | Không |
-| `verifications/{uid}` | Chính chủ, Admin | Chính chủ, `status = PENDING` | Admin | Không |
+| `appointments` | Thành viên trong `participants`; Admin | Người mua: `buyerId == uid`, `profileComplete`, không phải người bán, `status = PENDING_SELLER`, `proposedBy == uid` | Thành viên trong `participants`, chỉ theo đúng sơ đồ 3.8: người **không** phải `proposedBy` mới được chuyển sang `CONFIRMED`; đổi `place`/`meetAt` phải đặt `proposedBy = uid`; chỉ người bán chuyển `DONE` | Không |
 | `reviews/{listingId}` | Mọi người | `buyerId == uid` và `listings/{listingId}.soldToUid == uid` | Không | Không |
 | `chats/{id}` + `messages` | Thành viên trong `participants` | Người mua (`buyerId == uid`), không phải người bán | Thành viên trong `participants` | Không |
-| `boosts` | Chính chủ, Admin | Chính chủ đã xác thực | Không | Không |
+| `boosts` | Chính chủ, Admin | Chính chủ có hồ sơ đầy đủ | Không | Không |
 
 **Storage:**
 
@@ -440,9 +515,8 @@ Rules sẽ được viết trong giai đoạn code và **kiểm thử bằng Fir
 |---|---|---|
 | `listings/{listingId}/{file}` | Mọi người | Đã đăng nhập; ảnh `image/*`, ≤ 1 MB |
 | `avatars/{uid}.jpg` | Mọi người | Chính chủ; ≤ 1 MB |
-| `verifications/{uid}/card.jpg` | Chính chủ, Admin | Chính chủ; ≤ 2 MB |
 
-Hàm tiện ích trong Rules: `isSignedIn()`, `isOwner(uid)`, `isAdmin()` (đọc `users/{uid}.role`), `notBanned()`.
+Hàm tiện ích trong Rules: `isSignedIn()`, `isOwner(uid)`, `isAdmin()` (đọc `users/{uid}.role`), `notBanned()`, `profileComplete()`, `isParticipant(appt)`.
 
 ## 4.9. Xử lý lỗi & offline
 

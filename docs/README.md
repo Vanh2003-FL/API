@@ -5,7 +5,7 @@
 
 ## 1. Tóm tắt một đoạn
 
-UniMarket là ứng dụng Android giúp **sinh viên trên toàn quốc** đăng bán, tìm kiếm và trao đổi đồ cũ (sách/giáo trình, đồ điện tử, đồ dùng). Điểm khác biệt so với group Facebook hay Chợ Tốt: chỉ dành cho sinh viên (có xác thực), lọc theo **trường / thành phố**, tình trạng sản phẩm được chuẩn hoá, và có **gợi ý giá bán** dựa trên dữ liệu các sản phẩm tương tự. Đề tài được chấm **50% kỹ thuật – 50% kinh tế**, nên tài liệu gồm cả phân tích kinh tế (thị trường, mô hình kinh doanh, tài chính, KPI) lẫn thiết kế kỹ thuật (use case, CSDL, kiến trúc, giao diện).
+UniMarket là ứng dụng Android giúp **sinh viên trên toàn quốc** đăng bán, tìm kiếm và trao đổi đồ cũ (sách/giáo trình, đồ điện tử, đồ dùng). Điểm khác biệt so với group Facebook hay Chợ Tốt: dành cho sinh viên với **hồ sơ đầy đủ bắt buộc** (họ tên, SĐT, trường, điểm giao dịch), lọc theo **trường / thành phố**, tình trạng sản phẩm được chuẩn hoá, **mỗi lần đăng tin và mua bán đều xác nhận địa điểm giao dịch qua thông báo**, và có **gợi ý giá bán** dựa trên dữ liệu các sản phẩm tương tự. Đề tài được chấm **50% kỹ thuật – 50% kinh tế**, nên tài liệu gồm cả phân tích kinh tế (thị trường, mô hình kinh doanh, tài chính, KPI) lẫn thiết kế kỹ thuật (use case, CSDL, kiến trúc, giao diện).
 
 ## 2. Mục lục tài liệu
 
@@ -18,6 +18,7 @@ UniMarket là ứng dụng Android giúp **sinh viên trên toàn quốc** đăn
 | [05-thiet-ke-giao-dien.md](05-thiet-ke-giao-dien.md) | Design system, sơ đồ màn hình, đặc tả & wireframe từng màn hình | Báo cáo chương 5 · **Code / Figma** |
 | [06-ke-hoach-kiem-thu.md](06-ke-hoach-kiem-thu.md) | Lộ trình sprint, kế hoạch kiểm thử, chạy thử (pilot), rủi ro | Báo cáo chương 6, 7 · **Quản lý dự án** |
 | [phu-luc-khao-sat.md](phu-luc-khao-sat.md) | Bảng hỏi khảo sát trước khi làm & bảng hỏi sau pilot (SUS) | Báo cáo chương 2, 7 |
+| [../design/unimarket-ui.html](../design/unimarket-ui.html) | Bản mẫu giao diện HTML bấm được, có chú thích từng màn hình | Xem nhanh bố cục · Slide bảo vệ |
 
 ## 3. Quy ước mã định danh
 
@@ -47,9 +48,12 @@ Mức ưu tiên theo **MoSCoW**: **M** (Must – bắt buộc cho MVP), **S** (S
 | D5 | Gợi ý giá tính **trên thiết bị** (client-side), không dùng Cloud Functions | Không cần gói trả phí, đủ nhanh với ≤ 50 mẫu |
 | D6 | Admin nằm **trong cùng app**, phân quyền bằng `role` | Không phải làm thêm web admin |
 | D7 | Có giai đoạn **chạy thử thật (pilot)** với 20–30 sinh viên | Lấy số liệu thật cho phần đánh giá kinh tế |
+| D8 | **Bỏ xác thực sinh viên** (ảnh thẻ, email trường). Thay bằng **hồ sơ đầy đủ bắt buộc**: họ tên, SĐT, trường, điểm giao dịch quen thuộc | Linh hoạt, giảm rào cản tham gia; bớt khối lượng duyệt của admin |
+| D9 | **Mỗi lần đăng tin và mỗi lần mua bán đều xác nhận địa điểm giao dịch**, có thông báo cho các bên; giao dịch được quản lý bằng **lịch hẹn** | Bù lại độ tin cậy khi không xác thực; giảm bùng hẹn, tăng an toàn khi gặp mặt |
 
 ## 5. Lịch sử thay đổi
 
 | Phiên bản | Ngày | Nội dung |
 |---|---|---|
 | 1.0 | 10/11/2026 | Bản BA đầu tiên |
+| 1.1 | 11/11/2026 | Bỏ xác thực sinh viên (D8); thêm hồ sơ đầy đủ bắt buộc, xác nhận địa điểm khi đăng tin, đặt mua – lịch hẹn – thông báo (D9). Các mã **UC-05, UC-50, FR-05, FR-50, BR-14, BR-15, BR-32, SCR-20, SCR-25** được dùng lại với nội dung mới; xem chi tiết trong từng file |

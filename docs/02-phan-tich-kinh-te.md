@@ -6,14 +6,26 @@
 
 | Lý thuyết | Nội dung tóm tắt | Áp dụng vào UniMarket | Tính năng tương ứng |
 |---|---|---|---|
-| **Thông tin bất cân xứng** – Akerlof (1970), "The Market for Lemons" | Người bán biết rõ chất lượng hàng hơn người mua → người mua chỉ sẵn sàng trả giá trung bình → hàng tốt rút khỏi thị trường, thị trường thu hẹp | Đồ cũ là thị trường "lemons" điển hình. App giảm bất cân xứng bằng tín hiệu (signaling) | Xác thực SV, đánh giá người bán, tình trạng chuẩn hoá, ảnh bắt buộc, gợi ý giá |
-| **Chi phí giao dịch** – Coase, Williamson | Chi phí tìm kiếm, thương lượng, giám sát làm giảm số giao dịch diễn ra | Giảm chi phí tìm kiếm (lọc, danh mục, phạm vi gần) và chi phí thương lượng (giá tham khảo) | Tìm kiếm, bộ lọc, gợi ý giá, chat |
+| **Thông tin bất cân xứng** – Akerlof (1970), "The Market for Lemons" | Người bán biết rõ chất lượng hàng hơn người mua → người mua chỉ sẵn sàng trả giá trung bình → hàng tốt rút khỏi thị trường, thị trường thu hẹp | Đồ cũ là thị trường "lemons" điển hình. App giảm bất cân xứng bằng tín hiệu (signaling) | Hồ sơ đầy đủ (SĐT, trường), đánh giá người bán, tình trạng chuẩn hoá, ảnh bắt buộc, gợi ý giá |
+| **Chi phí giao dịch** – Coase, Williamson | Chi phí tìm kiếm, thương lượng, giám sát – thực thi làm giảm số giao dịch diễn ra | Giảm chi phí tìm kiếm (lọc, danh mục, phạm vi gần), chi phí thương lượng (giá tham khảo) và **chi phí thực thi** (thoả thuận trước địa điểm, giờ hẹn; nhắc lịch để giảm bùng hẹn) | Tìm kiếm, bộ lọc, gợi ý giá, chat, **đặt mua – lịch hẹn – thông báo** |
 | **Thị trường hai mặt & hiệu ứng mạng lưới** – Rochet & Tirole | Nền tảng phục vụ 2 nhóm; giá trị cho nhóm này tăng theo quy mô nhóm kia | Nhiều người bán → nhiều lựa chọn → hút người mua → hút thêm người bán. Có bài toán "con gà – quả trứng" | Chiến lược ra mắt (mục 2.7), miễn phí đăng tin |
 | **Kinh tế tuần hoàn** | Kéo dài vòng đời sản phẩm, giảm khai thác tài nguyên & rác thải | Mỗi giao dịch = 1 sản phẩm được tái sử dụng thay vì mua mới | Chỉ số tác động (KPI-08, KPI-09) |
 | **Khấu hao tài sản** | Giá trị tài sản giảm theo thời gian sử dụng | Làm cơ sở công thức định giá khi chưa có dữ liệu | Gợi ý giá – chế độ "ước tính" |
 | **Thặng dư người tiêu dùng / người sản xuất** | Chênh lệch giữa mức sẵn sàng trả/bán và giá giao dịch | Giá hợp lý giúp cả hai bên có thặng dư → giao dịch xảy ra nhiều hơn | Gợi ý giá dạng khoảng |
 
 **Luận điểm chính cho báo cáo:** UniMarket không chỉ là "nơi đăng tin", mà là công cụ **giảm thông tin bất cân xứng và chi phí giao dịch** trong thị trường đồ cũ sinh viên, từ đó làm tăng số giao dịch hiệu quả và tạo giá trị kinh tế – môi trường.
+
+### 2.1.1. Đánh đổi khi bỏ xác thực sinh viên (quyết định D8)
+
+| | Có xác thực sinh viên (v1.0) | Hồ sơ đầy đủ + xác nhận địa điểm (v1.1) |
+|---|---|---|
+| Rào cản tham gia | Cao: phải chụp thẻ / có email trường, chờ duyệt | Thấp: tự nhập thông tin là dùng được ngay |
+| Tác động lên hiệu ứng mạng lưới | Tăng chậm, mất người dùng ở bước duyệt | Tăng nhanh hơn, quan trọng ở giai đoạn cold start |
+| Tín hiệu tin cậy | Mạnh (danh tính được kiểm tra) | Yếu hơn → bù bằng SĐT công khai cho thành viên, đánh giá, báo cáo, điểm hẹn công cộng trong trường |
+| Rủi ro khi gặp mặt | Không giải quyết trực tiếp | Giảm: địa điểm và giờ được hai bên xác nhận, có nhắc lịch, khuyến nghị nơi công cộng |
+| Chi phí vận hành | Admin duyệt ảnh thẻ thủ công, lưu dữ liệu nhạy cảm | Không có; chỉ quản lý danh sách điểm giao dịch |
+
+**Lập luận:** ở giai đoạn đầu, giá trị nền tảng phụ thuộc chủ yếu vào **quy mô** (hiệu ứng mạng lưới), nên hạ rào cản gia nhập có lợi hơn. Rủi ro thực tế của mua bán đồ cũ sinh viên nằm nhiều ở **khâu gặp mặt** (bùng hẹn, gặp nơi vắng) hơn là ở danh tính. Vì vậy chuyển nguồn lực từ "xác minh người" sang "xác nhận giao dịch" là hợp lý. Pilot sẽ kiểm chứng bằng KPI-11 (tỷ lệ tin bị báo cáo), KPI-13 và KPI-14 (tỷ lệ hẹn được xác nhận / thành giao dịch).
 
 ## 2.2. Phân tích thị trường
 
@@ -46,11 +58,12 @@ Ví dụ tính minh hoạ **[GĐ]**: SAM = 2.000.000 × 60% × 70% × 60% ≈ 50
 | Chi phí đăng | Miễn phí | Miễn phí + phí đẩy tin | Phí sàn | Miễn phí + đẩy tin (tuỳ chọn) |
 | Phân loại, lọc | Không | Có | Có | Có + **lọc theo trường** |
 | Định giá | Không | Không | Không | **Có gợi ý giá** |
-| Xác thực người dùng | Không | SĐT | Có (người bán) | **Xác thực sinh viên** |
+| Thông tin người dùng | Không bắt buộc | SĐT | Có (người bán) | **Hồ sơ đầy đủ bắt buộc** (SĐT, trường, điểm giao dịch) |
+| Thoả thuận địa điểm gặp | Tự nhắn tin | Tự nhắn tin | Không áp dụng (giao hàng) | **Đặt mua – xác nhận địa điểm – nhắc lịch** |
 | Giáo trình theo môn/trường | Không | Không | Không | **Có** |
 | Lượng người dùng | Rất lớn | Rất lớn | Rất lớn | Nhỏ (điểm yếu) |
 
-**Kết luận:** UniMarket cạnh tranh bằng **ngách** (sinh viên) và **tính năng chuyên biệt** (gợi ý giá, lọc theo trường, xác thực), không cạnh tranh trực diện về quy mô.
+**Kết luận:** UniMarket cạnh tranh bằng **ngách** (sinh viên) và **tính năng chuyên biệt** (gợi ý giá, lọc theo trường, hẹn giao dịch có xác nhận địa điểm), không cạnh tranh trực diện về quy mô.
 
 ## 2.3. Khảo sát người dùng
 
@@ -73,17 +86,17 @@ Ví dụ tính minh hoạ **[GĐ]**: SAM = 2.000.000 × 60% × 70% × 60% ≈ 50
 
 | | Tích cực | Tiêu cực |
 |---|---|---|
-| **Nội bộ** | **S – Điểm mạnh**<br>• Tập trung ngách sinh viên<br>• Gợi ý giá – khác biệt rõ<br>• Lọc theo trường, giáo trình theo môn<br>• Chi phí vận hành rất thấp (Firebase) | **W – Điểm yếu**<br>• Chưa có người dùng (cold start)<br>• Một người phát triển, nguồn lực hạn chế<br>• Gợi ý giá kém chính xác khi ít dữ liệu<br>• Không có thanh toán đảm bảo |
+| **Nội bộ** | **S – Điểm mạnh**<br>• Tập trung ngách sinh viên<br>• Gợi ý giá – khác biệt rõ<br>• Lọc theo trường, giáo trình theo môn<br>• Chi phí vận hành rất thấp (Firebase) | **W – Điểm yếu**<br>• Chưa có người dùng (cold start)<br>• Một người phát triển, nguồn lực hạn chế<br>• Gợi ý giá kém chính xác khi ít dữ liệu<br>• Không có thanh toán đảm bảo<br>• Không xác minh danh tính → có thể có tài khoản ảo |
 | **Bên ngoài** | **O – Cơ hội**<br>• Hơn 2 triệu sinh viên, nhu cầu lặp lại hàng năm<br>• Xu hướng tiêu dùng bền vững, đồ second-hand<br>• Có thể hợp tác Đoàn – Hội sinh viên, CLB<br>• Quảng cáo địa phương quanh trường | **T – Thách thức**<br>• Group Facebook miễn phí, quen thuộc<br>• Chợ Tốt có thể làm tính năng tương tự<br>• Rủi ro lừa đảo ảnh hưởng uy tín<br>• Tính mùa vụ gây biến động người dùng |
 
-**Chiến lược rút ra:** S-O: dùng gợi ý giá + xác thực SV làm thông điệp marketing mùa tốt nghiệp/nhập học. W-O: hợp tác CLB để giải bài toán cold start. S-T: tạo cộng đồng tin cậy (huy hiệu, đánh giá) – thứ group Facebook không có. W-T: khởi đầu hẹp ở 1 thành phố, đo KPI trước khi mở rộng.
+**Chiến lược rút ra:** S-O: dùng gợi ý giá + "hẹn gặp có xác nhận" làm thông điệp marketing mùa tốt nghiệp/nhập học. W-O: hợp tác CLB để giải bài toán cold start. S-T: tạo cộng đồng tin cậy (hồ sơ đầy đủ, đánh giá, điểm hẹn công cộng trong trường) – thứ group Facebook không có. W-T: khởi đầu hẹp ở 1 thành phố, đo KPI trước khi mở rộng.
 
 ## 2.5. Business Model Canvas
 
 | Khối | Nội dung |
 |---|---|
 | **1. Phân khúc khách hàng** | Sinh viên người bán; sinh viên người mua; (phụ) cửa hàng/dịch vụ quanh trường – khách quảng cáo |
-| **2. Giá trị đề xuất** | Bán nhanh – mua rẻ – đúng giá; cộng đồng sinh viên đã xác thực; lọc theo trường |
+| **2. Giá trị đề xuất** | Bán nhanh – mua rẻ – đúng giá; hẹn gặp có xác nhận địa điểm; lọc theo trường |
 | **3. Kênh** | Google Play; group Facebook/Zalo trường; CLB, Đoàn – Hội; poster QR tại ký túc xá |
 | **4. Quan hệ khách hàng** | Tự phục vụ; cộng đồng (đánh giá); thông báo đẩy; chiến dịch theo mùa |
 | **5. Dòng doanh thu** | Đẩy tin, tin nổi bật; quảng cáo địa phương; gói "Shop sinh viên" (tương lai) |
@@ -191,9 +204,12 @@ Thay đổi từng tham số ±20% (tỷ lệ mua đẩy tin, giá/lượt, số
 | KPI-09 | Tiền sinh viên tiết kiệm | Σ (giá mua mới ước tính − giá bán thực tế) | `listings.originalPrice`, `soldPrice` | Tác động |
 | KPI-10 | Số sản phẩm được tái sử dụng | = KPI-01 luỹ kế | `listings` | Tác động môi trường |
 | KPI-11 | Tỷ lệ tin bị báo cáo | Tin có báo cáo / tổng tin | `reports` | An toàn |
-| KPI-12 | Doanh thu mô phỏng | Σ lượt đẩy tin × giá | `listings.boostCount` | Revenue |
+| KPI-12 | Doanh thu mô phỏng | Σ lượt đẩy tin × giá | `boosts` | Revenue |
+| KPI-13 | Tỷ lệ yêu cầu mua được xác nhận | Lịch hẹn từng đạt `CONFIRMED` / tổng yêu cầu mua | `appointments` | Tính năng |
+| KPI-14 | Tỷ lệ hẹn thành giao dịch | Lịch hẹn `DONE` / lịch hẹn `CONFIRMED` | `appointments` | Giá trị |
+| KPI-15 | Thời gian phản hồi TB của người bán | TB (`respondedAt` − `createdAt`) của yêu cầu mua | `appointments` | Tính năng |
 
-KPI-01, 04, 05, 06, 07, 11, 12 được hiển thị trên màn hình Admin Dashboard (SCR-24).
+KPI-01, 04, 05, 06, 07, 12, 13, 14 được hiển thị trên màn hình Admin Dashboard (SCR-24).
 
 ## 2.11. Đánh giá tác động kinh tế – xã hội
 
@@ -206,7 +222,9 @@ KPI-01, 04, 05, 06, 07, 11, 12 được hiển thị trên màn hình Admin Dash
 | Rủi ro | Khả năng | Ảnh hưởng | Biện pháp |
 |---|---|---|---|
 | Không đủ người dùng (cold start) | Cao | Cao | Gieo tin mẫu, ra mắt hẹp, chiến dịch theo mùa |
-| Lừa đảo, hàng kém chất lượng | Trung bình | Cao | Xác thực SV, đánh giá, báo cáo, khuyến nghị giao dịch trực tiếp |
+| Lừa đảo, hàng kém chất lượng | Trung bình | Cao | Hồ sơ đầy đủ bắt buộc, điểm hẹn công cộng được hai bên xác nhận, đánh giá, báo cáo |
+| Tài khoản ảo, thông tin khai sai (do không xác thực) | Trung bình | Trung bình | SĐT hiển thị cho thành viên, khoá tài khoản khi bị báo cáo, giới hạn số yêu cầu mua đang chờ |
+| Bùng hẹn, không đến điểm giao dịch | Cao | Trung bình | Xác nhận địa điểm – giờ, nhắc trước 1 giờ, huỷ phải nêu lý do; theo dõi KPI-14 |
 | Người dùng quay lại group Facebook | Cao | Trung bình | Khác biệt bằng gợi ý giá, lọc trường, chia sẻ tin ra Facebook bằng link |
 | Doanh thu thấp do sinh viên nhạy cảm giá | Cao | Trung bình | Dựa nhiều vào quảng cáo địa phương, phí đẩy tin rất thấp |
 | Đối thủ lớn sao chép tính năng | Thấp | Cao | Xây cộng đồng & thương hiệu sinh viên |

@@ -47,7 +47,8 @@ Thang Likert 5 mức dùng chung: 1 – Hoàn toàn không đồng ý / Không q
 |---|---|---|
 | D1 | Mức độ quan trọng của việc **lọc tin theo trường/khu vực** | Likert 1–5 |
 | D2 | Mức độ quan trọng của **gợi ý giá bán** dựa trên sản phẩm tương tự | Likert 1–5 |
-| D3 | Mức độ quan trọng của **huy hiệu người bán đã xác thực là sinh viên** | Likert 1–5 |
+| D3 | Mức độ quan trọng của việc **hai bên xác nhận trước địa điểm và giờ hẹn**, có thông báo nhắc | Likert 1–5 |
+| D3b | Bạn có ngại phải chụp thẻ sinh viên để được dùng app không? (Không ngại / Hơi ngại / Rất ngại, sẽ không dùng) | Chọn 1 – kiểm chứng quyết định bỏ xác thực (02, mục 2.1.1) |
 | D4 | Mức độ quan trọng của **chat trong ứng dụng** | Likert 1–5 |
 | D5 | Mức độ quan trọng của **đánh giá người bán** | Likert 1–5 |
 | D6 | Nếu có một app mua bán đồ cũ chỉ dành cho sinh viên, bạn có dùng không? (Chắc chắn có / Có thể / Không chắc / Không) | Chọn 1 |
@@ -106,7 +107,8 @@ Thang 1 (Hoàn toàn không đồng ý) → 5 (Hoàn toàn đồng ý).
 | P1 | Trong 2 tuần, bạn đã: (Đăng tin / Liên hệ người bán / Bán được đồ / Mua được đồ) | Chọn nhiều |
 | P2 | Gợi ý giá có giúp bạn đặt giá không? | Likert 1–5 |
 | P3 | Giá gợi ý so với giá bạn nghĩ là: (Thấp hơn nhiều / Hơi thấp / Hợp lý / Hơi cao / Cao hơn nhiều) | Chọn 1 |
-| P4 | Huy hiệu "SV đã xác thực" làm bạn yên tâm hơn khi giao dịch | Likert 1–5 |
+| P4 | Thông báo xác nhận địa điểm và nhắc hẹn làm bạn yên tâm hơn khi đi giao dịch | Likert 1–5 |
+| P4b | Trong 2 tuần, bạn có bị bùng hẹn hoặc phải đổi địa điểm phút chót không? (Không / 1 lần / Nhiều lần) | Chọn 1 |
 | P5 | So với group Facebook, tìm đồ trên UniMarket: (Nhanh hơn nhiều / Nhanh hơn / Như nhau / Chậm hơn) | Chọn 1 |
 | P6 | Khả năng bạn giới thiệu UniMarket cho bạn bè (0–10) → tính **NPS** | Thang 0–10 |
 | P7 | Điều bạn thích nhất ở ứng dụng? | Mở |
