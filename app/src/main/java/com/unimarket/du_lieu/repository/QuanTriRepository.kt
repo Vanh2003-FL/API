@@ -72,6 +72,7 @@ class QuanTriRepository(context: Context) {
     suspend fun giuTin(tinId: Long) = db.withTransaction {
         val tin = tinDao.layTheoId(tinId) ?: error("Tin không còn tồn tại.")
         baoCaoDao.dongBaoCaoCuaTin(tinId, "BO_QUA")
+        db.thongBaoDao().danhDauDaDocTheoLienKet("KIEM_DUYET", tinId)
         val dangAn = tin.trangThai == HangSo.TIN_BI_AN
         tinDao.capNhat(
             tin.copy(
@@ -88,6 +89,7 @@ class QuanTriRepository(context: Context) {
         val lyDo = baoCaoDao.layTheoTin(tinId).filter { it.trangThai == "CHO_XU_LY" }
             .groupingBy { it.lyDo }.eachCount().maxByOrNull { it.value }?.key ?: "vi phạm quy định"
         baoCaoDao.dongBaoCaoCuaTin(tinId, "DA_XU_LY")
+        db.thongBaoDao().danhDauDaDocTheoLienKet("KIEM_DUYET", tinId)
         goMotTin(tin, "Tin đã bị quản trị viên gỡ")
         thongBaoNguoiBan(tin, "Tin đã bị gỡ", "“${tin.tieuDe}” đã bị gỡ vì: $lyDo.")
         if (khoaNguoiBan) khoaTaiKhoan(tin.nguoiBanId)

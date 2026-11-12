@@ -33,4 +33,8 @@ interface ThongBaoDao {
 
     @Query("UPDATE thong_bao SET daDay = 1 WHERE nguoiNhanId = :nguoiDungId")
     suspend fun danhDauDaDay(nguoiDungId: Long)
+
+    /** Quản trị viên đã xử lý tin → các thông báo kiểm duyệt về tin đó coi như đã đọc. */
+    @Query("UPDATE thong_bao SET daDoc = 1 WHERE loaiLienKet = :loaiLienKet AND lienKetId = :lienKetId")
+    suspend fun danhDauDaDocTheoLienKet(loaiLienKet: String, lienKetId: Long)
 }

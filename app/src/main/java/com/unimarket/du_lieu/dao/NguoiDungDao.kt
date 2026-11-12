@@ -30,4 +30,8 @@ interface NguoiDungDao {
 
     @Query("SELECT COUNT(*) FROM nguoi_dung")
     suspend fun dem(): Int
+
+    /** Id các quản trị viên đang hoạt động (để gửi thông báo kiểm duyệt). */
+    @Query("SELECT id FROM nguoi_dung WHERE vaiTro = 'QUAN_TRI' AND biKhoa = 0")
+    suspend fun layIdQuanTri(): List<Long>
 }

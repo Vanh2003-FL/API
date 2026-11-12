@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.withTransaction
 import com.unimarket.du_lieu.database.AppDatabase
 import com.unimarket.mo_hinh.BaoCao
+import com.unimarket.mo_hinh.ThongBao
 import com.unimarket.mo_hinh.NguoiDung
 import com.unimarket.mo_hinh.TinDang
 import com.unimarket.mo_hinh.YeuThich
@@ -81,6 +82,8 @@ class TinDangRepository(context: Context) {
      * Ghi một báo cáo. Quy tắc:
      * - Mỗi người chỉ báo cáo một tin một lần; không tự báo cáo tin của mình.
      * - Đủ 3 báo cáo thì tin tự ẩn (BI_AN), chờ quản trị viên xử lý.
+     * - Mỗi báo cáo gửi thông báo cho quản trị viên (mở thẳng màn Kiểm duyệt);
+     *   khi tin tự ẩn thì báo thêm cho người bán (BR-39).
      * Tất cả chạy trong MỘT giao dịch (transaction) để số liệu không bị lệch.
      */
     suspend fun baoCao(tinDangId: Long, nguoiDungId: Long, lyDo: String): KetQuaBaoCao = db.withTransaction {
@@ -98,6 +101,30 @@ class TinDangRepository(context: Context) {
                 ngayCapNhat = System.currentTimeMillis()
             )
         )
+        val tb = db.thongBaoDao()
+        val nguong = HangSo.NGUONG_BAO_CAO_TU_AN
+        for (qt in db.nguoiDungDao().layIdQuanTri()) {
+            tb.them(
+                if (tuAn) ThongBao(
+                    nguoiNhanId = qt, loai = "BAO_CAO", tieuDe = "Tin đã tự ẩn – cần xử lý",
+                    noiDung = "“${tin.tieuDe}” bị $soMoi người báo cáo (mới nhất: $lyDo) nên đã tạm ẩn. Vào Kiểm duyệt để giữ hoặc gỡ tin.",
+                    loaiLienKet = "KIEM_DUYET", lienKetId = tin.id
+                ) else ThongBao(
+                    nguoiNhanId = qt, loai = "BAO_CAO", tieuDe = "Có tin bị báo cáo",
+                    noiDung = "“${tin.tieuDe}” bị báo cáo: $lyDo ($soMoi/$nguong). Đủ $nguong báo cáo tin sẽ tự ẩn.",
+                    loaiLienKet = "KIEM_DUYET", lienKetId = tin.id
+                )
+            )
+        }
+        if (tuAn) {
+            tb.them(
+                ThongBao(
+                    nguoiNhanId = tin.nguoiBanId, loai = "TIN_BI_AN", tieuDe = "Tin đang tạm ẩn",
+                    noiDung = "“${tin.tieuDe}” bị báo cáo $soMoi lần nên tạm ẩn, chờ quản trị viên xem xét.",
+                    loaiLienKet = "TIN_CUA_TOI", lienKetId = tin.id
+                )
+            )
+        }
         if (tuAn) KetQuaBaoCao.TIN_TU_AN else KetQuaBaoCao.DA_GHI_NHAN
     }
 }

@@ -21,9 +21,13 @@ class UniMarketApp : Application(), Application.ActivityLifecycleCallbacks {
 
     companion object {
         private var dangMo: WeakReference<Activity>? = null
+        private var soManHinhHien = 0
 
-        /** Màn hình đang hiện trên cùng (null = app đang ở nền hoặc đã đóng). */
+        /** Màn hình đang hiện trên cùng và hiện được banner (null = đang chuyển màn, ở màn đăng nhập, hoặc app ở nền). */
         fun manHinhDangMo(): Activity? = dangMo?.get()?.takeIf { !it.isFinishing }
+
+        /** Còn ít nhất một màn của app đang hiển thị (kể cả màn đăng nhập, lúc chuyển màn). */
+        fun appDangHien(): Boolean = soManHinhHien > 0
     }
 
     private val phamVi = MainScope()
@@ -49,8 +53,13 @@ class UniMarketApp : Application(), Application.ActivityLifecycleCallbacks {
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
-    override fun onActivityStarted(activity: Activity) {}
-    override fun onActivityStopped(activity: Activity) {}
+    override fun onActivityStarted(activity: Activity) {
+        soManHinhHien++
+    }
+
+    override fun onActivityStopped(activity: Activity) {
+        soManHinhHien--
+    }
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
     override fun onActivityDestroyed(activity: Activity) {}
 }

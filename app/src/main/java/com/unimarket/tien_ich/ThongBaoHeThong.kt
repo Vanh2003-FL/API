@@ -61,15 +61,22 @@ object ThongBaoHeThong {
 
         val toi = PhienDangNhap.layId(app)
         if (toi != PhienDangNhap.CHUA_DANG_NHAP) {
-            val moi = ThongBaoRepository(app).layVaDanhDauDaDay(toi)
-            if (moi.isNotEmpty()) {
-                val dangMo = UniMarketApp.manHinhDangMo()
-                if (dangMo != null) {
-                    BannerThongBao.hien(dangMo, moi)
-                    (dangMo as? CoThongBaoMoi)?.khiCoThongBaoMoi() // cập nhật số trên chuông / danh sách đang mở
-                } else {
-                    moi.takeLast(5).forEach { dayLenMay(app, it) }
+            val repo = ThongBaoRepository(app)
+            val dangMo = UniMarketApp.manHinhDangMo()
+            when {
+                // App đang mở một màn bình thường → banner trong app
+                dangMo != null -> {
+                    val moi = repo.layVaDanhDauDaDay(toi)
+                    if (moi.isNotEmpty()) {
+                        BannerThongBao.hien(dangMo, moi)
+                        (dangMo as? CoThongBaoMoi)?.khiCoThongBaoMoi() // cập nhật số trên chuông / danh sách đang mở
+                    }
                 }
+                // App đang hiện nhưng ở màn đăng nhập hoặc đang chuyển màn (ví dụ báo thức reo lúc vừa mở app):
+                // chưa đánh dấu, lần mở màn kế tiếp sẽ hiện banner thay vì bật thông báo hệ thống
+                UniMarketApp.appDangHien() -> Unit
+                // App ở nền / đã đóng → thông báo hệ thống Android
+                else -> repo.layVaDanhDauDaDay(toi).takeLast(5).forEach { dayLenMay(app, it) }
             }
         }
         datBaoThuc(app, bayGio)

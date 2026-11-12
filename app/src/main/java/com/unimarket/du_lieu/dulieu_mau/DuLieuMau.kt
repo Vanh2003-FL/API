@@ -255,6 +255,23 @@ object DuLieuMau {
                 BaoCao(tinDangId = aoKhoac, nguoiBaoCaoId = id("lan"), lyDo = "Sai danh mục", ngayTao = bayGio - 30 * MOT_GIO)
             )
         )
+        // Thông báo kiểm duyệt tương ứng (giống khi báo cáo thật trong app)
+        fun tbQuanTri(tin: Long, tieuDe: String, noiDung: String, gioTruoc: Int) = ThongBao(
+            nguoiNhanId = id("admin"), loai = "BAO_CAO", tieuDe = tieuDe, noiDung = noiDung,
+            loaiLienKet = "KIEM_DUYET", lienKetId = tin, daDay = true, thoiGian = bayGio - gioTruoc * MOT_GIO
+        )
+        listOf(
+            tbQuanTri(aoKhoac, "Có tin bị báo cáo", "“Áo khoác đồng phục khoa” bị báo cáo: Sai danh mục (1/3). Đủ 3 báo cáo tin sẽ tự ẩn.", 30),
+            tbQuanTri(iphone, "Có tin bị báo cáo", "“iPhone 13 Pro Max giá 2 triệu, cần cọc trước” bị báo cáo: Lừa đảo (2/3). Đủ 3 báo cáo tin sẽ tự ẩn.", 4),
+            tbQuanTri(deThi, "Tin đã tự ẩn – cần xử lý", "“Bán đề thi cuối kỳ Kinh tế lượng có đáp án” bị 3 người báo cáo (mới nhất: Thông tin sai sự thật) nên đã tạm ẩn. Vào Kiểm duyệt để giữ hoặc gỡ tin.", 6)
+        ).forEach { db.thongBaoDao().them(it) }
+        db.thongBaoDao().them(
+            ThongBao(
+                nguoiNhanId = id("tung"), loai = "TIN_BI_AN", tieuDe = "Tin đang tạm ẩn",
+                noiDung = "“Bán đề thi cuối kỳ Kinh tế lượng có đáp án” bị báo cáo 3 lần nên tạm ẩn, chờ quản trị viên xem xét.",
+                loaiLienKet = "TIN_CUA_TOI", lienKetId = deThi, daDay = true, thoiGian = bayGio - 6 * MOT_GIO
+            )
+        )
 
         // ---------- 5. Phòng chat, lịch hẹn, đánh giá ----------
         napGiaoDich(db, bayGio, dsTin, idTin, ::id, ::tinCo)
