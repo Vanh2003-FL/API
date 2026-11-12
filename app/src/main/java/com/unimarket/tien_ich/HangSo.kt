@@ -28,8 +28,11 @@ object HangSo {
     const val DIEM_KHAC = "Khác"
 
     // ===================== DANH MỤC =====================
-    /** Danh mục con. khauHaoNam = tỷ lệ mất giá mỗi năm (dùng cho gợi ý giá khi thiếu dữ liệu). */
-    data class DanhMucCon(val ma: String, val ten: String, val icon: Int, val khauHaoNam: Double)
+    /**
+     * Danh mục con. khauHaoNam = tỷ lệ mất giá mỗi năm (dùng cho gợi ý giá khi thiếu dữ liệu).
+     * an = quản trị viên đã ẩn: không cho chọn khi đăng tin/lọc nữa, nhưng tin cũ vẫn hiện đúng tên.
+     */
+    data class DanhMucCon(val ma: String, val ten: String, val icon: Int, val khauHaoNam: Double, val an: Boolean = false)
 
     /** Danh mục cha: có màu nền và màu icon riêng như bản thiết kế. */
     data class DanhMuc(
@@ -45,7 +48,12 @@ object HangSo {
     const val DIEN_TU = "DIEN_TU"
     const val DO_DUNG = "DO_DUNG"
 
-    val DS_DANH_MUC = listOf(
+    /**
+     * Danh mục MẶC ĐỊNH: dùng để nạp bảng danh_muc lần đầu. Từ Sprint 6 quản trị viên thêm/sửa/ẩn
+     * danh mục con trong app; danh sách thật nằm trong database và được chép lên DS_DANH_MUC
+     * (bộ nhớ đệm) bằng DanhMucRepository.napVaoBoNho(). 3 danh mục cha luôn cố định.
+     */
+    val DANH_MUC_MAC_DINH = listOf(
         DanhMuc(
             SACH, "Sách", R.drawable.ic_book, R.color.nen_sach, R.color.icon_sach, listOf(
                 DanhMucCon("GIAO_TRINH", "Giáo trình", R.drawable.ic_book, 0.0),
@@ -71,6 +79,31 @@ object HangSo {
             )
         )
     )
+
+    /** Danh mục đang dùng (gồm cả danh mục con đã ẩn). Đọc nhiều, chỉ thay cả danh sách khi nạp lại. */
+    @Volatile
+    var DS_DANH_MUC: List<DanhMuc> = DANH_MUC_MAC_DINH
+        private set
+
+    /** Thay danh mục con của 3 danh mục cha bằng danh sách đọc từ database. */
+    fun datDanhMucCon(dsCon: Map<String, List<DanhMucCon>>) {
+        DS_DANH_MUC = DANH_MUC_MAC_DINH.map { cha -> cha.copy(dsCon = dsCon[cha.ma].orEmpty()) }
+    }
+
+    /** Danh mục con còn hiện (dùng cho màn đăng tin, bộ lọc, tab Danh mục). */
+    fun conDangHien(cha: DanhMuc): List<DanhMucCon> = cha.dsCon.filter { !it.an }
+
+    /** Bộ icon quản trị viên được chọn cho danh mục con (lưu TÊN icon trong database). */
+    val DS_ICON_DANH_MUC = linkedMapOf(
+        "ic_book" to R.drawable.ic_book, "ic_laptop" to R.drawable.ic_laptop, "ic_phone" to R.drawable.ic_phone,
+        "ic_headphones" to R.drawable.ic_headphones, "ic_calc" to R.drawable.ic_calc, "ic_camera" to R.drawable.ic_camera,
+        "ic_fan" to R.drawable.ic_fan, "ic_cooker" to R.drawable.ic_cooker, "ic_desk" to R.drawable.ic_desk,
+        "ic_bike" to R.drawable.ic_bike, "ic_tag" to R.drawable.ic_tag, "ic_star" to R.drawable.ic_star
+    )
+
+    fun iconTheoTen(ten: String?): Int = DS_ICON_DANH_MUC[ten] ?: R.drawable.ic_tag
+
+    fun tenIcon(icon: Int): String = DS_ICON_DANH_MUC.entries.firstOrNull { it.value == icon }?.key ?: "ic_tag"
 
     fun timDanhMuc(ma: String?): DanhMuc? = DS_DANH_MUC.find { it.ma == ma }
 
@@ -108,6 +141,7 @@ object HangSo {
     const val TIN_HET_HAN = "HET_HAN"
     const val TIN_BI_AN = "BI_AN"
     const val TIN_DA_XOA = "DA_XOA"
+    const val TIN_BI_GO = "BI_GO"          // quản trị viên gỡ vĩnh viễn sau khi xem báo cáo
 
     // ===================== BÁO CÁO VI PHẠM =====================
     val LY_DO_BAO_CAO = listOf(

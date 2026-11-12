@@ -73,7 +73,7 @@ class DanhMucFragment : Fragment() {
             dau.iconMenu.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(ctx, dm.mauIcon))
             dau.tvTieuDe.text = dm.ten
             dau.tvTieuDe.setTypeface(null, Typeface.BOLD)
-            dau.tvPhu.text = "${dm.dsCon.size} danh mục con · ${ds.count { it.danhMucCha == dm.ma }} tin"
+            dau.tvPhu.text = "${HangSo.conDangHien(dm).size} danh mục con · ${ds.count { it.danhMucCha == dm.ma }} tin"
             dau.iconMuiTen.setImageResource(if (moRa) R.drawable.ic_down else R.drawable.ic_chev)
             dau.root.setOnClickListener {
                 dangMo = if (moRa) null else dm.ma
@@ -88,7 +88,7 @@ class DanhMucFragment : Fragment() {
             tatCa.tvPhu.visibility = View.GONE
             tatCa.root.setOnClickListener { TimKiemActivity.mo(ctx, danhMucCha = dm.ma, phamVi = phamVi) }
 
-            for (con in dm.dsCon) {
+            for (con in HangSo.conDangHien(dm)) {
                 val hang = HangMenuBinding.inflate(layoutInflater, khoi, true)
                 hang.iconMenu.setImageResource(con.icon)
                 hang.iconMenu.imageTintList = ContextCompat.getColorStateList(ctx, R.color.chu_phu)

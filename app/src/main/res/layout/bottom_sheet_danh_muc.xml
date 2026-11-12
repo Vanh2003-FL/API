@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bảng thêm / sửa danh mục con: tên, icon, tỷ lệ khấu hao năm, ẩn -->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/tvTieuDe"
+            style="@style/ChuTieuDe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tvCha"
+            style="@style/ChuPhu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/oTen"
+            style="@style/ONhap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="Tên danh mục con">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/nhapTen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapSentences"
+                android:maxLength="40" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            style="@style/NhanMuc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Biểu tượng" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/nhomIcon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:selectionRequired="true"
+            app:singleSelection="true" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/oKhauHao"
+            style="@style/ONhap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="Tỷ lệ khấu hao năm"
+            app:helperText="Ví dụ điện thoại 25%: dùng 2 năm còn khoảng 50% giá mua"
+            app:suffixText="%/năm">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/nhapKhauHao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLength="2" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/swAn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Ẩn danh mục (tin cũ vẫn giữ nguyên)" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLuu"
+            style="@style/NutChinh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Lưu" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnHuy"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Đóng" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

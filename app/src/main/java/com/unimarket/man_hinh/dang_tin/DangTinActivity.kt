@@ -230,7 +230,8 @@ class DangTinActivity : AppCompatActivity() {
                 veDanhMuc()
             }
             if (!moRa) continue
-            for (con in dm.dsCon) {
+            // Danh mục đã ẩn không cho chọn, trừ khi đang sửa tin thuộc chính danh mục đó
+            for (con in dm.dsCon.filter { !it.an || it.ma == maCon }) {
                 val hang = HangMenuBinding.inflate(layoutInflater, khoi, true)
                 hang.iconMenu.setImageResource(con.icon)
                 hang.iconMenu.imageTintList = ContextCompat.getColorStateList(this, R.color.chu_phu)

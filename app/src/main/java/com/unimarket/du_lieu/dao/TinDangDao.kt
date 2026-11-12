@@ -63,4 +63,12 @@ interface TinDangDao {
 
     @Query("SELECT COUNT(*) FROM tin_dang")
     suspend fun dem(): Int
+
+    /** Mọi tin (kể cả đã xoá mềm) – dùng cho thống kê của quản trị viên (BR-09). */
+    @Query("SELECT * FROM tin_dang")
+    suspend fun layTatCa(): List<TinDang>
+
+    /** Tin còn hiển thị của một người bán (để gỡ khi khoá tài khoản). */
+    @Query("SELECT * FROM tin_dang WHERE nguoiBanId = :nguoiBanId AND trangThai IN ('DANG_BAN', 'DANG_GIAO_DICH', 'BI_AN')")
+    suspend fun layConHienCuaNguoiBan(nguoiBanId: Long): List<TinDang>
 }

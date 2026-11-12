@@ -15,7 +15,10 @@ import com.unimarket.tien_ich.HangSo
 import com.unimarket.tien_ich.HangSo.MOT_GIO
 import com.unimarket.tien_ich.HangSo.MOT_NGAY
 import com.unimarket.tien_ich.MaHoa
+import com.unimarket.du_lieu.repository.DanhMucRepository
+import com.unimarket.xu_ly_nghiep_vu.GoiYGia
 import com.unimarket.xu_ly_nghiep_vu.QuyTacLichHen
+import java.util.Calendar
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -225,7 +228,8 @@ object DuLieuMau {
             tin("thao", "Áo khoác đồng phục khoa", "KHAC", 80_000, "TOT", "FTU", "Căng tin", 60.0,
                 "Size M.", soBaoCao = 1, luotXem = 11)
         )
-        val idTin = db.tinDangDao().themNhieu(dsTin)
+        db.danhMucDao().themNhieu(DanhMucRepository.dongMacDinh())
+        val idTin = db.tinDangDao().themNhieu(ganGoiYGia(dsTin))
         fun tinCo(tieuDe: String) = idTin[dsTin.indexOfFirst { it.tieuDe == tieuDe }]
 
         // ---------- 3. Yêu thích ----------
@@ -254,6 +258,33 @@ object DuLieuMau {
 
         // ---------- 5. Phòng chat, lịch hẹn, đánh giá ----------
         napGiaoDich(db, bayGio, dsTin, idTin, ::id, ::tinCo)
+    }
+
+    /**
+     * Mô phỏng "giá gợi ý lúc đăng" cho tin mẫu: mỗi tin chạy thuật toán GoiYGia với các tin đăng TRƯỚC nó
+     * (tin bán sau thời điểm đó coi như còn đang rao). Nhờ vậy KPI-07 (tỷ lệ dùng giá gợi ý)
+     * và KPI-08 (sai số MAPE) có số liệu ngay từ đầu.
+     */
+    private fun ganGoiYGia(ds: List<TinDang>): List<TinDang> {
+        val nam = Calendar.getInstance().get(Calendar.YEAR)
+        return ds.mapIndexed { i, t ->
+            val truoc = ds.filterIndexed { j, m ->
+                j != i && m.danhMucCon == t.danhMucCon && m.ngayTao < t.ngayTao &&
+                    m.ngayTao >= t.ngayTao - GoiYGia.SO_NGAY_LAY_MAU * MOT_NGAY
+            }.map { m ->
+                if (m.trangThai == HangSo.TIN_DA_BAN && (m.ngayBan ?: Long.MAX_VALUE) > t.ngayTao) m.copy(trangThai = HangSo.TIN_DANG_BAN) else m
+            }
+            val kq = GoiYGia.tinh(
+                dsMau = GoiYGia.chonMau(t.tieuDe, truoc, boQuaId = -1),
+                tinhTrang = t.tinhTrang, thanhPho = t.thanhPho,
+                laSach = HangSo.timChaCua(t.danhMucCon).ma == HangSo.SACH,
+                maDanhMucCon = t.danhMucCon, giaGoc = t.giaGoc, namMua = t.namMua, namHienTai = nam
+            )
+            if (!kq.coGoiY) t else t.copy(
+                giaGoiY = kq.giaGoiY, goiYThap = kq.giaThap, goiYCao = kq.giaCao,
+                doTinCay = kq.doTinCay.name, soMau = if (kq.tuDuLieuThat) kq.soMau else null
+            )
+        }
     }
 
     /**

@@ -26,6 +26,7 @@ object MoThongBao {
         "DA_DANG" -> Kieu(R.drawable.ic_pin, R.color.chinh, R.color.chinh_nhat)
         "SAP_HET_HAN" -> Kieu(R.drawable.ic_info, R.color.gia, R.color.nen_gia)
         "MOI_DANH_GIA", "DANH_GIA" -> Kieu(R.drawable.ic_star, R.color.gia, R.color.nen_gia)
+        "KIEM_DUYET" -> Kieu(R.drawable.ic_shield, R.color.thong_tin, R.color.nen_thong_tin)
         else -> Kieu(R.drawable.ic_bell, R.color.chu_phu, R.color.nen_lom)
     }
 

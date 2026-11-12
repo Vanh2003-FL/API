@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Quản lý danh mục (UC-53): 3 nhóm cha cố định, danh mục con thêm / sửa / ẩn được -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/nen"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/thanhTieuDe"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationIcon="@drawable/ic_back"
+        app:title="Danh mục" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_canh_bao"
+                android:drawablePadding="10dp"
+                android:padding="12dp"
+                android:text="Tỷ lệ khấu hao năm dùng khi gợi ý giá thiếu dữ liệu: giá ≈ giá mua × (1 − tỷ lệ × số năm) × hệ số tình trạng. Đối chiếu với sai số MAPE ở màn Quản trị để hiệu chỉnh."
+                android:textColor="@color/canh_bao"
+                android:textSize="13sp"
+                app:drawableStartCompat="@drawable/ic_bulb"
+                app:drawableTint="@color/canh_bao" />
+
+            <LinearLayout
+                android:id="@+id/dsNhom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

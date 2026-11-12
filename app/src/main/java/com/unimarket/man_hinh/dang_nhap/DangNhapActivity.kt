@@ -10,6 +10,7 @@ import com.unimarket.tien_ich.CanhLe
 import com.unimarket.databinding.ActivityDangNhapBinding
 import com.unimarket.du_lieu.database.AppDatabase
 import com.unimarket.du_lieu.dulieu_mau.DuLieuMau
+import com.unimarket.du_lieu.repository.DanhMucRepository
 import com.unimarket.du_lieu.repository.NguoiDungRepository
 import com.unimarket.man_hinh.trang_chu.ManHinhChinhActivity
 import com.unimarket.tien_ich.PhienDangNhap
@@ -37,6 +38,7 @@ class DangNhapActivity : AppCompatActivity() {
         datTrangThaiNut(false)
         lifecycleScope.launch {
             DuLieuMau.napNeuTrong(AppDatabase.layDb(this@DangNhapActivity))
+            DanhMucRepository(this@DangNhapActivity).napVaoBoNho() // danh mục do quản trị viên quản lý
             // Đã đăng nhập từ trước và tài khoản vẫn còn → vào thẳng màn chính
             if (PhienDangNhap.daDangNhap(this@DangNhapActivity)) {
                 if (repo.layNguoiDangNhap() != null) {

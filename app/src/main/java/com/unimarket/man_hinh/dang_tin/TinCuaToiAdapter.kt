@@ -76,6 +76,7 @@ class TinCuaToiAdapter(private val thaoTac: ThaoTac) : RecyclerView.Adapter<TinC
                 (tin.ngayBan?.let { " · ngày ${ngayThang.format(Date(it))}" } ?: "")
             HangSo.TIN_HET_HAN -> "Hết hạn · đã gia hạn ${tin.soLanGiaHan}/${HangSo.SO_LAN_GIA_HAN_TOI_DA} lần"
             HangSo.TIN_BI_AN -> "Tạm ẩn do ${tin.soBaoCao} báo cáo · chờ quản trị viên xử lý"
+            HangSo.TIN_BI_GO -> "Đã bị quản trị viên gỡ vì vi phạm quy định"
             else -> ""
         }
 

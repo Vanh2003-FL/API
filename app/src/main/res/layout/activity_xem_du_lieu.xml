@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Xem dữ liệu: chọn bảng SQLite, xem dạng bảng (cuộn ngang/dọc), xuất CSV hoặc cả file .db -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/nen"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/thanhTieuDe"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationIcon="@drawable/ic_back"
+        app:title="Xem dữ liệu" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/nhomBang"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            app:selectionRequired="true"
+            app:singleLine="true"
+            app:singleSelection="true" />
+    </HorizontalScrollView>
+
+    <TextView
+        android:id="@+id/tvThongTin"
+        style="@style/ChuPhu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="6dp"
+        android:textSize="12sp" />
+
+    <!-- Bảng: tiêu đề cột + các dòng, cuộn ngang cả khối -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/be_mat"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvTieuDeCot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/chinh_nhat"
+                android:fontFamily="monospace"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="6dp"
+                android:textColor="@color/tren_chinh_nhat"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/dsDong"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/nen_lom"
+        android:padding="10dp"
+        android:text="Xem đầy đủ trên máy tính: bấm “Xuất .db” rồi mở file bằng DB Browser for SQLite. Cột thời gian hiện theo giờ máy; file xuất giữ nguyên số mili-giây."
+        android:textColor="@color/chu_phu"
+        android:textSize="11sp" />
+</LinearLayout>

@@ -214,7 +214,7 @@ class TimKiemActivity : AppCompatActivity() {
             b.tvNhanDanhMucCon.visibility = if (cha == null) View.GONE else View.VISIBLE
             b.nhomDanhMucCon.visibility = if (cha == null) View.GONE else View.VISIBLE
             b.nhomDanhMucCon.removeAllViews()
-            cha?.dsCon?.forEach { con ->
+            cha?.let { HangSo.conDangHien(it) }?.forEach { con ->
                 themChip(b.nhomDanhMucCon, con.ten, dk.danhMucCon == con.ma) {
                     dk = dk.copy(danhMucCon = if (dk.danhMucCon == con.ma) null else con.ma)
                 }

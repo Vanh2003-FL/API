@@ -44,10 +44,16 @@ class NguoiDungRepository(context: Context) {
     }
 
     /** Người đang đăng nhập, hoặc null nếu là khách. */
+    /** Người đang đăng nhập; tài khoản đã bị quản trị viên khoá (UC-52) thì tự đăng xuất. */
     suspend fun layNguoiDangNhap(): NguoiDung? {
         val id = PhienDangNhap.layId(appContext)
         if (id == PhienDangNhap.CHUA_DANG_NHAP) return null
-        return dao.layTheoId(id)
+        val nd = dao.layTheoId(id)
+        if (nd?.biKhoa == true) {
+            PhienDangNhap.dangXuat(appContext)
+            return null
+        }
+        return nd
     }
 
     suspend fun layTheoId(id: Long): NguoiDung? = dao.layTheoId(id)

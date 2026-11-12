@@ -10,7 +10,6 @@ import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -24,6 +23,7 @@ import com.unimarket.man_hinh.dang_nhap.DangNhapActivity
 import com.unimarket.man_hinh.dang_tin.TinCuaToiActivity
 import com.unimarket.man_hinh.trang_chu.ManHinhChinhActivity
 import com.unimarket.man_hinh.thong_bao.ThongBaoActivity
+import com.unimarket.man_hinh.quan_tri.QuanTriActivity
 import com.unimarket.du_lieu.repository.ThongBaoRepository
 import androidx.appcompat.app.AppCompatActivity
 import com.unimarket.mo_hinh.NguoiDung
@@ -47,7 +47,6 @@ class TaiKhoanFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.btnDangNhap.setOnClickListener { veManDangNhap() }
 
-        // Các mục chưa làm tới sẽ báo sprint thực hiện
         datHang(binding.hangTinNhan, R.drawable.ic_chat, "Tin nhắn & giao dịch", "Chat và lịch hẹn") {
             (activity as? ManHinhChinhActivity)?.chonTab(R.id.tab_tin_nhan)
         }
@@ -63,7 +62,9 @@ class TaiKhoanFragment : Fragment() {
         datHang(binding.hangHoSo, R.drawable.ic_edit, "Hồ sơ", "Họ tên, SĐT, trường, điểm giao dịch") {
             startActivity(Intent(requireContext(), HoSoActivity::class.java))
         }
-        datHang(binding.hangQuanTri, R.drawable.ic_chart, "Quản trị", "Thống kê, biểu đồ, kiểm duyệt, xem dữ liệu") { baoSprint("Quản trị", 6) }
+        datHang(binding.hangQuanTri, R.drawable.ic_chart, "Quản trị", "Thống kê, biểu đồ, kiểm duyệt, xem dữ liệu") {
+            startActivity(Intent(requireContext(), QuanTriActivity::class.java))
+        }
         datHang(binding.hangDangXuat, R.drawable.ic_logout, "Đăng xuất", "") { hoiDangXuat() }
         val mauDo = ContextCompat.getColor(requireContext(), R.color.loi)
         binding.hangDangXuat.tvTieuDe.setTextColor(mauDo)
@@ -144,10 +145,6 @@ class TaiKhoanFragment : Fragment() {
         hang.tvPhu.text = phu
         hang.tvPhu.visibility = if (phu.isEmpty()) View.GONE else View.VISIBLE
         hang.root.setOnClickListener { khiBam() }
-    }
-
-    private fun baoSprint(chucNang: String, sprint: Int) {
-        Toast.makeText(requireContext(), "$chucNang sẽ làm ở Sprint $sprint", Toast.LENGTH_SHORT).show()
     }
 
     private fun hoiDangXuat() {

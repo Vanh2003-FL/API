@@ -3,6 +3,7 @@ package com.unimarket
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
+import com.unimarket.du_lieu.repository.DanhMucRepository
 import com.unimarket.man_hinh.dang_nhap.DangKyActivity
 import com.unimarket.man_hinh.dang_nhap.DangNhapActivity
 import com.unimarket.tien_ich.ThongBaoHeThong
@@ -31,6 +32,8 @@ class UniMarketApp : Application(), Application.ActivityLifecycleCallbacks {
         super.onCreate()
         ThongBaoHeThong.taoKenh(this)
         registerActivityLifecycleCallbacks(this)
+        // Mở app từ thông báo (bỏ qua màn đăng nhập) vẫn có danh mục mới nhất
+        phamVi.launch { DanhMucRepository(this@UniMarketApp).napVaoBoNho() }
     }
 
     override fun onActivityResumed(activity: Activity) {

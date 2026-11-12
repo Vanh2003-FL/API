@@ -342,6 +342,19 @@ class GiaoDichRepository(context: Context) {
             "${nguoiMua?.hoTen} đánh giá $soSao sao cho “${tin?.tieuDe}”", lich.cuocTroChuyenId)
     }
 
+    /**
+     * Huỷ mọi lịch hẹn còn hiệu lực của một tin (khi quản trị viên gỡ tin). Gọi BÊN TRONG transaction của nơi gọi.
+     * Người mua nhận thông báo, phòng chat có thẻ sự kiện do hệ thống ghi.
+     */
+    suspend fun huyLichCuaTin(tinId: Long, lyDo: String) {
+        val tin = tinDao.layTheoId(tinId)
+        for (l in lichDao.layDangHoatDongCuaTin(tinId)) {
+            lichDao.capNhat(l.copy(trangThai = HangSo.LICH_DA_HUY, lyDoHuy = lyDo, nguoiHuyId = 0))
+            ghiSuKien(l.cuocTroChuyenId, 0, HangSo.SK_HUY_HEN, "lịch hẹn tự huỷ · $lyDo", "Lịch hẹn đã huỷ", l)
+            thongBao(l.nguoiMuaId, "HUY_HEN", "Lịch hẹn đã huỷ", "“${tin?.tieuDe}”: $lyDo.", l.cuocTroChuyenId)
+        }
+    }
+
     // ===================== TÁC VỤ TỰ ĐỘNG (UC-62, UC-63) =====================
 
     /**

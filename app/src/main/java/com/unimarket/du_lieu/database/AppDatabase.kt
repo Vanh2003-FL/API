@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.unimarket.du_lieu.dao.BaoCaoDao
 import com.unimarket.du_lieu.dao.CuocTroChuyenDao
+import com.unimarket.du_lieu.dao.DanhMucDao
 import com.unimarket.du_lieu.dao.LichHenDao
 import com.unimarket.du_lieu.dao.NguoiDungDao
 import com.unimarket.du_lieu.dao.ThongBaoDao
@@ -14,6 +15,7 @@ import com.unimarket.du_lieu.dao.TinNhanDao
 import com.unimarket.du_lieu.dao.YeuThichDao
 import com.unimarket.mo_hinh.BaoCao
 import com.unimarket.mo_hinh.CuocTroChuyen
+import com.unimarket.mo_hinh.DanhMuc
 import com.unimarket.mo_hinh.LichHen
 import com.unimarket.mo_hinh.NguoiDung
 import com.unimarket.mo_hinh.ThongBao
@@ -28,12 +30,13 @@ import com.unimarket.mo_hinh.YeuThich
 @Database(
     entities = [
         NguoiDung::class, TinDang::class, YeuThich::class, CuocTroChuyen::class,
-        TinNhan::class, LichHen::class, ThongBao::class, BaoCao::class
+        TinNhan::class, LichHen::class, ThongBao::class, BaoCao::class, DanhMuc::class
     ],
     // v2 (Sprint 3): thêm cột tin_dang.doanhThuDayTin
     // v3 (Sprint 4): thêm chỉ mục lich_hen.nguoiMuaId (đếm yêu cầu đang chờ của người mua)
     // v4 (Sprint 5): lich_hen.daNhacLuc, thong_bao.daDay, tin_dang.daBaoSapHetHan
-    version = 4,
+    // v5 (Sprint 6): bảng danh_muc (quản trị viên quản lý danh mục con)
+    version = 5,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -46,6 +49,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun lichHenDao(): LichHenDao
     abstract fun thongBaoDao(): ThongBaoDao
     abstract fun baoCaoDao(): BaoCaoDao
+    abstract fun danhMucDao(): DanhMucDao
 
     companion object {
         const val TEN_FILE = "unimarket.db"

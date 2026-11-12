@@ -55,6 +55,17 @@
 
         <!-- Thông báo: trung tâm thông báo + báo thức nhắc hẹn / tự huỷ yêu cầu khi app đóng -->
         <activity android:name=".man_hinh.thong_bao.ThongBaoActivity" />
+
+        <!-- Quản trị: thống kê KPI, kiểm duyệt, người dùng, danh mục, xem / xuất dữ liệu -->
+        <activity android:name=".man_hinh.quan_tri.QuanTriActivity" />
+        <activity android:name=".man_hinh.quan_tri.KiemDuyetActivity" />
+        <activity
+            android:name=".man_hinh.quan_tri.QuanLyNguoiDungActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".man_hinh.quan_tri.QuanLyDanhMucActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".man_hinh.quan_tri.XemDuLieuActivity" />
         <receiver
             android:name=".tien_ich.BaoThucReceiver"
             android:exported="false">

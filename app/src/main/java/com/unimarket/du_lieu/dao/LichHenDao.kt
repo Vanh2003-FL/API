@@ -41,4 +41,7 @@ interface LichHenDao {
 
     @Query("SELECT COUNT(*) FROM lich_hen WHERE nguoiMuaId = :nguoiMuaId AND trangThai = 'CHO_XAC_NHAN'")
     suspend fun demChoCuaNguoiMua(nguoiMuaId: Long): Int
+
+    @Query("SELECT * FROM lich_hen")
+    suspend fun layTatCa(): List<LichHen>
 }

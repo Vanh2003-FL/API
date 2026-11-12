@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Màn Quản trị (SCR-24): chọn kỳ, thẻ KPI, 2 biểu đồ, lối vào kiểm duyệt / người dùng / danh mục / dữ liệu -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/nen"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/thanhTieuDe"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationIcon="@drawable/ic_back"
+        app:title="Quản trị" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:descendantFocusability="blocksDescendants"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="24dp">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/nhomKy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:selectionRequired="true"
+                app:singleSelection="true" />
+
+            <!-- KPI-01: chỉ số chính (North Star) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_the"
+                android:backgroundTint="@color/chinh_nhat"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="KPI-01 · Chỉ số chính (North Star)"
+                    android:textColor="@color/tren_chinh_nhat"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvGiaoDich"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/tren_chinh_nhat"
+                    android:textSize="34sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvGiaoDichPhu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/tren_chinh_nhat"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <!-- Lưới thẻ KPI (tạo bằng code, 2 thẻ mỗi hàng) -->
+            <LinearLayout
+                android:id="@+id/luoiKpi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <!-- Biểu đồ cột theo ngày -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_the"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <TextView
+                    style="@style/NhanMuc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tin đăng / tin bán theo ngày" />
+
+                <TextView
+                    android:id="@+id/tvChuThich"
+                    style="@style/ChuPhu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp" />
+
+                <com.unimarket.man_hinh.quan_tri.BieuDoCotView
+                    android:id="@+id/bieuDoNgay"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_marginTop="6dp" />
+            </LinearLayout>
+
+            <!-- Biểu đồ thanh ngang theo danh mục -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_the"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <TextView
+                    style="@style/NhanMuc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Phân bổ tin đăng theo danh mục" />
+
+                <TextView
+                    android:id="@+id/tvKhongCoDanhMuc"
+                    style="@style/ChuPhu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chưa có tin đăng trong kỳ này"
+                    android:visibility="gone" />
+
+                <com.unimarket.man_hinh.quan_tri.BieuDoNgangView
+                    android:id="@+id/bieuDoDanhMuc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp" />
+            </LinearLayout>
+
+            <!-- Lối vào các chức năng quản trị -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_the"
+                android:orientation="vertical">
+
+                <include
+                    android:id="@+id/hangKiemDuyet"
+                    layout="@layout/hang_menu" />
+
+                <include
+                    android:id="@+id/hangNguoiDung"
+                    layout="@layout/hang_menu" />
+
+                <include
+                    android:id="@+id/hangDanhMuc"
+                    layout="@layout/hang_menu" />
+
+                <include
+                    android:id="@+id/hangDuLieu"
+                    layout="@layout/hang_menu" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

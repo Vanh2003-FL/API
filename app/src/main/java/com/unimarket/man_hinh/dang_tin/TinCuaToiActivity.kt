@@ -114,9 +114,9 @@ class TinCuaToiActivity : AppCompatActivity(), TinCuaToiAdapter.ThaoTac {
         for (i in 0 until binding.nhomTab.childCount) {
             val chip = binding.nhomTab.getChildAt(i) as Chip
             val ten = DS_TAB.first { it.first == chip.tag }.second
-            chip.text = "$ten (${tatCa.count { it.trangThai == chip.tag }})"
+            chip.text = "$ten (${tatCa.count { thuocTab(it, chip.tag as String) }})"
         }
-        val ds = tatCa.filter { it.trangThai == tabDangChon }
+        val ds = tatCa.filter { thuocTab(it, tabDangChon) }
         adapter.capNhat(ds, luotLuu, hoiMua)
 
         val trong = binding.trong
@@ -129,6 +129,10 @@ class TinCuaToiActivity : AppCompatActivity(), TinCuaToiAdapter.ThaoTac {
         trong.btnTrong1.text = "Đăng tin"
         trong.btnTrong1.setOnClickListener { BoSungHoSo.kiemTra(this) { DangTinActivity.moMoi(this) } }
     }
+
+    /** Tab "Bị ẩn" gồm tin tạm ẩn do báo cáo và tin đã bị quản trị viên gỡ. */
+    private fun thuocTab(tin: TinDang, tab: String) =
+        tin.trangThai == tab || (tab == HangSo.TIN_BI_AN && tin.trangThai == HangSo.TIN_BI_GO)
 
     // ===================== THAO TÁC TRÊN MỘT TIN =====================
     override fun mo(tin: TinDang) = ChiTietSanPhamActivity.mo(this, tin.id)
