@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hình tròn (ảnh đại diện chữ viết tắt); màu nền đặt bằng backgroundTint -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <solid android:color="@color/chinh_nhat" />
+</shape>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bảng màu lấy đúng theo bản thiết kế unimarket-ui.html (giao diện sáng) -->
+<resources>
+    <!-- Nền và chữ -->
+    <color name="nen">#F6F7F6</color>
+    <color name="be_mat">#FFFFFF</color>
+    <color name="chu">#1B1F1B</color>
+    <color name="chu_phu">#5F6B60</color>
+    <color name="duong_ke">#E2E7E2</color>
+    <color name="nen_lom">#EEF2EE</color>
+
+    <!-- Màu chính (xanh lá) -->
+    <color name="chinh">#2E7D32</color>
+    <color name="tren_chinh">#FFFFFF</color>
+    <color name="chinh_nhat">#C8E6C9</color>
+    <color name="tren_chinh_nhat">#123D16</color>
+
+    <!-- Màu giá tiền (cam) -->
+    <color name="gia">#D2600A</color>
+    <color name="nen_gia">#FFF0E0</color>
+
+    <!-- Màu trạng thái -->
+    <color name="loi">#C62828</color>
+    <color name="nen_loi">#FDECEC</color>
+    <color name="thong_tin">#1E73C8</color>
+    <color name="nen_thong_tin">#E3EEFA</color>
+    <color name="canh_bao">#7A5000</color>
+    <color name="nen_canh_bao">#FFF3D1</color>
+
+    <!-- Màu nền và icon theo danh mục -->
+    <color name="nen_sach">#DCEBD9</color>
+    <color name="icon_sach">#3F7A44</color>
+    <color name="nen_dien_tu">#DCE6F2</color>
+    <color name="icon_dien_tu">#3B6A9C</color>
+    <color name="nen_do_dung">#F4E6D2</color>
+    <color name="icon_do_dung">#966628</color>
+
+    <!-- Màu nhãn tình trạng -->
+    <color name="tt_nhu_moi">#2E7D32</color>
+    <color name="tt_tot">#4F7F28</color>
+    <color name="tt_kha">#946600</color>
+    <color name="tt_cu">#7B5E52</color>
+</resources>

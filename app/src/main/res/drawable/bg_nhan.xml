@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Nhãn nhỏ bo tròn (trạng thái hồ sơ, trạng thái tin); màu đặt bằng backgroundTint -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/nen_lom" />
+    <corners android:radius="999dp" />
+</shape>

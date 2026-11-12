@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 5 tab ở thanh điều hướng dưới cùng, giống bản thiết kế -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/tab_trang_chu" android:icon="@drawable/ic_home" android:title="Trang chủ" />
+    <item android:id="@+id/tab_danh_muc" android:icon="@drawable/ic_grid" android:title="Danh mục" />
+    <item android:id="@+id/tab_dang_tin" android:icon="@drawable/ic_plus" android:title="Đăng tin" />
+    <item android:id="@+id/tab_tin_nhan" android:icon="@drawable/ic_chat" android:title="Tin nhắn" />
+    <item android:id="@+id/tab_tai_khoan" android:icon="@drawable/ic_user" android:title="Tài khoản" />
+</menu>

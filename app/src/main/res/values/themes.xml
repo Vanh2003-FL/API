@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Giao diện chung của app: Material 3, chỉ dùng chế độ sáng cho đơn giản -->
+<resources>
+    <style name="Theme.UniMarket" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/chinh</item>
+        <item name="colorOnPrimary">@color/tren_chinh</item>
+        <item name="colorPrimaryContainer">@color/chinh_nhat</item>
+        <item name="colorOnPrimaryContainer">@color/tren_chinh_nhat</item>
+        <item name="colorSecondaryContainer">@color/chinh_nhat</item>
+        <item name="colorOnSecondaryContainer">@color/tren_chinh_nhat</item>
+        <item name="colorError">@color/loi</item>
+        <item name="android:colorBackground">@color/nen</item>
+        <item name="colorSurface">@color/be_mat</item>
+        <item name="colorOnSurface">@color/chu</item>
+        <item name="colorOnSurfaceVariant">@color/chu_phu</item>
+        <item name="colorOutline">@color/duong_ke</item>
+        <item name="android:statusBarColor">@color/nen</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@color/be_mat</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+
+    <!-- Tiêu đề lớn và nhỏ dùng lại ở nhiều màn -->
+    <style name="ChuTieuDe" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textColor">@color/chu</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ChuPhu" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">@color/chu_phu</item>
+    </style>
+
+    <!-- Ô nhập liệu dạng viền -->
+    <style name="ONhap" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+    </style>
+
+    <!-- Nút chính bo tròn -->
+    <style name="NutChinh" parent="Widget.Material3.Button">
+        <item name="android:minHeight">52dp</item>
+        <item name="cornerRadius">14dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Bo tròn ảnh (ảnh đại diện) -->
+    <style name="HinhTron" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <!-- Tiêu đề nhỏ của từng mục trong form -->
+    <style name="NhanMuc" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textColor">@color/chu</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="NutVien" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minHeight">52dp</item>
+        <item name="cornerRadius">14dp</item>
+    </style>
+</resources>

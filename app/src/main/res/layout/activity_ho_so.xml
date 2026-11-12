@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Màn Hồ sơ (SCR-05): họ tên, SĐT, trường, điểm giao dịch quen thuộc. Mục thiếu được tô đỏ khi bị chặn. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/nen"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/thanhTieuDe"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationIcon="@drawable/ic_back"
+        app:title="Hồ sơ của bạn" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingBottom="20dp">
+
+            <!-- Cảnh báo khi bị chặn vì hồ sơ thiếu -->
+            <TextView
+                android:id="@+id/tvCanhBao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_canh_bao"
+                android:padding="12dp"
+                android:text="Bổ sung các mục được đánh dấu đỏ để tiếp tục."
+                android:textColor="@color/canh_bao"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvGioiThieu"
+                style="@style/ChuPhu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Điền đầy đủ để đăng tin, đặt mua và nhắn tin. Không cần chụp thẻ sinh viên." />
+
+            <!-- Ảnh đại diện -->
+            <LinearLayout
+                android:id="@+id/hangAnh"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/anhDaiDien"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:background="@color/chinh_nhat"
+                    android:contentDescription="Ảnh đại diện"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_camera"
+                    app:contentPadding="22dp"
+                    app:shapeAppearanceOverlay="@style/HinhTron"
+                    app:tint="@color/tren_chinh_nhat" />
+
+                <TextView
+                    style="@style/ChuPhu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:text="Ảnh đại diện (tuỳ chọn)\nChạm để chọn ảnh" />
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/oHoTen"
+                style="@style/ONhap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="Họ và tên *">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/nhapHoTen"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName|textCapWords" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/oSoDienThoai"
+                style="@style/ONhap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="Số điện thoại *"
+                app:placeholderText="Ví dụ: 0912345678">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/nhapSoDienThoai"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone"
+                    android:maxLength="12" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/cbZalo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Zalo dùng số điện thoại này" />
+
+            <!-- Chọn trường: gõ để lọc danh sách -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/oTimTruong"
+                style="@style/ONhap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="Trường * (gõ để tìm, ví dụ: bach khoa)"
+                app:startIconDrawable="@drawable/ic_search">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/nhapTimTruong"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:id="@+id/dsTruong"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_the"
+                android:orientation="vertical" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/ONhap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:enabled="false"
+                android:hint="Thành phố (tự điền theo trường)">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/nhapThanhPho"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Điểm giao dịch quen thuộc -->
+            <TextView
+                android:id="@+id/tvNhanDiem"
+                style="@style/NhanMuc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Điểm giao dịch quen thuộc *" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/nhomDiem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                app:selectionRequired="false"
+                app:singleSelection="true" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/oGhiChuDiem"
+                style="@style/ONhap"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:hint="Mô tả nơi gặp (tối thiểu 10 ký tự)"
+                android:visibility="gone">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/nhapGhiChuDiem"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                style="@style/ChuPhu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Dùng làm địa điểm mặc định khi bạn đăng tin hoặc đặt mua."
+                android:textSize="13sp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Nút cố định ở cuối màn -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/be_mat"
+        android:orientation="vertical"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="6dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLuu"
+            style="@style/NutChinh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Lưu hồ sơ" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDeSau"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Để sau" />
+    </LinearLayout>
+</LinearLayout>

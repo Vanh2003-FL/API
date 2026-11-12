@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icon "calc" chuyển từ bản thiết kế unimarket-ui.html -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M7,2.5h10a2,2 0 0,1 2,2v15a2,2 0 0,1 -2,2h-10a2,2 0 0,1 -2,-2v-15a2,2 0 0,1 2,-2z"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M8.5,5.5h7a0.5,0.5 0 0,1 0.5,0.5v3a0.5,0.5 0 0,1 -0.5,0.5h-7a0.5,0.5 0 0,1 -0.5,-0.5v-3a0.5,0.5 0 0,1 0.5,-0.5z"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M8.5 13h.01M12 13h.01M15.5 13h.01M8.5 17h.01M12 17h.01M15.5 17h.01"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

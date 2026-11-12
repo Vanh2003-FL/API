@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Màn Đăng nhập (SCR-03): logo, lợi ích, form email/mật khẩu, đăng nhập nhanh tài khoản mẫu -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/nen"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Logo + tên app -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/bg_logo"
+                android:contentDescription="Logo UniMarket"
+                android:padding="12dp"
+                android:src="@drawable/ic_tag"
+                app:tint="@color/tren_chinh" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="UniMarket"
+                    android:textColor="@color/chu"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    style="@style/ChuPhu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chợ đồ cũ của sinh viên" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 3 lợi ích chính -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
+            android:text="Đăng tin trong 2 phút"
+            android:textColor="@color/chu"
+            app:drawableStartCompat="@drawable/ic_check"
+            app:drawableTint="@color/chinh" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
+            android:text="Gợi ý giá theo các tin tương tự"
+            android:textColor="@color/chu"
+            app:drawableStartCompat="@drawable/ic_check"
+            app:drawableTint="@color/chinh" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
+            android:text="Nhắn tin và chốt hẹn trong cùng một chỗ"
+            android:textColor="@color/chu"
+            app:drawableStartCompat="@drawable/ic_check"
+            app:drawableTint="@color/chinh" />
+
+        <!-- Form đăng nhập -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/oEmail"
+            style="@style/ONhap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:hint="Email">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/nhapEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/oMatKhau"
+            style="@style/ONhap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:hint="Mật khẩu"
+            app:endIconMode="password_toggle">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/nhapMatKhau"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDangNhap"
+            style="@style/NutChinh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="Đăng nhập" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnDangKy"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Chưa có tài khoản? Đăng ký" />
+
+        <!-- Đăng nhập nhanh bằng tài khoản mẫu (để demo khi bảo vệ) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_the"
+            android:orientation="vertical"
+            android:padding="14dp">
+
+            <TextView
+                style="@style/NhanMuc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Đăng nhập nhanh tài khoản mẫu" />
+
+            <TextView
+                style="@style/ChuPhu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Mật khẩu chung: 123456"
+                android:textSize="13sp" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/nhomDangNhapNhanh"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnXemKhach"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:text="Xem tin không cần đăng nhập" />
+    </LinearLayout>
+</ScrollView>
