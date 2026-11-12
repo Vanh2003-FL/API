@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Tab Tin nhắn (SCR-21): bộ lọc theo trạng thái hẹn + danh sách cuộc trao đổi -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/nen"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/ChuTieuDe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="4dp"
+        android:text="Tin nhắn" />
+
+    <HorizontalScrollView
+        android:id="@+id/khungLoc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/nhomLoc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            app:selectionRequired="true"
+            app:singleLine="true"
+            app:singleSelection="true" />
+    </HorizontalScrollView>
+
+    <!-- Chip "Tin: ... ✕" khi mở từ "N người đang hỏi mua" ở Tin của tôi -->
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chipLocTin"
+        style="@style/Widget.Material3.Chip.Input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:visibility="gone"
+        app:closeIconVisible="true" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/dsCuoc"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="16dp" />
+
+        <include
+            android:id="@+id/trong"
+            layout="@layout/trang_thai_trong" />
+    </FrameLayout>
+</LinearLayout>

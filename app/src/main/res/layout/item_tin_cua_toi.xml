@@ -81,6 +81,23 @@
                     android:layout_height="wrap_content"
                     android:textSize="12sp" />
 
+                <!-- "N người đang hỏi mua" → mở tab Tin nhắn đã lọc theo tin này -->
+                <TextView
+                    android:id="@+id/tvHoiMua"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:drawablePadding="4dp"
+                    android:gravity="center_vertical"
+                    android:paddingVertical="4dp"
+                    android:textColor="@color/thong_tin"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:drawableStartCompat="@drawable/ic_chat"
+                    app:drawableTint="@color/thong_tin" />
+
                 <TextView
                     android:id="@+id/tvNhanDayTin"
                     android:layout_width="wrap_content"

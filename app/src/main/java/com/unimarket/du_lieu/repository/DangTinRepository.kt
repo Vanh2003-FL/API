@@ -12,7 +12,8 @@ import com.unimarket.xu_ly_nghiep_vu.KiemTraTinDang
 import java.util.Calendar
 
 /**
- * Xử lý phía NGƯỜI BÁN: gợi ý giá, đăng tin, sửa tin, đánh dấu đã bán, đẩy tin, gia hạn, xoá.
+ * Xử lý phía NGƯỜI BÁN: gợi ý giá, đăng tin, sửa tin, đẩy tin, gia hạn, xoá.
+ * (Đánh dấu đã bán nằm ở GiaoDichRepository vì liên quan lịch hẹn và người mua.)
  * Lỗi nghiệp vụ được ném ra kèm câu tiếng Việt để màn hình hiển thị.
  */
 class DangTinRepository(context: Context) {
@@ -109,15 +110,6 @@ class DangTinRepository(context: Context) {
     /** Số người đã lưu từng tin: map id tin → số lượt lưu. */
     suspend fun demLuotLuu(dsTin: List<TinDang>): Map<Long, Int> =
         dsTin.associate { it.id to db.yeuThichDao().demTheoTin(it.id) }
-
-    /** Đánh dấu đã bán với giá chốt thật (dữ liệu quý cho gợi ý giá về sau). */
-    suspend fun danhDauDaBan(tinId: Long, giaBan: Long, nguoiMuaId: Long? = null) {
-        val tin = dao.layTheoId(tinId) ?: return
-        val bayGio = System.currentTimeMillis()
-        dao.capNhat(
-            tin.copy(trangThai = HangSo.TIN_DA_BAN, giaBan = giaBan, ngayBan = bayGio, nguoiMuaId = nguoiMuaId, dayTinDen = null, ngayCapNhat = bayGio)
-        )
-    }
 
     /** Đẩy tin (thanh toán mô phỏng): tin lên mục Nổi bật thêm soNgay ngày, cộng doanh thu. */
     suspend fun dayTin(tinId: Long, soNgay: Int, phi: Long) {

@@ -14,12 +14,14 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import com.unimarket.R
 import com.unimarket.databinding.ActivityTinCuaToiBinding
-import com.unimarket.databinding.BottomSheetDaBanBinding
 import com.unimarket.databinding.BottomSheetDayTinBinding
 import com.unimarket.databinding.ChipLocBinding
 import com.unimarket.du_lieu.repository.DangTinRepository
+import com.unimarket.du_lieu.repository.GiaoDichRepository
 import com.unimarket.du_lieu.repository.NguoiDungRepository
+import com.unimarket.man_hinh.chat.BangGiaoDich
 import com.unimarket.man_hinh.chi_tiet_san_pham.ChiTietSanPhamActivity
+import com.unimarket.man_hinh.trang_chu.ManHinhChinhActivity
 import com.unimarket.man_hinh.tai_khoan.BoSungHoSo
 import com.unimarket.mo_hinh.TinDang
 import com.unimarket.tien_ich.CanhLe
@@ -29,7 +31,8 @@ import kotlinx.coroutines.launch
 
 /**
  * Màn Tin của tôi: 5 tab Đang bán / Đang giao dịch / Đã bán / Hết hạn / Bị ẩn.
- * Thao tác: sửa, đánh dấu đã bán (nhập giá chốt), đẩy tin (thanh toán mô phỏng), gia hạn, xoá.
+ * Thao tác: sửa, đánh dấu đã bán (nhập giá chốt + chọn người mua), đẩy tin (thanh toán mô phỏng), gia hạn, xoá,
+ * xem những người đang hỏi mua.
  */
 class TinCuaToiActivity : AppCompatActivity(), TinCuaToiAdapter.ThaoTac {
 
@@ -51,10 +54,13 @@ class TinCuaToiActivity : AppCompatActivity(), TinCuaToiAdapter.ThaoTac {
 
     private lateinit var binding: ActivityTinCuaToiBinding
     private lateinit var repo: DangTinRepository
+    private lateinit var giaoDich: GiaoDichRepository
+    private var toiId = 0L
     private val adapter = TinCuaToiAdapter(this)
     private var tabDangChon = HangSo.TIN_DANG_BAN
     private var tatCa: List<TinDang> = emptyList()
     private var luotLuu: Map<Long, Int> = emptyMap()
+    private var hoiMua: Map<Long, Int> = emptyMap()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +68,7 @@ class TinCuaToiActivity : AppCompatActivity(), TinCuaToiAdapter.ThaoTac {
         setContentView(binding.root)
         CanhLe.chuaVienHeThong(binding.root)
         repo = DangTinRepository(this)
+        giaoDich = GiaoDichRepository(this)
         tabDangChon = intent.getStringExtra(EXTRA_TAB) ?: HangSo.TIN_DANG_BAN
 
         binding.thanhTieuDe.setNavigationOnClickListener { finish() }
@@ -94,8 +101,10 @@ class TinCuaToiActivity : AppCompatActivity(), TinCuaToiAdapter.ThaoTac {
                 finish()
                 return@launch
             }
+            toiId = nd.id
             tatCa = repo.layTinCuaToi(nd.id)
             luotLuu = repo.demLuotLuu(tatCa)
+            hoiMua = giaoDich.demHoiMua(tatCa)
             veDanhSach()
         }
     }
@@ -108,7 +117,7 @@ class TinCuaToiActivity : AppCompatActivity(), TinCuaToiAdapter.ThaoTac {
             chip.text = "$ten (${tatCa.count { it.trangThai == chip.tag }})"
         }
         val ds = tatCa.filter { it.trangThai == tabDangChon }
-        adapter.capNhat(ds, luotLuu)
+        adapter.capNhat(ds, luotLuu, hoiMua)
 
         val trong = binding.trong
         trong.root.visibility = if (ds.isEmpty()) View.VISIBLE else View.GONE
@@ -126,28 +135,25 @@ class TinCuaToiActivity : AppCompatActivity(), TinCuaToiAdapter.ThaoTac {
 
     override fun sua(tin: TinDang) = DangTinActivity.moSua(this, tin.id)
 
+    /** Đã bán: nhập giá chốt và chọn người mua (người đã chốt hẹn được chọn sẵn). */
     override fun daBan(tin: TinDang) {
-        val bang = BottomSheetDialog(this)
-        val b = BottomSheetDaBanBinding.inflate(layoutInflater)
-        bang.setContentView(b.root)
-        b.tvTenTin.text = "${tin.tieuDe} · giá rao ${DinhDang.gia(tin.gia)}"
-        b.nhapGiaBan.setText(tin.gia.toString())
-        b.btnHuy.setOnClickListener { bang.dismiss() }
-        b.btnXacNhan.setOnClickListener {
-            val gia = b.nhapGiaBan.text.toString().toLongOrNull()
-            if (gia == null || gia < 0) {
-                b.oGiaBan.error = "Nhập giá đã bán (0 nếu tặng)"
-                return@setOnClickListener
-            }
-            lifecycleScope.launch {
-                repo.danhDauDaBan(tin.id, gia)
-                bang.dismiss()
-                thongBao("Đã chuyển sang Đã bán với giá ${DinhDang.gia(gia)}")
-                taiDuLieu()
+        lifecycleScope.launch {
+            val ungVien = giaoDich.layUngVienNguoiMua(tin.id)
+            BangGiaoDich.moBangDaBan(this@TinCuaToiActivity, tin, ungVien) { gia, nguoiMuaId ->
+                lifecycleScope.launch {
+                    try {
+                        giaoDich.daBan(tin.id, toiId, gia, nguoiMuaId)
+                        thongBao("Đã chuyển sang Đã bán với giá ${DinhDang.gia(gia)}")
+                    } catch (e: IllegalStateException) {
+                        BangGiaoDich.baoLoi(this@TinCuaToiActivity, e.message)
+                    }
+                    taiDuLieu()
+                }
             }
         }
-        bang.show()
     }
+
+    override fun xemHoiMua(tin: TinDang) = ManHinhChinhActivity.moTinNhanTheoTin(this, tin.id, tin.tieuDe)
 
     /** Đẩy tin: cần hồ sơ đầy đủ; chọn gói rồi "thanh toán" (mô phỏng). */
     override fun dayTin(tin: TinDang) {

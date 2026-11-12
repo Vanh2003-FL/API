@@ -37,6 +37,20 @@
             android:maxLength="9" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!-- "Bạn bán cho ai?": người đã chốt hẹn được chọn sẵn; chỉ người được chọn mới đánh giá được (BR-30) -->
+    <TextView
+        android:id="@+id/tvNhanNguoiMua"
+        style="@style/NhanMuc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Bạn bán cho ai?" />
+
+    <RadioGroup
+        android:id="@+id/nhomNguoiMua"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

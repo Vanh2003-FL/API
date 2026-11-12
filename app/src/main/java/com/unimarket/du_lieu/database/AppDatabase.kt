@@ -30,7 +30,9 @@ import com.unimarket.mo_hinh.YeuThich
         NguoiDung::class, TinDang::class, YeuThich::class, CuocTroChuyen::class,
         TinNhan::class, LichHen::class, ThongBao::class, BaoCao::class
     ],
-    version = 2, // v2 (Sprint 3): thêm cột tin_dang.doanhThuDayTin
+    // v2 (Sprint 3): thêm cột tin_dang.doanhThuDayTin
+    // v3 (Sprint 4): thêm chỉ mục lich_hen.nguoiMuaId (đếm yêu cầu đang chờ của người mua)
+    version = 3,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {

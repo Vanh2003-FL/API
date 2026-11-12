@@ -22,6 +22,7 @@ import com.unimarket.du_lieu.repository.NguoiDungRepository
 import com.unimarket.du_lieu.repository.TinDangRepository
 import com.unimarket.man_hinh.dang_nhap.DangNhapActivity
 import com.unimarket.man_hinh.dang_tin.TinCuaToiActivity
+import com.unimarket.man_hinh.trang_chu.ManHinhChinhActivity
 import com.unimarket.mo_hinh.NguoiDung
 import com.unimarket.tien_ich.DinhDang
 import com.unimarket.tien_ich.HangSo
@@ -44,7 +45,9 @@ class TaiKhoanFragment : Fragment() {
         binding.btnDangNhap.setOnClickListener { veManDangNhap() }
 
         // Các mục chưa làm tới sẽ báo sprint thực hiện
-        datHang(binding.hangTinNhan, R.drawable.ic_chat, "Tin nhắn & giao dịch", "Chat và lịch hẹn") { baoSprint("Tin nhắn", 4) }
+        datHang(binding.hangTinNhan, R.drawable.ic_chat, "Tin nhắn & giao dịch", "Chat và lịch hẹn") {
+            (activity as? ManHinhChinhActivity)?.chonTab(R.id.tab_tin_nhan)
+        }
         datHang(binding.hangThongBao, R.drawable.ic_bell, "Thông báo", "Có người mua, chốt hẹn, nhắc hẹn") { baoSprint("Thông báo", 5) }
         datHang(binding.hangTinCuaToi, R.drawable.ic_list, "Tin của tôi", "Đang bán, đã bán, hết hạn") { TinCuaToiActivity.mo(requireContext()) }
         datHang(binding.hangDaLuu, R.drawable.ic_heart, "Đã lưu", "0 tin") {

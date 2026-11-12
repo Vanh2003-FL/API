@@ -43,6 +43,9 @@
             android:name=".man_hinh.dang_tin.DangTinActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".man_hinh.dang_tin.TinCuaToiActivity" />
+        <activity
+            android:name=".man_hinh.chat.PhongChatActivity"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

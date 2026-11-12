@@ -16,7 +16,7 @@ import androidx.room.PrimaryKey
         ForeignKey(entity = CuocTroChuyen::class, parentColumns = ["id"], childColumns = ["cuocTroChuyenId"], onDelete = ForeignKey.CASCADE),
         ForeignKey(entity = TinDang::class, parentColumns = ["id"], childColumns = ["tinDangId"], onDelete = ForeignKey.CASCADE)
     ],
-    indices = [Index("cuocTroChuyenId"), Index("tinDangId")]
+    indices = [Index("cuocTroChuyenId"), Index("tinDangId"), Index("nguoiMuaId")]
 )
 data class LichHen(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,

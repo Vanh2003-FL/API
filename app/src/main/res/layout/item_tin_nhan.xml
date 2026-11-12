@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Một tin nhắn chữ. Căn trái (bên kia) hay phải (mình) và màu bong bóng được đặt bằng code -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/hang"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingVertical="3dp">
+
+    <TextView
+        android:id="@+id/tvNoiDung"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="280dp"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="9dp"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/tvGio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="6dp"
+        android:layout_marginTop="2dp"
+        android:textColor="@color/chu_phu"
+        android:textSize="11sp" />
+</LinearLayout>

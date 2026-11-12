@@ -132,6 +132,35 @@ object HangSo {
         GoiDayTin(7, 20_000L, "Gói 7 ngày mùa tốt nghiệp")
     )
 
+    // ===================== LỊCH HẸN GIAO DỊCH =====================
+    // CHO_XAC_NHAN → DA_CHOT → HOAN_TAT, hoặc DA_HUY bất cứ lúc nào trước khi hoàn tất
+    const val LICH_CHO_XAC_NHAN = "CHO_XAC_NHAN"
+    const val LICH_DA_CHOT = "DA_CHOT"
+    const val LICH_HOAN_TAT = "HOAN_TAT"
+    const val LICH_DA_HUY = "DA_HUY"
+
+    // Loại thẻ sự kiện trong phòng chat (cột tin_nhan.suKien)
+    const val SK_DAT_MUA = "DAT_MUA"
+    const val SK_DOI_HEN = "DOI_HEN"
+    const val SK_CHOT_HEN = "CHOT_HEN"
+    const val SK_HUY_HEN = "HUY_HEN"
+    const val SK_NHAC_HEN = "NHAC_HEN"
+    const val SK_DA_BAN = "DA_BAN"
+    const val SK_MOI_DAT_MUA = "MOI_DAT_MUA"
+    const val SK_DANH_GIA = "DANH_GIA"
+
+    const val TIN_NHAN_VAN_BAN = "VAN_BAN"
+    const val TIN_NHAN_SU_KIEN = "SU_KIEN"
+
+    val LY_DO_HUY_HEN = listOf("Không tiện giờ hẹn", "Đổi ý, không mua nữa", "Đã mua được món khác", "Lý do khác")
+    val LY_DO_TU_CHOI = listOf("Đã bán cho người khác", "Không tiện giờ hẹn", "Địa điểm quá xa", "Lý do khác")
+
+    const val SO_YEU_CAU_CHO_TOI_DA = 5      // BR-33: tối đa 5 yêu cầu mua đang chờ cùng lúc
+    const val PHUT_HEN_SOM_NHAT = 30         // BR-37: giờ hẹn sau hiện tại ít nhất 30 phút
+    const val SO_NGAY_HEN_TOI_DA = 7         // BR-37: không hẹn quá 7 ngày
+    const val SO_KY_TU_DIA_DIEM_TU_NHAP = 10 // BR-34: địa điểm tự nhập dài ít nhất 10 ký tự
+
     const val MOT_NGAY = 24L * 60 * 60 * 1000
     const val MOT_GIO = 60L * 60 * 1000
+    const val MOT_PHUT = 60L * 1000
 }

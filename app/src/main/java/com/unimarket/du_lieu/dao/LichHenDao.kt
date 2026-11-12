@@ -29,4 +29,12 @@ interface LichHenDao {
     /** Lịch hẹn mới nhất của một phòng chat (để hiện ở thanh ghim). */
     @Query("SELECT * FROM lich_hen WHERE cuocTroChuyenId = :cuocId ORDER BY ngayTao DESC, id DESC LIMIT 1")
     suspend fun layMoiNhatCuaCuoc(cuocId: Long): LichHen?
+
+    /** Các lịch hẹn còn hiệu lực (chờ xác nhận hoặc đã chốt) của một tin. */
+    @Query("SELECT * FROM lich_hen WHERE tinDangId = :tinDangId AND trangThai IN ('CHO_XAC_NHAN', 'DA_CHOT')")
+    suspend fun layDangHoatDongCuaTin(tinDangId: Long): List<LichHen>
+
+    /** BR-33: số yêu cầu mua đang chờ của một người mua (tối đa 5). */
+    @Query("SELECT COUNT(*) FROM lich_hen WHERE nguoiMuaId = :nguoiMuaId AND trangThai = 'CHO_XAC_NHAN'")
+    suspend fun demChoCuaNguoiMua(nguoiMuaId: Long): Int
 }

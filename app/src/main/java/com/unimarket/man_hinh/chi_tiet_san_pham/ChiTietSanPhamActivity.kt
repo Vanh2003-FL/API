@@ -19,12 +19,16 @@ import com.unimarket.databinding.BottomSheetBaoCaoBinding
 import com.unimarket.databinding.HangMenuBinding
 import com.unimarket.databinding.HangThuocTinhBinding
 import com.unimarket.du_lieu.repository.DangTinRepository
+import com.unimarket.du_lieu.repository.GiaoDichRepository
 import com.unimarket.du_lieu.repository.NguoiDungRepository
 import com.unimarket.du_lieu.repository.TinDangRepository
 import com.unimarket.du_lieu.repository.TinDangRepository.KetQuaBaoCao
+import com.unimarket.man_hinh.chat.BangGiaoDich
+import com.unimarket.man_hinh.chat.PhongChatActivity
 import com.unimarket.man_hinh.dang_tin.TinCuaToiActivity
 import com.unimarket.man_hinh.tai_khoan.BoSungHoSo
 import com.unimarket.man_hinh.trang_chu.TinDangAdapter
+import com.unimarket.mo_hinh.LichHen
 import com.unimarket.mo_hinh.NguoiDung
 import com.unimarket.mo_hinh.TinDang
 import com.unimarket.tien_ich.CanhLe
@@ -32,13 +36,15 @@ import com.unimarket.tien_ich.DinhDang
 import com.unimarket.tien_ich.HangSo
 import com.unimarket.tien_ich.LuuAnh
 import com.unimarket.xu_ly_nghiep_vu.GoiYGia
+import com.unimarket.xu_ly_nghiep_vu.QuyTacLichHen
 import kotlinx.coroutines.launch
 
 /**
  * Màn Chi tiết tin đăng.
  * - Mỗi lần người KHÁC (không phải người bán) mở tin thì lượt xem +1.
  * - Lưu tin, chia sẻ, báo cáo vi phạm, gọi / Zalo cho người bán.
- * - Nút Chat và Đặt mua cần hồ sơ đầy đủ (phòng chat + lịch hẹn làm ở Sprint 4).
+ * - Nút Chat và Đặt mua cần hồ sơ đầy đủ. Đặt mua xong mở thẳng phòng chat;
+ *   quay lại thì nút chính đổi thành "Xem trao đổi" (bảng 3.3.2).
  */
 class ChiTietSanPhamActivity : AppCompatActivity() {
 
@@ -67,6 +73,8 @@ class ChiTietSanPhamActivity : AppCompatActivity() {
     private var dsAnh: List<String> = emptyList()
     private var viTriAnh = 0
     private var banNhap: TinDang? = null   // khác null = đang ở chế độ xem trước
+    private var cuocId: Long? = null       // phòng chat của người xem với tin này (nếu đã có)
+    private var lichCuaToi: LichHen? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,12 +116,12 @@ class ChiTietSanPhamActivity : AppCompatActivity() {
             return
         }
 
-        // Chat và Đặt mua: cần hồ sơ đầy đủ (cổng chặn), chức năng thật làm ở Sprint 4
-        binding.btnChat.setOnClickListener {
-            BoSungHoSo.kiemTra(this) { thongBao("Phòng chat sẽ làm ở Sprint 4") }
-        }
+        // Chat và Đặt mua: cần hồ sơ đầy đủ (cổng chặn BR-13)
+        binding.btnChat.setOnClickListener { BoSungHoSo.kiemTra(this) { moPhongChat() } }
         binding.btnDatMua.setOnClickListener {
-            BoSungHoSo.kiemTra(this) { thongBao("Đặt mua + lịch hẹn sẽ làm ở Sprint 4") }
+            val phong = cuocId
+            if (phong != null && QuyTacLichHen.dangHoatDong(lichCuaToi)) PhongChatActivity.mo(this, phong)
+            else BoSungHoSo.kiemTra(this) { datMua() }
         }
     }
 
@@ -145,6 +153,11 @@ class ChiTietSanPhamActivity : AppCompatActivity() {
             tin = t
             nguoiXem = nx
             daLuu = nx != null && t.id in repo.layIdDaLuu(nx.id)
+            if (nx != null && nx.id != t.nguoiBanId) {
+                val (phong, lich) = GiaoDichRepository(this@ChiTietSanPhamActivity).lichCuaNguoiMua(t.id, nx.id)
+                cuocId = phong
+                lichCuaToi = lich
+            }
             val ttNguoiBan = repo.thongTinNguoiBan(t.nguoiBanId)
             nguoiBan = ttNguoiBan.nguoiDung
 
@@ -268,8 +281,46 @@ class ChiTietSanPhamActivity : AppCompatActivity() {
         binding.btnChat.visibility = if (cuaToi) View.GONE else View.VISIBLE
         binding.btnDatMua.visibility = if (cuaToi) View.GONE else View.VISIBLE
         binding.tvTinCuaBan.visibility = if (cuaToi) View.VISIBLE else View.GONE
-        binding.btnChat.isEnabled = conBan
-        binding.btnDatMua.isEnabled = conBan
+        // Đã có lịch hẹn đang hoạt động → nút chính thành "Xem trao đổi"; tin hết bán vẫn xem lại được phòng chat cũ
+        val dangHen = QuyTacLichHen.dangHoatDong(lichCuaToi)
+        if (banNhap != null) return // chế độ xem trước giữ nhãn "Sửa lại" / "Đăng tin"
+        binding.btnDatMua.text = if (dangHen) "Xem trao đổi" else "Đặt mua"
+        binding.btnDatMua.setIconResource(if (dangHen) R.drawable.ic_chat else R.drawable.ic_cal)
+        binding.btnChat.isEnabled = conBan || cuocId != null
+        binding.btnDatMua.isEnabled = conBan || dangHen
+    }
+
+    // ===================== CHAT / ĐẶT MUA =====================
+    private fun moPhongChat() {
+        val t = tin ?: return
+        lifecycleScope.launch {
+            val nd = NguoiDungRepository(this@ChiTietSanPhamActivity).layNguoiDangNhap() ?: return@launch
+            try {
+                PhongChatActivity.mo(this@ChiTietSanPhamActivity, GiaoDichRepository(this@ChiTietSanPhamActivity).moPhong(t.id, nd.id))
+            } catch (e: IllegalStateException) {
+                BangGiaoDich.baoLoi(this@ChiTietSanPhamActivity, e.message)
+            }
+        }
+    }
+
+    /** Đặt mua (UC-34): chọn địa điểm + giờ → tạo lịch hẹn → mở thẳng phòng chat. */
+    private fun datMua() {
+        val t = tin ?: return
+        val canhBao = if (t.trangThai == HangSo.TIN_DANG_GIAO_DICH)
+            "Đã có người hẹn mua trước, yêu cầu của bạn sẽ xếp hàng." else null
+        BangGiaoDich.moBangHen(this, t, null, canhBao) { kq ->
+            lifecycleScope.launch {
+                val nd = NguoiDungRepository(this@ChiTietSanPhamActivity).layNguoiDangNhap() ?: return@launch
+                try {
+                    val phong = GiaoDichRepository(this@ChiTietSanPhamActivity)
+                        .datMua(t.id, nd.id, kq.diaDiem, kq.thoiGian, kq.loiNhan)
+                    thongBao("Đã gửi yêu cầu. Chờ người bán xác nhận địa điểm.")
+                    PhongChatActivity.mo(this@ChiTietSanPhamActivity, phong)
+                } catch (e: IllegalStateException) {
+                    BangGiaoDich.baoLoi(this@ChiTietSanPhamActivity, e.message)
+                }
+            }
+        }
     }
 
     private fun hienNguoiBan(t: TinDang, tt: TinDangRepository.ThongTinNguoiBan) {

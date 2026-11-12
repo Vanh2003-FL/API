@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bảng "Đặt mua & hẹn địa điểm" (SCR-31), dùng lại cho "Đổi địa điểm / giờ hẹn" (SCR-32) -->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/tvTieuDe"
+            style="@style/ChuTieuDe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đặt mua" />
+
+        <TextView
+            android:id="@+id/tvTenTin"
+            style="@style/ChuPhu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp" />
+
+        <!-- Dòng "Đề xuất hiện tại" khi đổi hẹn -->
+        <TextView
+            android:id="@+id/tvDeXuatHienTai"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_the_su_kien"
+            android:padding="10dp"
+            android:textColor="@color/chu"
+            android:textSize="13sp"
+            android:visibility="gone" />
+
+        <!-- Cảnh báo xếp hàng khi tin đã có người chốt hẹn (BR-36) -->
+        <TextView
+            android:id="@+id/tvCanhBao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_canh_bao"
+            android:drawablePadding="8dp"
+            android:padding="10dp"
+            android:textColor="@color/canh_bao"
+            android:textSize="13sp"
+            android:visibility="gone"
+            app:drawableStartCompat="@drawable/ic_info"
+            app:drawableTint="@color/canh_bao" />
+
+        <TextView
+            style="@style/NhanMuc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Địa điểm hẹn" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/nhomDiaDiem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            app:selectionRequired="true"
+            app:singleSelection="true" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/oDiaDiemKhac"
+            style="@style/ONhap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Mô tả địa điểm (ít nhất 10 ký tự)"
+            android:visibility="gone">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/nhapDiaDiemKhac"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapSentences"
+                android:maxLength="80" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            style="@style/NhanMuc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="Giờ hẹn" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/nhomGio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            app:selectionRequired="true"
+            app:singleSelection="true" />
+
+        <TextView
+            android:id="@+id/tvLoiGio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/loi"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/oLoiNhan"
+            style="@style/ONhap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:hint="Lời nhắn cho người bán (tuỳ chọn)">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/nhapLoiNhan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapSentences"
+                android:maxLength="150" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:drawablePadding="10dp"
+            android:text="Nên hẹn ở nơi công cộng trong trường và kiểm tra hàng trước khi trả tiền."
+            android:textColor="@color/chu"
+            android:textSize="13sp"
+            app:drawableStartCompat="@drawable/ic_bulb"
+            app:drawableTint="@color/gia" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnGui"
+            style="@style/NutChinh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:text="Gửi yêu cầu mua" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnHuy"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Đóng" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

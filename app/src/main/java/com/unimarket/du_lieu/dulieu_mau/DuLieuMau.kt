@@ -3,14 +3,19 @@ package com.unimarket.du_lieu.dulieu_mau
 import androidx.room.withTransaction
 import com.unimarket.du_lieu.database.AppDatabase
 import com.unimarket.mo_hinh.BaoCao
+import com.unimarket.mo_hinh.CuocTroChuyen
+import com.unimarket.mo_hinh.LichHen
 import com.unimarket.mo_hinh.NguoiDung
+import com.unimarket.mo_hinh.ThongBao
 import com.unimarket.mo_hinh.TinDang
+import com.unimarket.mo_hinh.TinNhan
 import com.unimarket.mo_hinh.YeuThich
 import com.unimarket.tien_ich.DinhDang
 import com.unimarket.tien_ich.HangSo
 import com.unimarket.tien_ich.HangSo.MOT_GIO
 import com.unimarket.tien_ich.HangSo.MOT_NGAY
 import com.unimarket.tien_ich.MaHoa
+import com.unimarket.xu_ly_nghiep_vu.QuyTacLichHen
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -246,5 +251,169 @@ object DuLieuMau {
                 BaoCao(tinDangId = aoKhoac, nguoiBaoCaoId = id("lan"), lyDo = "Sai danh mục", ngayTao = bayGio - 30 * MOT_GIO)
             )
         )
+
+        // ---------- 5. Phòng chat, lịch hẹn, đánh giá ----------
+        napGiaoDich(db, bayGio, dsTin, idTin, ::id, ::tinCo)
+    }
+
+    /**
+     * Giao dịch mẫu:
+     * (a) Mỗi tin ĐÃ BÁN có người mua → một phòng chat + lịch HOAN_TAT + đánh giá (người bán có điểm sao thật).
+     * (b) 4 cuộc trao đổi đang diễn ra ở các trạng thái khác nhau để demo tab Tin nhắn và thanh ghim.
+     */
+    private suspend fun napGiaoDich(
+        db: AppDatabase, bayGio: Long, dsTin: List<TinDang>, idTin: List<Long>,
+        id: (String) -> Long, tinCo: (String) -> Long
+    ) {
+        val cuocDao = db.cuocTroChuyenDao()
+        val lichDao = db.lichHenDao()
+        val tinNhanDao = db.tinNhanDao()
+        fun luc(gioTruoc: Double) = bayGio - (gioTruoc * MOT_GIO).toLong()
+        fun chu(cuoc: Long, nguoi: Long, noiDung: String, thoiGian: Long) =
+            TinNhan(cuocTroChuyenId = cuoc, nguoiGuiId = nguoi, noiDung = noiDung, thoiGian = thoiGian)
+        fun suKien(cuoc: Long, nguoi: Long, loai: String, cumTu: String, thoiGian: Long, lich: LichHen? = null) =
+            TinNhan(
+                cuocTroChuyenId = cuoc, nguoiGuiId = nguoi, loai = HangSo.TIN_NHAN_SU_KIEN, noiDung = cumTu, suKien = loai,
+                diaDiem = lich?.diaDiem, thoiGianHen = lich?.thoiGianHen, thoiGian = thoiGian
+            )
+        fun sao(n: Int) = "★".repeat(n) + "☆".repeat(5 - n)
+
+        // (a) Tin đã bán → đánh giá
+        val dsSao = listOf(5, 4, 5, 5, 4, 5)
+        val dsNhanXet = listOf(
+            "Người bán nhiệt tình, đồ đúng mô tả", "Đúng hẹn, hàng như ảnh", "Giao dịch nhanh gọn",
+            "Hàng ok, giá hợp lý", "Bạn bán dễ thương, sẽ ủng hộ tiếp", ""
+        )
+        var thuTu = 0
+        dsTin.forEachIndexed { i, t ->
+            val nguoiMua = t.nguoiMuaId ?: return@forEachIndexed
+            val ngayBan = t.ngayBan ?: return@forEachIndexed
+            val soSao = dsSao[thuTu % dsSao.size]
+            val nhanXet = dsNhanXet[thuTu % dsNhanXet.size]
+            thuTu++
+            val gia = DinhDang.gia(t.giaBan ?: t.gia)
+            val cuoc = cuocDao.them(
+                CuocTroChuyen(
+                    tinDangId = idTin[i], nguoiMuaId = nguoiMua, nguoiBanId = t.nguoiBanId,
+                    tinNhanCuoi = "Đánh giá ${sao(soSao)}", capNhatLuc = ngayBan + MOT_GIO
+                )
+            )
+            val lich = LichHen(
+                cuocTroChuyenId = cuoc, tinDangId = idTin[i], nguoiMuaId = nguoiMua, nguoiBanId = t.nguoiBanId,
+                maTruong = t.maTruong, diaDiem = t.diemGiaoDich, thoiGianHen = ngayBan,
+                trangThai = HangSo.LICH_HOAN_TAT, nguoiDeXuatId = nguoiMua, soSao = soSao, nhanXet = nhanXet.ifEmpty { null },
+                ngayTao = ngayBan - MOT_NGAY, ngayChot = ngayBan - MOT_NGAY + MOT_GIO, hetHanLuc = ngayBan
+            )
+            lichDao.them(lich)
+            val danhGia = "đánh giá người bán ${sao(soSao)}" + if (nhanXet.isNotEmpty()) " · “$nhanXet”" else ""
+            tinNhanDao.themNhieu(
+                listOf(
+                    chu(cuoc, nguoiMua, "Chào bạn, món này còn không?", ngayBan - MOT_NGAY - MOT_GIO),
+                    chu(cuoc, t.nguoiBanId, "Còn bạn nhé", ngayBan - MOT_NGAY - 30 * 60_000),
+                    suKien(cuoc, nguoiMua, HangSo.SK_DAT_MUA, "gửi yêu cầu mua", ngayBan - MOT_NGAY, lich),
+                    suKien(cuoc, t.nguoiBanId, HangSo.SK_CHOT_HEN, "xác nhận · lịch hẹn đã chốt", ngayBan - MOT_NGAY + MOT_GIO, lich),
+                    suKien(cuoc, t.nguoiBanId, HangSo.SK_DA_BAN, "đánh dấu đã bán · $gia", ngayBan),
+                    suKien(cuoc, nguoiMua, HangSo.SK_DANH_GIA, danhGia, ngayBan + MOT_GIO)
+                )
+            )
+        }
+
+        // (b) Các cuộc trao đổi đang diễn ra; giờ hẹn lấy theo gợi ý "Mai 11:30", "Mai 17:00"
+        val goiY = QuyTacLichHen.goiYGioHen(bayGio).toMap()
+        val mai1130 = goiY.getValue("Mai 11:30")
+        val mai1700 = goiY.getValue("Mai 17:00")
+
+        // 1. Huy hỏi mua sách Kinh tế lượng của Lan → CHỜ LAN XÁC NHẬN
+        val sachKTL = tinCo("Sách Kinh tế lượng (Nguyễn Quang Dong)")
+        val c1 = cuocDao.them(
+            CuocTroChuyen(
+                tinDangId = sachKTL, nguoiMuaId = id("huy"), nguoiBanId = id("lan"),
+                tinNhanCuoi = "Mình lấy luôn nếu sách ok", chuaDocNguoiBan = 2, capNhatLuc = luc(0.08)
+            )
+        )
+        val l1 = LichHen(
+            cuocTroChuyenId = c1, tinDangId = sachKTL, nguoiMuaId = id("huy"), nguoiBanId = id("lan"), maTruong = "NEU",
+            diaDiem = "Thư viện", thoiGianHen = mai1130, loiNhan = "Mình lấy luôn nếu sách ok",
+            nguoiDeXuatId = id("huy"), ngayTao = luc(0.1), hetHanLuc = luc(0.1) + MOT_NGAY
+        )
+        lichDao.them(l1)
+        tinNhanDao.themNhieu(
+            listOf(
+                chu(c1, id("huy"), "Chào bạn, sách còn không?", luc(5.0)),
+                chu(c1, id("lan"), "Còn bạn nhé, sách mình giữ kỹ lắm", luc(4.5)),
+                suKien(c1, id("huy"), HangSo.SK_DAT_MUA, "gửi yêu cầu mua", luc(0.1), l1),
+                chu(c1, id("huy"), "Mình lấy luôn nếu sách ok", luc(0.08))
+            )
+        )
+
+        // 2. Huy chỉ nhắn tin trả giá giáo trình Vi mô của Minh Anh → CHƯA ĐẶT MUA
+        val viMo = tinCo("Giáo trình Kinh tế vi mô – NEU")
+        val c2 = cuocDao.them(
+            CuocTroChuyen(
+                tinDangId = viMo, nguoiMuaId = id("huy"), nguoiBanId = id("minhanh"),
+                tinNhanCuoi = "Mình để 43k nhé, sách còn mới lắm", chuaDocNguoiMua = 1, capNhatLuc = luc(2.0)
+            )
+        )
+        tinNhanDao.themNhieu(
+            listOf(
+                chu(c2, id("huy"), "Bớt còn 40k được không bạn?", luc(3.0)),
+                chu(c2, id("minhanh"), "Mình để 43k nhé, sách còn mới lắm", luc(2.0))
+            )
+        )
+
+        // 3. Lan mua Casio của My → ĐÃ CHỐT HẸN, tin chuyển "Đang giao dịch"
+        val casio = tinCo("Máy tính Casio FX-580VN X")
+        val c3 = cuocDao.them(
+            CuocTroChuyen(
+                tinDangId = casio, nguoiMuaId = id("lan"), nguoiBanId = id("my"),
+                tinNhanCuoi = "Ok bạn, 5h chiều mai mình ở thư viện tầng 1", capNhatLuc = luc(18.0)
+            )
+        )
+        val l3 = LichHen(
+            cuocTroChuyenId = c3, tinDangId = casio, nguoiMuaId = id("lan"), nguoiBanId = id("my"), maTruong = "FTU",
+            diaDiem = "Thư viện", thoiGianHen = mai1700, trangThai = HangSo.LICH_DA_CHOT,
+            nguoiDeXuatId = id("lan"), ngayTao = luc(20.0), ngayChot = luc(19.0), hetHanLuc = luc(20.0) + MOT_NGAY
+        )
+        lichDao.them(l3)
+        tinNhanDao.themNhieu(
+            listOf(
+                chu(c3, id("lan"), "Máy còn bảo hành không bạn?", luc(21.0)),
+                chu(c3, id("my"), "Còn 6 tháng nhé, đủ hộp", luc(20.5)),
+                suKien(c3, id("lan"), HangSo.SK_DAT_MUA, "gửi yêu cầu mua", luc(20.0), l3),
+                suKien(c3, id("my"), HangSo.SK_CHOT_HEN, "xác nhận · lịch hẹn đã chốt", luc(19.0), l3),
+                chu(c3, id("my"), "Ok bạn, 5h chiều mai mình ở thư viện tầng 1", luc(18.0))
+            )
+        )
+        db.tinDangDao().layTheoId(casio)?.let { db.tinDangDao().capNhat(it.copy(trangThai = HangSo.TIN_DANG_GIAO_DICH)) }
+
+        // 4. Trang hỏi quạt của Lan → CHƯA ĐẶT MUA, Lan chưa đọc
+        val quat = tinCo("Quạt bàn Asia 16 inch")
+        val c4 = cuocDao.them(
+            CuocTroChuyen(
+                tinDangId = quat, nguoiMuaId = id("trang"), nguoiBanId = id("lan"),
+                tinNhanCuoi = "Quạt còn chạy êm không bạn?", chuaDocNguoiBan = 1, capNhatLuc = luc(1.0)
+            )
+        )
+        tinNhanDao.them(chu(c4, id("trang"), "Quạt còn chạy êm không bạn?", luc(1.0)))
+
+        // Thông báo đi kèm (trung tâm thông báo làm ở Sprint 5)
+        val tb = db.thongBaoDao()
+        tb.them(
+            ThongBao(
+                nguoiNhanId = id("lan"), loai = "DAT_MUA", tieuDe = "Có người muốn mua",
+                noiDung = "Phạm Đức Huy muốn mua “Sách Kinh tế lượng (Nguyễn Quang Dong)” · Thư viện, ${DinhDang.gioHen(mai1130, bayGio)}",
+                loaiLienKet = "CHAT", lienKetId = c1, thoiGian = luc(0.1)
+            )
+        )
+        for (nguoi in listOf(id("lan"), id("my"))) {
+            tb.them(
+                ThongBao(
+                    nguoiNhanId = nguoi, loai = "CHOT_HEN", tieuDe = "Đã chốt hẹn",
+                    noiDung = "Thư viện, ${DinhDang.gioHen(mai1700, bayGio)} · “Máy tính Casio FX-580VN X”",
+                    loaiLienKet = "CHAT", lienKetId = c3, daDoc = nguoi == id("my"), thoiGian = luc(19.0)
+                )
+            )
+        }
     }
 }
+

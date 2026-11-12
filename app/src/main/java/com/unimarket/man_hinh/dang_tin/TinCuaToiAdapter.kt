@@ -26,15 +26,18 @@ class TinCuaToiAdapter(private val thaoTac: ThaoTac) : RecyclerView.Adapter<TinC
         fun dayTin(tin: TinDang)
         fun giaHan(tin: TinDang)
         fun xoa(tin: TinDang)
+        fun xemHoiMua(tin: TinDang)
     }
 
     private var ds: List<TinDang> = emptyList()
     private var luotLuu: Map<Long, Int> = emptyMap()
+    private var hoiMua: Map<Long, Int> = emptyMap()
     private val ngayThang = SimpleDateFormat("dd/MM", Locale("vi"))
 
-    fun capNhat(dsMoi: List<TinDang>, soLuotLuu: Map<Long, Int>) {
+    fun capNhat(dsMoi: List<TinDang>, soLuotLuu: Map<Long, Int>, soHoiMua: Map<Long, Int>) {
         ds = dsMoi
         luotLuu = soLuotLuu
+        hoiMua = soHoiMua
         notifyDataSetChanged()
     }
 
@@ -68,7 +71,7 @@ class TinCuaToiAdapter(private val thaoTac: ThaoTac) : RecyclerView.Adapter<TinC
                 val conNgay = ((tin.ngayHetHan - bayGio + HangSo.MOT_NGAY - 1) / HangSo.MOT_NGAY).coerceAtLeast(0)
                 "${tin.luotXem} lượt xem · ${luotLuu[tin.id] ?: 0} lượt lưu · còn $conNgay ngày"
             }
-            HangSo.TIN_DANG_GIAO_DICH -> "Đã có người hẹn mua · ${tin.luotXem} lượt xem"
+            HangSo.TIN_DANG_GIAO_DICH -> "Đã chốt hẹn với người mua · ${tin.luotXem} lượt xem"
             HangSo.TIN_DA_BAN -> "Bán được ${DinhDang.gia(tin.giaBan ?: tin.gia)}" +
                 (tin.ngayBan?.let { " · ngày ${ngayThang.format(Date(it))}" } ?: "")
             HangSo.TIN_HET_HAN -> "Hết hạn · đã gia hạn ${tin.soLanGiaHan}/${HangSo.SO_LAN_GIA_HAN_TOI_DA} lần"
@@ -84,6 +87,12 @@ class TinCuaToiAdapter(private val thaoTac: ThaoTac) : RecyclerView.Adapter<TinC
         val dangBan = tin.trangThai == HangSo.TIN_DANG_BAN
         val giaoDich = tin.trangThai == HangSo.TIN_DANG_GIAO_DICH
         val hetHan = tin.trangThai == HangSo.TIN_HET_HAN
+
+        // "N người đang hỏi mua" → tab Tin nhắn lọc theo tin này
+        val soHoiMua = hoiMua[tin.id] ?: 0
+        b.tvHoiMua.visibility = if ((dangBan || giaoDich) && soHoiMua > 0) View.VISIBLE else View.GONE
+        b.tvHoiMua.text = "$soHoiMua người đang hỏi mua ›"
+        b.tvHoiMua.setOnClickListener { thaoTac.xemHoiMua(tin) }
         b.btnSua.visibility = if (dangBan || hetHan) View.VISIBLE else View.GONE
         b.btnDaBan.visibility = if (dangBan || giaoDich) View.VISIBLE else View.GONE
         b.btnDayTin.visibility = if (dangBan && !noiBat) View.VISIBLE else View.GONE

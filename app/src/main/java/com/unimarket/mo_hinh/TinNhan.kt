@@ -25,7 +25,7 @@ data class TinNhan(
     val nguoiGuiId: Long,
     val loai: String = "VAN_BAN",        // VAN_BAN / SU_KIEN
     val noiDung: String = "",
-    val suKien: String? = null,          // DAT_MUA / DOI_HEN / CHOT_HEN / HUY_HEN / NHAC_HEN / DA_BAN / MOI_DANH_GIA
+    val suKien: String? = null,          // DAT_MUA / DOI_HEN / CHOT_HEN / HUY_HEN / NHAC_HEN / DA_BAN / MOI_DAT_MUA / DANH_GIA
     val diaDiem: String? = null,         // địa điểm tại thời điểm xảy ra sự kiện
     val thoiGianHen: Long? = null,
     val thoiGian: Long = System.currentTimeMillis()

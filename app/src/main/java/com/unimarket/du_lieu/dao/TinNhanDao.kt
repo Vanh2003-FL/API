@@ -14,4 +14,7 @@ interface TinNhanDao {
 
     @Query("SELECT * FROM tin_nhan WHERE cuocTroChuyenId = :cuocId ORDER BY thoiGian, id")
     suspend fun layTheoCuoc(cuocId: Long): List<TinNhan>
+
+    @Insert
+    suspend fun themNhieu(ds: List<TinNhan>)
 }
