@@ -6,31 +6,42 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.unimarket.R
 import com.unimarket.databinding.ItemTinDangBinding
 import com.unimarket.mo_hinh.TinDang
 import com.unimarket.tien_ich.DinhDang
 import com.unimarket.tien_ich.HangSo
 import com.unimarket.tien_ich.LuuAnh
+import com.unimarket.xu_ly_nghiep_vu.LocTinDang
 
 /**
- * Adapter hiển thị danh sách tin đăng dạng thẻ (dùng ở Trang chủ, kết quả tìm kiếm, Đã lưu...).
- * khiBam: việc cần làm khi người dùng chạm vào một thẻ.
+ * Adapter hiển thị danh sách tin đăng dạng thẻ (Trang chủ, Tìm kiếm, Đã lưu, Tin tương tự...).
+ * - ngang = true: thẻ rộng cố định để xếp thành hàng ngang cuộn được.
+ * - khiBam: chạm vào thẻ (mở chi tiết).
+ * - khiBamTim: chạm vào trái tim (lưu / bỏ lưu); null thì ẩn nút trái tim.
  */
 class TinDangAdapter(
+    private val ngang: Boolean = false,
+    private val khiBamTim: ((TinDang) -> Unit)? = null,
     private val khiBam: (TinDang) -> Unit
 ) : RecyclerView.Adapter<TinDangAdapter.ONhin>() {
 
     private var ds: List<TinDang> = emptyList()
+    private var daLuu: Set<Long> = emptySet()
 
-    fun capNhat(dsMoi: List<TinDang>) {
+    fun capNhat(dsMoi: List<TinDang>, idDaLuu: Set<Long> = daLuu) {
         ds = dsMoi
+        daLuu = idDaLuu
         notifyDataSetChanged()
     }
 
     class ONhin(val b: ItemTinDangBinding) : RecyclerView.ViewHolder(b.root)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ONhin =
-        ONhin(ItemTinDangBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ONhin {
+        val b = ItemTinDangBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        if (ngang) b.root.layoutParams.width = (160 * parent.resources.displayMetrics.density).toInt()
+        return ONhin(b)
+    }
 
     override fun getItemCount() = ds.size
 
@@ -54,18 +65,28 @@ class TinDangAdapter(
             b.iconTin.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(ctx, cha.mauIcon))
         }
 
-        // Nhãn góc ảnh: đang giao dịch / nổi bật
-        val noiBat = (tin.dayTinDen ?: 0) > System.currentTimeMillis()
-        when {
-            tin.trangThai == HangSo.TIN_DANG_GIAO_DICH -> {
-                b.nhanTrangThai.text = "Đang giao dịch"
-                b.nhanTrangThai.visibility = View.VISIBLE
-            }
-            noiBat -> {
-                b.nhanTrangThai.text = "Nổi bật"
-                b.nhanTrangThai.visibility = View.VISIBLE
-            }
-            else -> b.nhanTrangThai.visibility = View.GONE
+        // Nhãn góc ảnh theo trạng thái
+        val nhan = when {
+            tin.trangThai == HangSo.TIN_DA_BAN -> "Đã bán"
+            tin.trangThai == HangSo.TIN_HET_HAN -> "Hết hạn"
+            tin.trangThai == HangSo.TIN_BI_AN -> "Tạm ẩn"
+            tin.trangThai == HangSo.TIN_DANG_GIAO_DICH -> "Đang giao dịch"
+            LocTinDang.dangNoiBat(tin) -> "Nổi bật"
+            else -> null
+        }
+        b.nhanTrangThai.visibility = if (nhan == null) View.GONE else View.VISIBLE
+        b.nhanTrangThai.text = nhan
+
+        // Trái tim
+        if (khiBamTim == null) {
+            b.btnTim.visibility = View.GONE
+        } else {
+            val coLuu = tin.id in daLuu
+            b.btnTim.visibility = View.VISIBLE
+            b.btnTim.setImageResource(if (coLuu) R.drawable.ic_heart_filled else R.drawable.ic_heart)
+            b.btnTim.imageTintList = ContextCompat.getColorStateList(ctx, if (coLuu) R.color.loi else R.color.chu)
+            b.btnTim.contentDescription = if (coLuu) "Bỏ lưu" else "Lưu tin"
+            b.btnTim.setOnClickListener { khiBamTim.invoke(tin) }
         }
 
         b.tvGia.text = DinhDang.gia(tin.gia)
@@ -73,7 +94,7 @@ class TinDangAdapter(
         val tinhTrang = HangSo.timTinhTrang(tin.tinhTrang)
         b.tvTinhTrang.text = tinhTrang.ten
         b.tvTinhTrang.setTextColor(ContextCompat.getColor(ctx, tinhTrang.mau))
-        b.tvNoiBan.text = "${tin.maTruong} · ${DinhDang.thoiGianTruoc(tin.ngayTao)}"
+        b.tvNoiBan.text = "${tin.diemGiaoDich} · ${tin.maTruong} · ${DinhDang.thoiGianTruoc(tin.ngayTao)}"
 
         b.root.setOnClickListener { khiBam(tin) }
     }

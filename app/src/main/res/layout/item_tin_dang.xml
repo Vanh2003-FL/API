@@ -49,6 +49,19 @@
                 android:textSize="11sp"
                 android:textStyle="bold"
                 android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/btnTim"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_gravity="top|end"
+                android:layout_margin="6dp"
+                android:background="@drawable/bg_nut_kinh"
+                android:contentDescription="Lưu tin"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_heart"
+                app:tint="@color/chu" />
         </FrameLayout>
 
         <LinearLayout

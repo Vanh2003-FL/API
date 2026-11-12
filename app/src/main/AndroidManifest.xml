@@ -30,6 +30,13 @@
         <activity
             android:name=".man_hinh.tai_khoan.HoSoActivity"
             android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".man_hinh.tai_khoan.DaLuuActivity" />
+
+        <!-- Mua hàng: tìm kiếm và chi tiết tin -->
+        <activity
+            android:name=".man_hinh.tim_kiem.TimKiemActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".man_hinh.chi_tiet_san_pham.ChiTietSanPhamActivity" />
     </application>
 
 </manifest>

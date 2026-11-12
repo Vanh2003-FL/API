@@ -16,6 +16,9 @@ interface BaoCaoDao {
     @Insert
     suspend fun themNhieu(ds: List<BaoCao>)
 
+    @Query("SELECT COUNT(*) FROM bao_cao WHERE tinDangId = :tinDangId AND nguoiBaoCaoId = :nguoiDungId")
+    suspend fun daBaoCao(tinDangId: Long, nguoiDungId: Long): Int
+
     @Query("SELECT * FROM bao_cao WHERE tinDangId = :tinDangId ORDER BY ngayTao")
     suspend fun layTheoTin(tinDangId: Long): List<BaoCao>
 }

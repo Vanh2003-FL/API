@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import com.unimarket.databinding.FragmentSapCoBinding
 
 /**
- * Màn tạm cho các tab chưa làm tới (Danh mục – Sprint 2, Tin nhắn – Sprint 4).
+ * Màn tạm cho tab chưa làm tới (Tin nhắn – Sprint 4).
  * File này sẽ bị XOÁ khi các tab đó được làm thật.
  */
 class SapCoFragment : Fragment() {

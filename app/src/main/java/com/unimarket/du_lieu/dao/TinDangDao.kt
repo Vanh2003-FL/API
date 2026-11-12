@@ -29,6 +29,14 @@ interface TinDangDao {
     )
     suspend fun layTinMoi(gioiHan: Int): List<TinDang>
 
+    /** Tất cả tin người mua nhìn thấy được (dùng cho trang chủ, tìm kiếm, danh mục). */
+    @Query("SELECT * FROM tin_dang WHERE trangThai IN ('DANG_BAN', 'DANG_GIAO_DICH') ORDER BY ngayTao DESC")
+    suspend fun layDangHienThi(): List<TinDang>
+
+    /** Mỗi lần người khác mở chi tiết tin thì tăng lượt xem thêm 1. */
+    @Query("UPDATE tin_dang SET luotXem = luotXem + 1 WHERE id = :id")
+    suspend fun tangLuotXem(id: Long)
+
     /** Đếm tin của một người bán theo trạng thái (dùng cho ô "Đang bán / Đã bán" ở Tài khoản). */
     @Query("SELECT COUNT(*) FROM tin_dang WHERE nguoiBanId = :nguoiBanId AND trangThai = :trangThai")
     suspend fun demTheoNguoiBan(nguoiBanId: Long, trangThai: String): Int

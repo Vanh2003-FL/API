@@ -11,6 +11,7 @@ import com.unimarket.R
 import com.unimarket.databinding.BottomSheetBoSungHoSoBinding
 import com.unimarket.du_lieu.repository.NguoiDungRepository
 import com.unimarket.man_hinh.dang_nhap.DangNhapActivity
+import com.unimarket.mo_hinh.NguoiDung
 import com.unimarket.xu_ly_nghiep_vu.KiemTraHoSo
 import kotlinx.coroutines.launch
 
@@ -40,6 +41,17 @@ object BoSungHoSo {
                 viecDangCho = viec
                 hienBangNhac(activity, thieu)
             }
+        }
+    }
+
+    /**
+     * Dành cho thao tác chỉ cần ĐĂNG NHẬP, không cần hồ sơ đầy đủ (lưu tin, báo cáo tin).
+     * Chưa đăng nhập thì hỏi; đã đăng nhập thì chạy viec(nguoiDung).
+     */
+    fun canDangNhap(activity: AppCompatActivity, viec: (NguoiDung) -> Unit) {
+        activity.lifecycleScope.launch {
+            val nd = NguoiDungRepository(activity).layNguoiDangNhap()
+            if (nd == null) hoiDangNhap(activity) else viec(nd)
         }
     }
 
@@ -94,7 +106,7 @@ object BoSungHoSo {
     private fun hoiDangNhap(activity: AppCompatActivity) {
         AlertDialog.Builder(activity)
             .setTitle("Cần đăng nhập")
-            .setMessage("Bạn cần đăng nhập để đăng tin, đặt mua và nhắn tin.")
+            .setMessage("Bạn cần đăng nhập để lưu tin, đăng tin, đặt mua và nhắn tin.")
             .setPositiveButton("Đăng nhập") { _, _ ->
                 activity.startActivity(
                     Intent(activity, DangNhapActivity::class.java)

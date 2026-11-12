@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Tab Trang chủ (SCR-06): lời chào + lưới tin mới đọc từ database -->
+<!-- Tab Trang chủ (SCR-06): tìm kiếm, phạm vi xem, danh mục, Nổi bật, Sách cho trường bạn, Tin mới -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -7,18 +7,19 @@
     android:background="@color/nen"
     android:orientation="vertical">
 
-    <!-- Thanh trên cùng -->
+    <!-- Thanh trên cùng: logo + nút Đã lưu -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingHorizontal="16dp"
-        android:paddingTop="14dp">
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="8dp">
 
         <ImageView
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
             android:background="@drawable/bg_logo"
             android:contentDescription="Logo"
             android:padding="7dp"
@@ -26,53 +27,207 @@
             app:tint="@color/tren_chinh" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
+            android:layout_weight="1"
             android:text="UniMarket"
             android:textColor="@color/chu"
             android:textSize="20sp"
             android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/btnDaLuu"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Tin đã lưu"
+            android:src="@drawable/ic_heart"
+            app:tint="@color/chu" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tvChao"
-        style="@style/ChuPhu"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        android:paddingTop="6dp" />
+        android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingHorizontal="16dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="4dp">
-
-        <TextView
-            style="@style/NhanMuc"
-            android:layout_width="0dp"
+        <!-- blocksDescendants: tránh danh sách tự giành focus làm trang nhảy xuống cuối khi tải lại -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Tin mới"
-            android:textSize="17sp" />
+            android:descendantFocusability="blocksDescendants"
+            android:orientation="vertical"
+            android:paddingBottom="12dp">
 
-        <TextView
-            android:id="@+id/tvSoTin"
-            style="@style/ChuPhu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="13sp" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/tvChao"
+                style="@style/ChuPhu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="16dp"
+                android:textSize="13sp" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/dsTin"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:clipToPadding="false"
-        android:padding="10dp" />
+            <!-- Ô tìm kiếm (chạm để mở màn Tìm kiếm) -->
+            <TextView
+                android:id="@+id/oTimKiem"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_the"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="14dp"
+                android:text="Bạn đang tìm gì?"
+                android:textColor="@color/chu_phu"
+                android:textSize="15sp"
+                app:drawableStartCompat="@drawable/ic_search"
+                app:drawableTint="@color/chu_phu" />
+
+            <!-- Phạm vi xem -->
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/nhomPhamVi"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:paddingHorizontal="16dp"
+                app:selectionRequired="true"
+                app:singleLine="true"
+                app:singleSelection="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipTruong"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Trường tôi" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipThanhPho"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipToanQuoc"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Toàn quốc" />
+            </com.google.android.material.chip.ChipGroup>
+
+            <!-- 3 ô danh mục (tạo bằng code) -->
+            <LinearLayout
+                android:id="@+id/hangDanhMuc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal"
+                android:paddingHorizontal="10dp" />
+
+            <!-- Mục Nổi bật -->
+            <LinearLayout
+                android:id="@+id/mucNoiBat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/NhanMuc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="14dp"
+                    android:drawablePadding="6dp"
+                    android:gravity="center_vertical"
+                    android:text="Nổi bật"
+                    android:textSize="17sp"
+                    app:drawableEndCompat="@drawable/ic_rocket"
+                    app:drawableTint="@color/gia" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/dsNoiBat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:paddingHorizontal="10dp" />
+            </LinearLayout>
+
+            <!-- Mục Sách cho sinh viên trường tôi -->
+            <LinearLayout
+                android:id="@+id/mucSach"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="4dp">
+
+                    <TextView
+                        android:id="@+id/tvTieuDeSach"
+                        style="@style/NhanMuc"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="17sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnXemTatCaSach"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Xem tất cả" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/dsSach"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:paddingHorizontal="10dp" />
+            </LinearLayout>
+
+            <!-- Mục Tin mới -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp">
+
+                <TextView
+                    android:id="@+id/tvTieuDeTinMoi"
+                    style="@style/NhanMuc"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textSize="17sp" />
+
+                <TextView
+                    android:id="@+id/tvSoTin"
+                    style="@style/ChuPhu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/dsTin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:paddingHorizontal="10dp" />
+
+            <include
+                android:id="@+id/trong"
+                layout="@layout/trang_thai_trong"
+                android:visibility="gone" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 </LinearLayout>

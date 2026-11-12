@@ -9,6 +9,7 @@ import com.unimarket.R
 import com.unimarket.databinding.ActivityManHinhChinhBinding
 import com.unimarket.man_hinh.tai_khoan.BoSungHoSo
 import com.unimarket.man_hinh.tai_khoan.TaiKhoanFragment
+import com.unimarket.man_hinh.tim_kiem.DanhMucFragment
 
 /**
  * Màn hình chính chứa 5 tab: Trang chủ, Danh mục, Đăng tin, Tin nhắn, Tài khoản.
@@ -49,10 +50,7 @@ class ManHinhChinhActivity : AppCompatActivity() {
 
     private fun taoFragment(maTab: Int): Fragment = when (maTab) {
         R.id.tab_trang_chu -> TrangChuFragment()
-        R.id.tab_danh_muc -> SapCoFragment.tao(
-            R.drawable.ic_grid, "Danh mục",
-            "Duyệt Sách, Đồ điện tử, Đồ dùng theo danh mục con (Sprint 2)."
-        )
+        R.id.tab_danh_muc -> DanhMucFragment()
         R.id.tab_tin_nhan -> SapCoFragment.tao(
             R.drawable.ic_chat, "Tin nhắn",
             "Phòng chat kèm lịch hẹn giao dịch (Sprint 4)."

@@ -109,6 +109,11 @@ object HangSo {
     const val TIN_BI_AN = "BI_AN"
     const val TIN_DA_XOA = "DA_XOA"
 
+    // ===================== BÁO CÁO VI PHẠM =====================
+    val LY_DO_BAO_CAO = listOf(
+        "Lừa đảo", "Hàng cấm", "Sai danh mục", "Thông tin sai sự thật", "Bùng hẹn nhiều lần", "Spam"
+    )
+
     // ===================== VAI TRÒ =====================
     const val VAI_TRO_NGUOI_DUNG = "NGUOI_DUNG"
     const val VAI_TRO_QUAN_TRI = "QUAN_TRI"

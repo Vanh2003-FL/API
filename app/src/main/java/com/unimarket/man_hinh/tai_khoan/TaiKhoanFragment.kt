@@ -46,7 +46,9 @@ class TaiKhoanFragment : Fragment() {
         datHang(binding.hangTinNhan, R.drawable.ic_chat, "Tin nhắn & giao dịch", "Chat và lịch hẹn") { baoSprint("Tin nhắn", 4) }
         datHang(binding.hangThongBao, R.drawable.ic_bell, "Thông báo", "Có người mua, chốt hẹn, nhắc hẹn") { baoSprint("Thông báo", 5) }
         datHang(binding.hangTinCuaToi, R.drawable.ic_list, "Tin của tôi", "Đang bán, đã bán, hết hạn") { baoSprint("Tin của tôi", 3) }
-        datHang(binding.hangDaLuu, R.drawable.ic_heart, "Đã lưu", "0 tin") { baoSprint("Đã lưu", 2) }
+        datHang(binding.hangDaLuu, R.drawable.ic_heart, "Đã lưu", "0 tin") {
+            startActivity(Intent(requireContext(), DaLuuActivity::class.java))
+        }
         datHang(binding.hangHoSo, R.drawable.ic_edit, "Hồ sơ", "Họ tên, SĐT, trường, điểm giao dịch") {
             startActivity(Intent(requireContext(), HoSoActivity::class.java))
         }
