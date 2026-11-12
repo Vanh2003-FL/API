@@ -23,20 +23,32 @@ object LuuAnh {
         return fileDich.absolutePath
     }
 
+    /** Ảnh mẫu đóng gói trong app (thư mục assets) được lưu dạng "asset://anh_mau/dell_1.jpg". */
+    const val TIEN_TO_ASSET = "asset://"
+
     /**
-     * Hiện ảnh từ file lên ImageView. Ảnh được thu nhỏ trước khi đọc để không tốn bộ nhớ.
-     * Trả về false nếu file không tồn tại (khi đó nơi gọi sẽ hiện icon thay thế).
+     * Hiện ảnh lên ImageView. Ảnh được thu nhỏ trước khi đọc để không tốn bộ nhớ.
+     * Đường dẫn là file trong bộ nhớ app (ảnh người dùng chụp/chọn) hoặc "asset://..." (ảnh mẫu).
+     * Trả về false nếu không đọc được (khi đó nơi gọi sẽ hiện icon thay thế).
      */
     fun hienAnh(imageView: ImageView, duongDan: String?, kichThuocToiDa: Int = 600): Boolean {
-        if (duongDan.isNullOrBlank() || !File(duongDan).exists()) return false
+        if (duongDan.isNullOrBlank()) return false
+        val laAsset = duongDan.startsWith(TIEN_TO_ASSET)
+        if (!laAsset && !File(duongDan).exists()) return false
+        val assets = imageView.context.assets
+        // Đọc ảnh 2 lần: lần 1 chỉ lấy kích thước, lần 2 đọc ảnh đã thu nhỏ
+        fun doc(tuyChon: BitmapFactory.Options) =
+            if (laAsset) runCatching { assets.open(duongDan.removePrefix(TIEN_TO_ASSET)).use { BitmapFactory.decodeStream(it, null, tuyChon) } }.getOrNull()
+            else BitmapFactory.decodeFile(duongDan, tuyChon)
+
         val kichThuoc = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-        BitmapFactory.decodeFile(duongDan, kichThuoc)
+        doc(kichThuoc)
+        if (kichThuoc.outWidth <= 0) return false
         var tyLe = 1
         while (kichThuoc.outWidth / (tyLe * 2) >= kichThuocToiDa && kichThuoc.outHeight / (tyLe * 2) >= kichThuocToiDa) {
             tyLe *= 2
         }
-        val bitmap = BitmapFactory.decodeFile(duongDan, BitmapFactory.Options().apply { inSampleSize = tyLe })
-            ?: return false
+        val bitmap = doc(BitmapFactory.Options().apply { inSampleSize = tyLe }) ?: return false
         imageView.imageTintList = null
         imageView.setImageBitmap(bitmap)
         return true
