@@ -9,6 +9,7 @@ import com.unimarket.tien_ich.DinhDang
 import com.unimarket.tien_ich.HangSo
 import com.unimarket.xu_ly_nghiep_vu.GoiYGia
 import com.unimarket.xu_ly_nghiep_vu.KiemTraTinDang
+import com.unimarket.xu_ly_nghiep_vu.LichNhac
 import java.util.Calendar
 
 /**
@@ -77,7 +78,8 @@ class DangTinRepository(context: Context) {
                 tieuDe = "Tin đã đăng",
                 noiDung = "“${tin.tieuDe}” · Địa điểm giao dịch: ${tin.diemGiaoDich}, ${tin.maTruong}",
                 loaiLienKet = "TIN_CUA_TOI",
-                lienKetId = id
+                lienKetId = id,
+                daDay = true // người bán vừa tự đăng, chỉ cần lưu vào trung tâm thông báo
             )
         )
         id
@@ -135,6 +137,7 @@ class DangTinRepository(context: Context) {
             tin.copy(
                 trangThai = HangSo.TIN_DANG_BAN,
                 soLanGiaHan = tin.soLanGiaHan + 1,
+                daBaoSapHetHan = false,
                 ngayHetHan = bayGio + HangSo.SO_NGAY_HIEN_TIN * HangSo.MOT_NGAY,
                 ngayCapNhat = bayGio
             )
@@ -145,5 +148,28 @@ class DangTinRepository(context: Context) {
     suspend fun xoaTin(tinId: Long) {
         val tin = dao.layTheoId(tinId) ?: return
         dao.capNhat(tin.copy(trangThai = HangSo.TIN_DA_XOA, ngayCapNhat = System.currentTimeMillis()))
+    }
+
+    // ===================== TÁC VỤ TỰ ĐỘNG =====================
+    /** Báo người bán khi tin còn ≤ 3 ngày là hết hạn (mỗi tin một lần). Trả về số tin đã báo. */
+    suspend fun baoTinSapHetHan(bayGio: Long = System.currentTimeMillis()): Int = db.withTransaction {
+        var dem = 0
+        for (t in dao.layDangBanChuaBaoHetHan()) {
+            if (!LichNhac.canBaoSapHetHan(t, bayGio)) continue
+            dao.capNhat(t.copy(daBaoSapHetHan = true))
+            db.thongBaoDao().them(
+                ThongBao(
+                    nguoiNhanId = t.nguoiBanId,
+                    loai = "SAP_HET_HAN",
+                    tieuDe = "Tin sắp hết hạn",
+                    noiDung = "“${t.tieuDe}” sẽ hết hạn sau ${LichNhac.soNgayConLai(t.ngayHetHan, bayGio)} ngày. " +
+                        "Đã bán thì bấm “Đã bán”; hết hạn rồi vẫn gia hạn được trong Tin của tôi.",
+                    loaiLienKet = "TIN_CUA_TOI",
+                    lienKetId = t.id
+                )
+            )
+            dem++
+        }
+        dem
     }
 }

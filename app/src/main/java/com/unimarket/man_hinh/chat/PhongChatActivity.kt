@@ -21,6 +21,7 @@ import com.unimarket.tien_ich.CanhLe
 import com.unimarket.tien_ich.DinhDang
 import com.unimarket.tien_ich.HangSo
 import com.unimarket.tien_ich.LuuAnh
+import com.unimarket.tien_ich.ThongBaoHeThong
 import com.unimarket.xu_ly_nghiep_vu.QuyTacLichHen
 import com.unimarket.xu_ly_nghiep_vu.QuyTacLichHen.Nut
 import kotlinx.coroutines.launch
@@ -34,9 +35,13 @@ class PhongChatActivity : AppCompatActivity() {
 
     companion object {
         private const val EXTRA_CUOC = "cuoc_id"
+        private const val EXTRA_CUON_TOI = "cuon_toi_luc"
 
-        fun mo(context: Context, cuocId: Long) {
-            context.startActivity(Intent(context, PhongChatActivity::class.java).putExtra(EXTRA_CUOC, cuocId))
+        /** @param cuonToiLuc mở từ thông báo: cuộn tới thẻ sự kiện xảy ra lúc đó (0 = cuộn xuống cuối). */
+        fun mo(context: Context, cuocId: Long, cuonToiLuc: Long = 0) {
+            context.startActivity(
+                Intent(context, PhongChatActivity::class.java).putExtra(EXTRA_CUOC, cuocId).putExtra(EXTRA_CUON_TOI, cuonToiLuc)
+            )
         }
     }
 
@@ -46,6 +51,7 @@ class PhongChatActivity : AppCompatActivity() {
     private var cuocId = 0L
     private var toi: NguoiDung? = null
     private var phong: PhongChat? = null
+    private var cuonToiLuc = 0L // chỉ dùng ở lần tải đầu tiên
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +60,7 @@ class PhongChatActivity : AppCompatActivity() {
         CanhLe.chuaVienHeThong(binding.root)
         repo = GiaoDichRepository(this)
         cuocId = intent.getLongExtra(EXTRA_CUOC, -1)
+        if (savedInstanceState == null) cuonToiLuc = intent.getLongExtra(EXTRA_CUON_TOI, 0)
 
         binding.thanhTieuDe.setNavigationOnClickListener { finish() }
         binding.dsTinNhan.layoutManager = LinearLayoutManager(this).apply { stackFromEnd = true }
@@ -103,7 +110,13 @@ class PhongChatActivity : AppCompatActivity() {
 
         veThanhGhim(p)
         adapter.capNhat(p.dsTinNhan, nd.id, doiPhuong.hoTen)
-        if (p.dsTinNhan.isNotEmpty()) binding.dsTinNhan.scrollToPosition(p.dsTinNhan.size - 1)
+        if (p.dsTinNhan.isNotEmpty()) {
+            // Mở từ thông báo: cuộn tới tin nhắn/thẻ sự kiện gần nhất trước thời điểm thông báo
+            val viTri = if (cuonToiLuc > 0) p.dsTinNhan.indexOfLast { it.thoiGian <= cuonToiLuc }.coerceAtLeast(0)
+            else p.dsTinNhan.size - 1
+            binding.dsTinNhan.scrollToPosition(viTri)
+            cuonToiLuc = 0
+        }
         veTraLoiNhanh(p)
     }
 
@@ -216,6 +229,7 @@ class PhongChatActivity : AppCompatActivity() {
             try {
                 viec()
                 Toast.makeText(this@PhongChatActivity, thanhCong, Toast.LENGTH_SHORT).show()
+                ThongBaoHeThong.kiemTra(this@PhongChatActivity) // ví dụ vừa chốt hẹn trong vòng 1 giờ → nhắc ngay
             } catch (e: IllegalStateException) {
                 BangGiaoDich.baoLoi(this@PhongChatActivity, e.message)
             }

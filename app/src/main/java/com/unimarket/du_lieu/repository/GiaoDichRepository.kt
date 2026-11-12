@@ -11,6 +11,7 @@ import com.unimarket.mo_hinh.TinDang
 import com.unimarket.mo_hinh.TinNhan
 import com.unimarket.tien_ich.DinhDang
 import com.unimarket.tien_ich.HangSo
+import com.unimarket.xu_ly_nghiep_vu.LichNhac
 import com.unimarket.xu_ly_nghiep_vu.QuyTacLichHen
 
 /**
@@ -196,7 +197,8 @@ class GiaoDichRepository(context: Context) {
         }
         ghiSuKien(lich.cuocTroChuyenId, nguoiDungId, HangSo.SK_CHOT_HEN, "xác nhận · lịch hẹn đã chốt", "Đã chốt hẹn · ${hen(lich)}", lich)
         for (nguoiNhan in listOf(lich.nguoiMuaId, lich.nguoiBanId)) {
-            thongBao(nguoiNhan, "CHOT_HEN", "Đã chốt hẹn", "${hen(lich)} · “${tin.tieuDe}”", lich.cuocTroChuyenId)
+            // Người vừa bấm xác nhận đã thấy ngay trên màn hình → không cần bật banner cho họ
+            thongBao(nguoiNhan, "CHOT_HEN", "Đã chốt hẹn", "${hen(lich)} · “${tin.tieuDe}”", lich.cuocTroChuyenId, daDay = nguoiNhan == nguoiDungId)
         }
     }
 
@@ -340,6 +342,56 @@ class GiaoDichRepository(context: Context) {
             "${nguoiMua?.hoTen} đánh giá $soSao sao cho “${tin?.tieuDe}”", lich.cuocTroChuyenId)
     }
 
+    // ===================== TÁC VỤ TỰ ĐỘNG (UC-62, UC-63) =====================
+
+    /**
+     * Hệ thống tự chạy (khi mở app và theo báo thức khi app đóng):
+     * - yêu cầu chờ xác nhận quá 24 giờ → tự huỷ (BR-15)
+     * - lịch đã chốt còn ≤ 1 giờ → nhắc cả hai bên (BR-37)
+     * Trả về số việc đã làm.
+     */
+    suspend fun chayTacVuTuDong(bayGio: Long = System.currentTimeMillis()): Int = db.withTransaction {
+        var dem = 0
+        for (lich in lichDao.layDangHoatDong()) {
+            when {
+                LichNhac.quaHanPhanHoi(lich, bayGio) -> { tuHuyQuaHan(lich); dem++ }
+                LichNhac.canNhacHen(lich, bayGio) -> { nhacHen(lich, bayGio); dem++ }
+            }
+        }
+        dem
+    }
+
+    private suspend fun tuHuyQuaHan(lich: LichHen) {
+        lichDao.capNhat(lich.copy(trangThai = HangSo.LICH_DA_HUY, lyDoHuy = "Quá 24 giờ chưa được xác nhận", nguoiHuyId = 0))
+        ghiSuKien(lich.cuocTroChuyenId, 0, HangSo.SK_HUY_HEN, "yêu cầu tự huỷ vì quá 24 giờ chưa được xác nhận", "Lịch hẹn đã tự huỷ", lich)
+        val tin = "“${tinDao.layTheoId(lich.tinDangId)?.tieuDe}”"
+        val nguoiMuaDeXuat = lich.nguoiDeXuatId == lich.nguoiMuaId
+        val tenNguoiMua = ndDao.layTheoId(lich.nguoiMuaId)?.hoTen
+        thongBao(
+            lich.nguoiMuaId, "HUY_HEN", "Yêu cầu mua đã tự huỷ",
+            if (nguoiMuaDeXuat) "Người bán chưa phản hồi sau 24 giờ, yêu cầu mua $tin đã tự huỷ."
+            else "Bạn chưa trả lời đề xuất của người bán sau 24 giờ, yêu cầu mua $tin đã tự huỷ.",
+            lich.cuocTroChuyenId
+        )
+        thongBao(
+            lich.nguoiBanId, "HUY_HEN", "Yêu cầu mua đã tự huỷ",
+            if (nguoiMuaDeXuat) "Bạn chưa xác nhận sau 24 giờ, yêu cầu mua $tin của $tenNguoiMua đã tự huỷ."
+            else "$tenNguoiMua chưa trả lời đề xuất của bạn sau 24 giờ, yêu cầu mua $tin đã tự huỷ.",
+            lich.cuocTroChuyenId
+        )
+    }
+
+    private suspend fun nhacHen(lich: LichHen, bayGio: Long) {
+        lichDao.capNhat(lich.copy(daNhacLuc = bayGio))
+        val conLai = LichNhac.conLai(lich.thoiGianHen, bayGio)
+        ghiSuKien(lich.cuocTroChuyenId, 0, HangSo.SK_NHAC_HEN, "nhắc hẹn · còn $conLai nữa", "Nhắc hẹn · ${hen(lich)}", lich)
+        val gio = DinhDang.gioHen(lich.thoiGianHen, bayGio)
+        val nguoiMua = ndDao.layTheoId(lich.nguoiMuaId)?.hoTen
+        val nguoiBan = ndDao.layTheoId(lich.nguoiBanId)?.hoTen
+        thongBao(lich.nguoiMuaId, "NHAC_HEN", "Nhắc hẹn", "Còn $conLai nữa: gặp $nguoiBan ở ${lich.diaDiem} lúc $gio.", lich.cuocTroChuyenId)
+        thongBao(lich.nguoiBanId, "NHAC_HEN", "Nhắc hẹn", "Còn $conLai nữa: gặp $nguoiMua ở ${lich.diaDiem} lúc $gio.", lich.cuocTroChuyenId)
+    }
+
     // ===================== HÀM PHỤ =====================
 
     private fun hen(lich: LichHen) = "${lich.diaDiem}, ${DinhDang.gioHen(lich.thoiGianHen)}"
@@ -372,9 +424,15 @@ class GiaoDichRepository(context: Context) {
             tomTat
         )
 
-    private suspend fun thongBao(nguoiNhanId: Long, loai: String, tieuDe: String, noiDung: String, cuocId: Long) {
+    /** Ghi thông báo; bấm vào sẽ mở phòng chat. daDay = true nếu không cần bật banner / thông báo hệ thống. */
+    private suspend fun thongBao(
+        nguoiNhanId: Long, loai: String, tieuDe: String, noiDung: String, cuocId: Long, daDay: Boolean = false
+    ) {
         tbDao.them(
-            ThongBao(nguoiNhanId = nguoiNhanId, loai = loai, tieuDe = tieuDe, noiDung = noiDung, loaiLienKet = "CHAT", lienKetId = cuocId)
+            ThongBao(
+                nguoiNhanId = nguoiNhanId, loai = loai, tieuDe = tieuDe, noiDung = noiDung,
+                loaiLienKet = "CHAT", lienKetId = cuocId, daDay = daDay
+            )
         )
     }
 }

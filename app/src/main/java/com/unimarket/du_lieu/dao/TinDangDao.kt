@@ -57,6 +57,10 @@ interface TinDangDao {
     @Query("SELECT COUNT(*) FROM tin_dang WHERE nguoiBanId = :nguoiBanId AND trangThai = :trangThai")
     suspend fun demTheoNguoiBan(nguoiBanId: Long, trangThai: String): Int
 
+    /** Tin đang bán chưa được báo "sắp hết hạn" (lọc tiếp bằng LichNhac.canBaoSapHetHan). */
+    @Query("SELECT * FROM tin_dang WHERE trangThai = 'DANG_BAN' AND daBaoSapHetHan = 0")
+    suspend fun layDangBanChuaBaoHetHan(): List<TinDang>
+
     @Query("SELECT COUNT(*) FROM tin_dang")
     suspend fun dem(): Int
 }

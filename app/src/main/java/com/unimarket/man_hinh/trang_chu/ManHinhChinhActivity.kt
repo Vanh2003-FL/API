@@ -1,6 +1,14 @@
 package com.unimarket.man_hinh.trang_chu
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import com.unimarket.du_lieu.repository.ThongBaoRepository
+import com.unimarket.tien_ich.PhienDangNhap
+import com.unimarket.tien_ich.ThongBaoHeThong
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -22,7 +30,7 @@ import kotlinx.coroutines.launch
  * Màn hình chính chứa 5 tab: Trang chủ, Danh mục, Đăng tin, Tin nhắn, Tài khoản.
  * Mỗi tab là một Fragment; đổi tab thì ẩn/hiện Fragment (không tạo lại → giữ vị trí cuộn).
  */
-class ManHinhChinhActivity : AppCompatActivity() {
+class ManHinhChinhActivity : AppCompatActivity(), ThongBaoHeThong.CoThongBaoMoi {
 
     companion object {
         private const val EXTRA_LOC_TIN_ID = "loc_tin_id"
@@ -41,6 +49,7 @@ class ManHinhChinhActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityManHinhChinhBinding
     private var locTinCho: Pair<Long, String>? = null
+    private val xinQuyen = registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +69,7 @@ class ManHinhChinhActivity : AppCompatActivity() {
             }
         }
         xuLyIntent(intent)
+        xinQuyenThongBao()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -83,7 +93,9 @@ class ManHinhChinhActivity : AppCompatActivity() {
         binding.thanhDieuHuong.selectedItemId = maTab
     }
 
-    /** Số tin nhắn chưa đọc hiện thành chấm đỏ trên tab Tin nhắn. */
+    override fun khiCoThongBaoMoi() = capNhatSoChuaDoc()
+
+    /** Số tin nhắn chưa đọc trên tab Tin nhắn và số thông báo chưa đọc trên chuông ở Trang chủ. */
     fun capNhatSoChuaDoc() {
         lifecycleScope.launch {
             val nd = NguoiDungRepository(this@ManHinhChinhActivity).layNguoiDangNhap()
@@ -91,7 +103,19 @@ class ManHinhChinhActivity : AppCompatActivity() {
             val huyHieu = binding.thanhDieuHuong.getOrCreateBadge(R.id.tab_tin_nhan)
             huyHieu.isVisible = so > 0
             huyHieu.number = so
+            val chuong = if (nd == null) 0 else ThongBaoRepository(this@ManHinhChinhActivity).demChuaDoc(nd.id)
+            (supportFragmentManager.findFragmentByTag("tab_${R.id.tab_trang_chu}") as? TrangChuFragment)?.capNhatChuong(chuong)
         }
+    }
+
+    /** Android 13+ phải xin quyền mới hiện được thông báo hệ thống. Chỉ hỏi một lần. */
+    private fun xinQuyenThongBao() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || !PhienDangNhap.daDangNhap(this)) return
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) return
+        val caiDat = getSharedPreferences("cai_dat", MODE_PRIVATE)
+        if (caiDat.getBoolean("da_hoi_quyen_thong_bao", false)) return
+        caiDat.edit().putBoolean("da_hoi_quyen_thong_bao", true).apply()
+        xinQuyen.launch(Manifest.permission.POST_NOTIFICATIONS)
     }
 
     /** Ghi nhớ yêu cầu "lọc tin nhắn theo tin"; thực hiện ở onResume. */

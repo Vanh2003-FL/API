@@ -32,7 +32,8 @@ import com.unimarket.mo_hinh.YeuThich
     ],
     // v2 (Sprint 3): thêm cột tin_dang.doanhThuDayTin
     // v3 (Sprint 4): thêm chỉ mục lich_hen.nguoiMuaId (đếm yêu cầu đang chờ của người mua)
-    version = 3,
+    // v4 (Sprint 5): lich_hen.daNhacLuc, thong_bao.daDay, tin_dang.daBaoSapHetHan
+    version = 4,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {

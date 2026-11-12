@@ -35,6 +35,10 @@ interface LichHenDao {
     suspend fun layDangHoatDongCuaTin(tinDangId: Long): List<LichHen>
 
     /** BR-33: số yêu cầu mua đang chờ của một người mua (tối đa 5). */
+    /** Mọi lịch còn hiệu lực – dùng cho tác vụ tự động (nhắc hẹn, tự huỷ) và hẹn giờ báo thức. */
+    @Query("SELECT * FROM lich_hen WHERE trangThai IN ('CHO_XAC_NHAN', 'DA_CHOT')")
+    suspend fun layDangHoatDong(): List<LichHen>
+
     @Query("SELECT COUNT(*) FROM lich_hen WHERE nguoiMuaId = :nguoiMuaId AND trangThai = 'CHO_XAC_NHAN'")
     suspend fun demChoCuaNguoiMua(nguoiMuaId: Long): Int
 }

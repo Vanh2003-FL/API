@@ -22,6 +22,8 @@ import com.unimarket.man_hinh.chi_tiet_san_pham.ChiTietSanPhamActivity
 import com.unimarket.man_hinh.chi_tiet_san_pham.LuuTin
 import com.unimarket.man_hinh.tai_khoan.BoSungHoSo
 import com.unimarket.man_hinh.tai_khoan.DaLuuActivity
+import com.unimarket.man_hinh.thong_bao.ThongBaoActivity
+import com.unimarket.du_lieu.repository.ThongBaoRepository
 import com.unimarket.man_hinh.tim_kiem.TimKiemActivity
 import com.unimarket.mo_hinh.NguoiDung
 import com.unimarket.mo_hinh.TinDang
@@ -61,6 +63,9 @@ class TrangChuFragment : Fragment() {
         val act = requireActivity() as AppCompatActivity
         binding.trong.root.visibility = View.GONE
 
+        binding.btnThongBao.setOnClickListener {
+            BoSungHoSo.canDangNhap(act) { startActivity(Intent(act, ThongBaoActivity::class.java)) }
+        }
         binding.btnDaLuu.setOnClickListener {
             BoSungHoSo.canDangNhap(act) { startActivity(Intent(act, DaLuuActivity::class.java)) }
         }
@@ -114,6 +119,13 @@ class TrangChuFragment : Fragment() {
         if (!hidden) taiDuLieu()
     }
 
+    /** Số thông báo chưa đọc trên chuông (gọi lại khi có thông báo mới lúc đang mở app). */
+    fun capNhatChuong(so: Int) {
+        val b = _binding ?: return
+        b.tvSoThongBao.visibility = if (so > 0) View.VISIBLE else View.GONE
+        b.tvSoThongBao.text = if (so > 9) "9+" else so.toString()
+    }
+
     /** Đọc lại người dùng, toàn bộ tin đang hiển thị và danh sách đã lưu từ database. */
     private fun taiDuLieu() {
         viewLifecycleOwner.lifecycleScope.launch {
@@ -122,6 +134,7 @@ class TrangChuFragment : Fragment() {
             nguoiDung = nd
             tatCa = repo.layDangHienThi()
             daLuu = if (nd == null) emptySet() else repo.layIdDaLuu(nd.id)
+            capNhatChuong(if (nd == null) 0 else ThongBaoRepository(requireContext()).demChuaDoc(nd.id))
             datChipPhamVi(nd)
             veLai()
         }

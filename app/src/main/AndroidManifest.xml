@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Hiện thông báo hệ thống (Android 13+ phải xin quyền lúc chạy) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Khởi động lại máy thì đặt lại báo thức nhắc hẹn -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
+        android:name=".UniMarketApp"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -46,6 +52,16 @@
         <activity
             android:name=".man_hinh.chat.PhongChatActivity"
             android:windowSoftInputMode="adjustResize" />
+
+        <!-- Thông báo: trung tâm thông báo + báo thức nhắc hẹn / tự huỷ yêu cầu khi app đóng -->
+        <activity android:name=".man_hinh.thong_bao.ThongBaoActivity" />
+        <receiver
+            android:name=".tien_ich.BaoThucReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

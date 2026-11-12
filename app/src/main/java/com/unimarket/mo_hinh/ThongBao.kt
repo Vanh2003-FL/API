@@ -22,11 +22,12 @@ import androidx.room.PrimaryKey
 data class ThongBao(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val nguoiNhanId: Long,
-    val loai: String,                    // DAT_MUA / DOI_HEN / CHOT_HEN / NHAC_HEN / HUY_HEN / DA_DANG / HET_HAN / THONG_TIN
+    val loai: String,                    // DAT_MUA / DOI_HEN / CHOT_HEN / NHAC_HEN / HUY_HEN / DA_DANG / SAP_HET_HAN / MOI_DANH_GIA / DANH_GIA / MOI_DAT_MUA
     val tieuDe: String,
     val noiDung: String,
     val loaiLienKet: String? = null,     // CHAT / TIN_CUA_TOI / TIN_DANG
     val lienKetId: Long? = null,
     val daDoc: Boolean = false,
+    val daDay: Boolean = false,          // đã hiện lên máy (banner hoặc thông báo hệ thống) chưa
     val thoiGian: Long = System.currentTimeMillis()
 )

@@ -402,7 +402,7 @@ object DuLieuMau {
             ThongBao(
                 nguoiNhanId = id("lan"), loai = "DAT_MUA", tieuDe = "Có người muốn mua",
                 noiDung = "Phạm Đức Huy muốn mua “Sách Kinh tế lượng (Nguyễn Quang Dong)” · Thư viện, ${DinhDang.gioHen(mai1130, bayGio)}",
-                loaiLienKet = "CHAT", lienKetId = c1, thoiGian = luc(0.1)
+                loaiLienKet = "CHAT", lienKetId = c1, daDay = true, thoiGian = luc(0.1)
             )
         )
         for (nguoi in listOf(id("lan"), id("my"))) {
@@ -410,7 +410,7 @@ object DuLieuMau {
                 ThongBao(
                     nguoiNhanId = nguoi, loai = "CHOT_HEN", tieuDe = "Đã chốt hẹn",
                     noiDung = "Thư viện, ${DinhDang.gioHen(mai1700, bayGio)} · “Máy tính Casio FX-580VN X”",
-                    loaiLienKet = "CHAT", lienKetId = c3, daDoc = nguoi == id("my"), thoiGian = luc(19.0)
+                    loaiLienKet = "CHAT", lienKetId = c3, daDay = true, daDoc = nguoi == id("my"), thoiGian = luc(19.0)
                 )
             )
         }

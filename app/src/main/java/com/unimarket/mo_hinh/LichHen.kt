@@ -36,5 +36,6 @@ data class LichHen(
     val nhanXet: String? = null,
     val ngayTao: Long = System.currentTimeMillis(),
     val ngayChot: Long? = null,
+    val daNhacLuc: Long? = null,         // đã gửi nhắc hẹn trước 1 giờ lúc nào (null = chưa nhắc)
     val hetHanLuc: Long = System.currentTimeMillis() + 24L * 60 * 60 * 1000 // tự huỷ nếu 24h không ai xác nhận
 )

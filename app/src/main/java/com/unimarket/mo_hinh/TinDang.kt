@@ -54,6 +54,7 @@ data class TinDang(
     val luotXem: Int = 0,
     val soBaoCao: Int = 0,
     val soLanGiaHan: Int = 0,
+    val daBaoSapHetHan: Boolean = false, // đã gửi thông báo "tin sắp hết hạn" chưa (gia hạn thì đặt lại false)
     val soLanDayTin: Int = 0,            // số lần người bán mua gói đẩy tin
     val doanhThuDayTin: Long = 0,        // tổng tiền các gói đẩy tin (thanh toán mô phỏng)
     val dayTinDen: Long? = null,         // tin nổi bật đến thời điểm này

@@ -36,6 +36,38 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
+        <!-- Chuông thông báo + số chưa đọc -->
+        <FrameLayout
+            android:layout_width="48dp"
+            android:layout_height="48dp">
+
+            <ImageButton
+                android:id="@+id/btnThongBao"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Thông báo"
+                android:src="@drawable/ic_bell"
+                app:tint="@color/chu" />
+
+            <TextView
+                android:id="@+id/tvSoThongBao"
+                android:layout_width="wrap_content"
+                android:layout_height="18dp"
+                android:layout_gravity="top|end"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_nhan"
+                android:backgroundTint="@color/loi"
+                android:gravity="center"
+                android:minWidth="18dp"
+                android:paddingHorizontal="4dp"
+                android:textColor="@color/tren_chinh"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+        </FrameLayout>
+
         <ImageButton
             android:id="@+id/btnDaLuu"
             android:layout_width="48dp"

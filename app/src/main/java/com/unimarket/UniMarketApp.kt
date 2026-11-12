@@ -1,0 +1,53 @@
+package com.unimarket
+
+import android.app.Activity
+import android.app.Application
+import android.os.Bundle
+import com.unimarket.man_hinh.dang_nhap.DangKyActivity
+import com.unimarket.man_hinh.dang_nhap.DangNhapActivity
+import com.unimarket.tien_ich.ThongBaoHeThong
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import java.lang.ref.WeakReference
+
+/**
+ * Lớp Application của app: chạy một lần khi app khởi động.
+ * - Tạo kênh thông báo.
+ * - Theo dõi màn hình đang mở: mỗi lần một màn hiện lên thì kiểm tra thông báo mới (hiện banner);
+ *   khi app bị ẩn thì đặt báo thức để vẫn nhắc hẹn được.
+ */
+class UniMarketApp : Application(), Application.ActivityLifecycleCallbacks {
+
+    companion object {
+        private var dangMo: WeakReference<Activity>? = null
+
+        /** Màn hình đang hiện trên cùng (null = app đang ở nền hoặc đã đóng). */
+        fun manHinhDangMo(): Activity? = dangMo?.get()?.takeIf { !it.isFinishing }
+    }
+
+    private val phamVi = MainScope()
+
+    override fun onCreate() {
+        super.onCreate()
+        ThongBaoHeThong.taoKenh(this)
+        registerActivityLifecycleCallbacks(this)
+    }
+
+    override fun onActivityResumed(activity: Activity) {
+        // Màn đăng nhập/đăng ký chỉ hiện thoáng qua → không bật banner ở đây
+        if (activity is DangNhapActivity || activity is DangKyActivity) return
+        dangMo = WeakReference(activity)
+        phamVi.launch { ThongBaoHeThong.kiemTra(this@UniMarketApp) }
+    }
+
+    override fun onActivityPaused(activity: Activity) {
+        if (dangMo?.get() === activity) dangMo = null
+        phamVi.launch { ThongBaoHeThong.datBaoThuc(this@UniMarketApp) }
+    }
+
+    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
+    override fun onActivityStarted(activity: Activity) {}
+    override fun onActivityStopped(activity: Activity) {}
+    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
+    override fun onActivityDestroyed(activity: Activity) {}
+}

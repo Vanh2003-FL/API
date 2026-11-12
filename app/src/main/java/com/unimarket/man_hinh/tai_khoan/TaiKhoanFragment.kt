@@ -23,6 +23,9 @@ import com.unimarket.du_lieu.repository.TinDangRepository
 import com.unimarket.man_hinh.dang_nhap.DangNhapActivity
 import com.unimarket.man_hinh.dang_tin.TinCuaToiActivity
 import com.unimarket.man_hinh.trang_chu.ManHinhChinhActivity
+import com.unimarket.man_hinh.thong_bao.ThongBaoActivity
+import com.unimarket.du_lieu.repository.ThongBaoRepository
+import androidx.appcompat.app.AppCompatActivity
 import com.unimarket.mo_hinh.NguoiDung
 import com.unimarket.tien_ich.DinhDang
 import com.unimarket.tien_ich.HangSo
@@ -48,7 +51,11 @@ class TaiKhoanFragment : Fragment() {
         datHang(binding.hangTinNhan, R.drawable.ic_chat, "Tin nhắn & giao dịch", "Chat và lịch hẹn") {
             (activity as? ManHinhChinhActivity)?.chonTab(R.id.tab_tin_nhan)
         }
-        datHang(binding.hangThongBao, R.drawable.ic_bell, "Thông báo", "Có người mua, chốt hẹn, nhắc hẹn") { baoSprint("Thông báo", 5) }
+        datHang(binding.hangThongBao, R.drawable.ic_bell, "Thông báo", "Có người mua, chốt hẹn, nhắc hẹn") {
+            BoSungHoSo.canDangNhap(requireActivity() as AppCompatActivity) {
+                startActivity(Intent(requireContext(), ThongBaoActivity::class.java))
+            }
+        }
         datHang(binding.hangTinCuaToi, R.drawable.ic_list, "Tin của tôi", "Đang bán, đã bán, hết hạn") { TinCuaToiActivity.mo(requireContext()) }
         datHang(binding.hangDaLuu, R.drawable.ic_heart, "Đã lưu", "0 tin") {
             startActivity(Intent(requireContext(), DaLuuActivity::class.java))
@@ -88,6 +95,8 @@ class TaiKhoanFragment : Fragment() {
             binding.tvSoDaBan.text = oSoLieu(daBan, "Đã bán")
             binding.tvSoDaLuu.text = oSoLieu(daLuu, "Đã lưu")
             binding.hangDaLuu.tvPhu.text = "$daLuu tin"
+            val chuaDoc = ThongBaoRepository(requireContext()).demChuaDoc(nd.id)
+            binding.hangThongBao.tvPhu.text = if (chuaDoc > 0) "$chuaDoc thông báo chưa đọc" else "Có người mua, chốt hẹn, nhắc hẹn"
         }
     }
 
