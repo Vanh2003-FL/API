@@ -37,7 +37,8 @@ import com.unimarket.mo_hinh.YeuThich
     // v4 (Sprint 5): lich_hen.daNhacLuc, thong_bao.daDay, tin_dang.daBaoSapHetHan
     // v5 (Sprint 6): bảng danh_muc (quản trị viên quản lý danh mục con)
     // v6: dữ liệu mẫu mới (đồ điện tử kèm ảnh thật, bỏ tin sách) – tăng số phiên bản để máy đã cài tự nạp lại
-    version = 6,
+    // v7: thêm ảnh chụp thật cho các tin Đồ dùng
+    version = 7,
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {

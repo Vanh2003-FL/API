@@ -27,3 +27,16 @@
 | macbook_2.jpg | [File:MacBook M1.jpg](https://commons.wikimedia.org/wiki/File:MacBook_M1.jpg) | Wilfredor | CC0 |
 | iphone13_1.jpg | [File:Apple iPhone 13 Pro and 13 Pro Max.jpg](https://commons.wikimedia.org/wiki/File:Apple_iPhone_13_Pro_and_13_Pro_Max.jpg) | SimonWaldherr | CC BY-SA 4.0 |
 | iphone13_2.jpg | [File:Back of the iPhone 13 Pro.jpg](https://commons.wikimedia.org/wiki/File:Back_of_the_iPhone_13_Pro.jpg) | Hajoon0102 | CC BY-SA 4.0 |
+| bangap_1.jpg | [File:Folding Picnic Table 2.jpg](https://commons.wikimedia.org/wiki/File:Folding_Picnic_Table_2.jpg) | Steven Groves | CC BY 2.0 |
+| quatcay_1.jpg | [File:Floor fan.jpg](https://commons.wikimedia.org/wiki/File:Floor_fan.jpg) | Hans Olav Lien | CC BY-SA 3.0 |
+| noicom_1.jpg | [File:Rice-cooker.jpg](https://commons.wikimedia.org/wiki/File:Rice-cooker.jpg) | Taken by User:Aarchiba; detoured by Rama | Public domain |
+| xedap_1.jpg | [File:Azor Oma Oklahoma R3D Violet Matt.jpg](https://commons.wikimedia.org/wiki/File:Azor_Oma_Oklahoma_R3D_Violet_Matt.jpg) | Andrej Shadura | CC BY 4.0 |
+| quatban_1.jpg | [File:Table fan FT-1201 II 30 cm 9186.jpg](https://commons.wikimedia.org/wiki/File:Table_fan_FT-1201_II_30_cm_9186.jpg) | Gunnar Creutz | CC BY-SA 4.0 |
+| kesach_1.jpg | [File:IKEA Billy bookshelf (80x106 cm birch veneer).jpg](https://commons.wikimedia.org/wiki/File:IKEA_Billy_bookshelf_(80x106_cm_birch_veneer).jpg) | Magnus Bäck | Public domain |
+| hoodie_1.jpg | [File:Hoodie m7agar.jpg](https://commons.wikimedia.org/wiki/File:Hoodie_m7agar.jpg) | YoussefTahoun | CC0 |
+| noilau_1.jpg | [File:Korean hot pot with Chinese dippings.jpg](https://commons.wikimedia.org/wiki/File:Korean_hot_pot_with_Chinese_dippings.jpg) | Shenghan0329 | CC BY-SA 4.0 |
+| xemini_1.jpg | [File:Lejeune small wheel bicycle (14144372080).jpg](https://commons.wikimedia.org/wiki/File:Lejeune_small_wheel_bicycle_(14144372080).jpg) | Frankie Gosselin from Paris, France | CC BY 2.0 |
+| ghexoay_1.jpg | [File:Buerostuhl (fcm).jpg](https://commons.wikimedia.org/wiki/File:Buerostuhl_(fcm).jpg) | Photograph:  Frank C. Müller, Baden-Baden | CC BY-SA 4.0 |
+| denban_1.jpg | [File:Concise bamboo eye protection LED desk lamp.jpg](https://commons.wikimedia.org/wiki/File:Concise_bamboo_eye_protection_LED_desk_lamp.jpg) | Indesign Technology | CC BY-SA 4.0 |
+| aokhoac_1.jpg | [File:Jacket (AM 1984.142-5).jpg](https://commons.wikimedia.org/wiki/File:Jacket_(AM_1984.142-5).jpg) | Benson Blenkarn | CC BY 4.0 |
+| aokhoac_2.jpg | [File:Jacket (AM 1984.142-2).jpg](https://commons.wikimedia.org/wiki/File:Jacket_(AM_1984.142-2).jpg) | Benson Blenkarn | CC BY 4.0 |

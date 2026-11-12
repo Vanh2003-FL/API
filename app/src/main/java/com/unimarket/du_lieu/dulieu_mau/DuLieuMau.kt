@@ -185,30 +185,39 @@ object DuLieuMau {
                 "Máy chính hãng, đủ chức năng thi.", "Hãng: Casio\nModel: FX-580VN X", luotXem = 20,
                 anh = anhMau("casio580_4")),
 
-            // ===== ĐỒ DÙNG (giữ nguyên, chưa có ảnh) =====
-            tin("trang", "Bàn học gấp gọn kèm ghế nhựa", "NOI_THAT", 300_000, "TOT", "NEU", "Sảnh giảng đường", 30.0,
-                "Bàn gấp được, hợp phòng trọ nhỏ.", "Chất liệu: Gỗ MDF, khung sắt\nKích thước: 80 × 50 cm",
-                trangThai = HangSo.TIN_DANG_GIAO_DICH, luotXem = 54, dayTin = true),
-            tin("nam", "Quạt cây Senko 3 cánh", "GIA_DUNG", 180_000, "TOT", "HUST", "Căng tin", 5.0,
-                "Quạt chạy êm, đủ 3 số. Chuyển trọ nên bán lại.", "Hãng: Senko\nNăm mua: 2024", namMua = 2024, luotXem = 22),
-            tin("long", "Nồi cơm điện Sharp 1,8 lít", "GIA_DUNG", 250_000, "KHA", "HUST", "Cổng chính", 72.0,
-                "Nấu vẫn ngon, lòng nồi hơi tróc chống dính ở đáy.", "Hãng: Sharp\nNăm mua: 2023", namMua = 2023, luotXem = 29),
-            tin("thanh", "Xe đạp Thống Nhất 26 inch", "XE_DAP", 900_000, "KHA", "HCMUT", "Cổng chính", 40.0,
-                "Xe đi êm, vừa thay lốp sau.", "Hãng: Thống Nhất\nLoại xe: Đường phố", luotXem = 44),
-            tin("lan", "Quạt bàn Asia 16 inch", "GIA_DUNG", 120_000, "TOT", "NEU", "Căng tin", 18 * 24.0,
-                "Quạt chạy êm, có hẹn giờ.", "Hãng: Asia\nNăm mua: 2024", namMua = 2024, luotXem = 18),
-            tin("lan", "Kệ sách gỗ 3 tầng", "NOI_THAT", 300_000, "TOT", "NEU", "Cổng chính", 10 * 24.0,
-                "Kệ chắc chắn, tháo lắp dễ.", "Chất liệu: Gỗ thông", trangThai = HangSo.TIN_DANG_GIAO_DICH, luotXem = 54),
-            tin("thao", "Áo hoodie UniClub size L", "THOI_TRANG", 120_000, "KHA", "FTU", "Căng tin", 9 * 24.0,
-                "Mặc vài lần, không xù lông.", trangThai = ban, giaBan = 100_000, banCachDayNgay = 3.0, mua = "my"),
+            // ===== ĐỒ DÙNG – có ảnh chụp thật =====
+            tin("trang", "Bàn gấp kèm 4 ghế nhựa, gấp gọn như vali", "NOI_THAT", 300_000, "TOT", "NEU", "Sảnh giảng đường", 30.0,
+                "Bàn và ghế gấp gọn thành một khối, có quai xách. Hợp phòng trọ nhỏ hoặc đi dã ngoại.",
+                "Chất liệu: Nhựa, khung nhôm\nKích thước mở: 85 × 65 cm", trangThai = HangSo.TIN_DANG_GIAO_DICH,
+                luotXem = 54, dayTin = true, anh = anhMau("bangap_1")),
+            tin("nam", "Quạt cây đứng 3 cánh, chân tròn", "GIA_DUNG", 180_000, "TOT", "HUST", "Căng tin", 5.0,
+                "Quạt chạy êm, đủ 3 số, chỉnh được độ cao. Chuyển trọ nên bán lại.", "Loại: Quạt cây\nNăm mua: 2024",
+                namMua = 2024, luotXem = 22, anh = anhMau("quatcay_1")),
+            tin("long", "Nồi cơm điện 1,8 lít nắp kính", "GIA_DUNG", 250_000, "KHA", "HUST", "Cổng chính", 72.0,
+                "Nấu vẫn ngon, kèm cốc đong gạo. Lòng nồi hơi tróc chống dính ở đáy.", "Dung tích: 1,8 lít\nNăm mua: 2023",
+                namMua = 2023, luotXem = 29, anh = anhMau("noicom_1")),
+            tin("thanh", "Xe đạp đường phố 26 inch, có giỏ sau", "XE_DAP", 900_000, "KHA", "HCMUT", "Cổng chính", 40.0,
+                "Xe đi êm, vừa thay lốp sau, có chắn bùn và đèn.", "Loại xe: Đường phố\nCỡ bánh: 26 inch",
+                luotXem = 44, anh = anhMau("xedap_1")),
+            tin("lan", "Quạt bàn 3 cánh 30 cm", "GIA_DUNG", 120_000, "TOT", "NEU", "Căng tin", 18 * 24.0,
+                "Quạt chạy êm, 3 tốc độ, có chế độ xoay.", "Đường kính cánh: 30 cm\nNăm mua: 2024", namMua = 2024,
+                luotXem = 18, anh = anhMau("quatban_1")),
+            tin("lan", "Kệ sách gỗ 4 tầng", "NOI_THAT", 300_000, "TOT", "NEU", "Cổng chính", 10 * 24.0,
+                "Kệ chắc chắn, tháo lắp dễ, cao khoảng 1 m.", "Chất liệu: Gỗ ép phủ veneer\nKích thước: 80 × 106 cm",
+                trangThai = HangSo.TIN_DANG_GIAO_DICH, luotXem = 54, anh = anhMau("kesach_1")),
+            tin("thao", "Áo hoodie đen in hoạ tiết, size L", "THOI_TRANG", 120_000, "KHA", "FTU", "Căng tin", 9 * 24.0,
+                "Mặc vài lần, không xù lông.", trangThai = ban, giaBan = 100_000, banCachDayNgay = 3.0, mua = "my",
+                anh = anhMau("hoodie_1")),
             tin("hoa", "Nồi lẩu điện mini 1,5L", "GIA_DUNG", 160_000, "TOT", "NEU", "Căng tin", 20 * 24.0,
-                "Dùng 1 học kỳ.", trangThai = ban, giaBan = 150_000, banCachDayNgay = 5.0, mua = "huy"),
-            tin("khoa", "Xe đạp Asama mini", "XE_DAP", 1_200_000, "TOT", "DUE", "Cổng chính", 30 * 24.0,
-                "Xe nhẹ, phanh tốt.", trangThai = ban, giaBan = 1_100_000, banCachDayNgay = 10.0, mua = "khai"),
-            tin("khai", "Ghế xoay văn phòng", "NOI_THAT", 450_000, "KHA", "HUST", "Sảnh giảng đường", 96.0,
-                "Ghế còn chắc, đệm hơi xẹp.", luotXem = 14),
+                "Dùng 1 học kỳ, nấu lẩu 2–3 người vừa đủ. Ảnh lúc đang dùng.", trangThai = ban, giaBan = 150_000,
+                banCachDayNgay = 5.0, mua = "huy", anh = anhMau("noilau_1")),
+            tin("khoa", "Xe đạp mini bánh nhỏ màu vàng", "XE_DAP", 1_200_000, "TOT", "DUE", "Cổng chính", 30 * 24.0,
+                "Xe nhẹ, phanh tốt, có baga sau.", trangThai = ban, giaBan = 1_100_000, banCachDayNgay = 10.0, mua = "khai",
+                anh = anhMau("xemini_1")),
+            tin("khai", "Ghế xoay văn phòng có tay vịn", "NOI_THAT", 450_000, "KHA", "HUST", "Sảnh giảng đường", 96.0,
+                "Ghế còn chắc, đệm hơi xẹp, bánh xe trơn.", luotXem = 14, anh = anhMau("ghexoay_1")),
             tin("trang", "Đèn bàn học LED chống cận", "KHAC", 90_000, "NHU_MOI", "NEU", "Sảnh giảng đường", 10.0,
-                "3 chế độ sáng, sạc USB.", luotXem = 5),
+                "3 chế độ sáng, sạc USB, đế gỗ tre.", luotXem = 5, anh = anhMau("denban_1")),
 
             // ===== Tin bị báo cáo (màn kiểm duyệt của quản trị) =====
             // Tin lừa đảo dùng ảnh máy thật lấy trên mạng, giá rẻ bất thường → đủ 3 báo cáo nên đã tự ẩn
@@ -216,7 +225,7 @@ object DuLieuMau {
                 "Chuyển khoản cọc trước 500k để giữ máy.", "Hãng: Apple\nModel: iPhone 13 Pro Max",
                 trangThai = HangSo.TIN_BI_AN, soBaoCao = 3, luotXem = 60, anh = anhMau("iphone13_1", "iphone13_2")),
             tin("thao", "Áo khoác đồng phục khoa", "KHAC", 80_000, "TOT", "FTU", "Căng tin", 60.0,
-                "Size M.", soBaoCao = 1, luotXem = 11)
+                "Size M, mặc vài lần.", soBaoCao = 1, luotXem = 11, anh = anhMau("aokhoac_1", "aokhoac_2"))
         )
         db.danhMucDao().themNhieu(DanhMucRepository.dongMacDinh())
         val idTin = db.tinDangDao().themNhieu(ganGoiYGia(dsTin))
@@ -359,7 +368,7 @@ object DuLieuMau {
         val mai1700 = goiY.getValue("Mai 17:00")
 
         // 1. Huy đặt mua quạt của Lan → CHỜ LAN XÁC NHẬN (cùng với Trang ở mục 4: Lan thấy "2 người đang hỏi mua")
-        val quat = tinCo("Quạt bàn Asia 16 inch")
+        val quat = tinCo("Quạt bàn 3 cánh 30 cm")
         val c1 = cuocDao.them(
             CuocTroChuyen(
                 tinDangId = quat, nguoiMuaId = id("huy"), nguoiBanId = id("lan"),
@@ -435,7 +444,7 @@ object DuLieuMau {
         tb.them(
             ThongBao(
                 nguoiNhanId = id("lan"), loai = "DAT_MUA", tieuDe = "Có người muốn mua",
-                noiDung = "Phạm Đức Huy muốn mua “Quạt bàn Asia 16 inch” · Thư viện, ${DinhDang.gioHen(mai1130, bayGio)}",
+                noiDung = "Phạm Đức Huy muốn mua “Quạt bàn 3 cánh 30 cm” · Thư viện, ${DinhDang.gioHen(mai1130, bayGio)}",
                 loaiLienKet = "CHAT", lienKetId = c1, daDay = true, thoiGian = luc(0.1)
             )
         )
