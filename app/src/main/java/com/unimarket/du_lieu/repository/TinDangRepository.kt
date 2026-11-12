@@ -19,7 +19,10 @@ class TinDangRepository(context: Context) {
     suspend fun layTinMoi(gioiHan: Int = 40): List<TinDang> = dao.layTinMoi(gioiHan)
 
     /** Tất cả tin đang hiển thị; việc lọc theo phạm vi/từ khoá làm ở LocTinDang. */
-    suspend fun layDangHienThi(): List<TinDang> = dao.layDangHienThi()
+    suspend fun layDangHienThi(): List<TinDang> {
+        dao.capNhatHetHan(System.currentTimeMillis()) // tin quá 30 ngày tự chuyển Hết hạn
+        return dao.layDangHienThi()
+    }
 
     suspend fun layTheoId(id: Long): TinDang? = dao.layTheoId(id)
 

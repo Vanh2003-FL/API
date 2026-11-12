@@ -1,0 +1,1032 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "a9dc4245679769c50fc4e094e117cedc",
+    "entities": [
+      {
+        "tableName": "nguoi_dung",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `email` TEXT NOT NULL, `matKhauMaHoa` TEXT NOT NULL, `hoTen` TEXT NOT NULL, `soDienThoai` TEXT NOT NULL, `zaloCungSo` INTEGER NOT NULL, `maTruong` TEXT NOT NULL, `thanhPho` TEXT NOT NULL, `diemGiaoDich` TEXT NOT NULL, `ghiChuDiem` TEXT NOT NULL, `anhDaiDien` TEXT, `vaiTro` TEXT NOT NULL, `biKhoa` INTEGER NOT NULL, `ngayTao` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "email",
+            "columnName": "email",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "matKhauMaHoa",
+            "columnName": "matKhauMaHoa",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hoTen",
+            "columnName": "hoTen",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "soDienThoai",
+            "columnName": "soDienThoai",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "zaloCungSo",
+            "columnName": "zaloCungSo",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maTruong",
+            "columnName": "maTruong",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thanhPho",
+            "columnName": "thanhPho",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "diemGiaoDich",
+            "columnName": "diemGiaoDich",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ghiChuDiem",
+            "columnName": "ghiChuDiem",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "anhDaiDien",
+            "columnName": "anhDaiDien",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "vaiTro",
+            "columnName": "vaiTro",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "biKhoa",
+            "columnName": "biKhoa",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ngayTao",
+            "columnName": "ngayTao",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_nguoi_dung_email",
+            "unique": true,
+            "columnNames": [
+              "email"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_nguoi_dung_email` ON `${TABLE_NAME}` (`email`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "tin_dang",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nguoiBanId` INTEGER NOT NULL, `tieuDe` TEXT NOT NULL, `moTa` TEXT NOT NULL, `danhMucCha` TEXT NOT NULL, `danhMucCon` TEXT NOT NULL, `gia` INTEGER NOT NULL, `giaGoc` INTEGER, `namMua` INTEGER, `tinhTrang` TEXT NOT NULL, `thuocTinh` TEXT NOT NULL, `anh` TEXT NOT NULL, `maTruong` TEXT NOT NULL, `thanhPho` TEXT NOT NULL, `diemGiaoDich` TEXT NOT NULL, `ghiChuDiaDiem` TEXT NOT NULL, `coGiaoHang` INTEGER NOT NULL, `xacNhanDiaDiemLuc` INTEGER, `trangThai` TEXT NOT NULL, `giaGoiY` INTEGER, `goiYThap` INTEGER, `goiYCao` INTEGER, `doTinCay` TEXT, `soMau` INTEGER, `giaBan` INTEGER, `ngayBan` INTEGER, `nguoiMuaId` INTEGER, `luotXem` INTEGER NOT NULL, `soBaoCao` INTEGER NOT NULL, `soLanGiaHan` INTEGER NOT NULL, `soLanDayTin` INTEGER NOT NULL, `doanhThuDayTin` INTEGER NOT NULL, `dayTinDen` INTEGER, `tuKhoa` TEXT NOT NULL, `ngayTao` INTEGER NOT NULL, `ngayCapNhat` INTEGER NOT NULL, `ngayHetHan` INTEGER NOT NULL, FOREIGN KEY(`nguoiBanId`) REFERENCES `nguoi_dung`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nguoiBanId",
+            "columnName": "nguoiBanId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tieuDe",
+            "columnName": "tieuDe",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "moTa",
+            "columnName": "moTa",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "danhMucCha",
+            "columnName": "danhMucCha",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "danhMucCon",
+            "columnName": "danhMucCon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gia",
+            "columnName": "gia",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "giaGoc",
+            "columnName": "giaGoc",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "namMua",
+            "columnName": "namMua",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "tinhTrang",
+            "columnName": "tinhTrang",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thuocTinh",
+            "columnName": "thuocTinh",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "anh",
+            "columnName": "anh",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maTruong",
+            "columnName": "maTruong",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thanhPho",
+            "columnName": "thanhPho",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "diemGiaoDich",
+            "columnName": "diemGiaoDich",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ghiChuDiaDiem",
+            "columnName": "ghiChuDiaDiem",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "coGiaoHang",
+            "columnName": "coGiaoHang",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "xacNhanDiaDiemLuc",
+            "columnName": "xacNhanDiaDiemLuc",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "trangThai",
+            "columnName": "trangThai",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "giaGoiY",
+            "columnName": "giaGoiY",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "goiYThap",
+            "columnName": "goiYThap",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "goiYCao",
+            "columnName": "goiYCao",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "doTinCay",
+            "columnName": "doTinCay",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "soMau",
+            "columnName": "soMau",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "giaBan",
+            "columnName": "giaBan",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "ngayBan",
+            "columnName": "ngayBan",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "nguoiMuaId",
+            "columnName": "nguoiMuaId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "luotXem",
+            "columnName": "luotXem",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "soBaoCao",
+            "columnName": "soBaoCao",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "soLanGiaHan",
+            "columnName": "soLanGiaHan",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "soLanDayTin",
+            "columnName": "soLanDayTin",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "doanhThuDayTin",
+            "columnName": "doanhThuDayTin",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dayTinDen",
+            "columnName": "dayTinDen",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "tuKhoa",
+            "columnName": "tuKhoa",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ngayTao",
+            "columnName": "ngayTao",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ngayCapNhat",
+            "columnName": "ngayCapNhat",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ngayHetHan",
+            "columnName": "ngayHetHan",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_tin_dang_nguoiBanId",
+            "unique": false,
+            "columnNames": [
+              "nguoiBanId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_tin_dang_nguoiBanId` ON `${TABLE_NAME}` (`nguoiBanId`)"
+          },
+          {
+            "name": "index_tin_dang_trangThai",
+            "unique": false,
+            "columnNames": [
+              "trangThai"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_tin_dang_trangThai` ON `${TABLE_NAME}` (`trangThai`)"
+          },
+          {
+            "name": "index_tin_dang_danhMucCon",
+            "unique": false,
+            "columnNames": [
+              "danhMucCon"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_tin_dang_danhMucCon` ON `${TABLE_NAME}` (`danhMucCon`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "nguoi_dung",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "nguoiBanId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "yeu_thich",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`nguoiDungId` INTEGER NOT NULL, `tinDangId` INTEGER NOT NULL, `ngayTao` INTEGER NOT NULL, PRIMARY KEY(`nguoiDungId`, `tinDangId`), FOREIGN KEY(`nguoiDungId`) REFERENCES `nguoi_dung`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`tinDangId`) REFERENCES `tin_dang`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "nguoiDungId",
+            "columnName": "nguoiDungId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tinDangId",
+            "columnName": "tinDangId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ngayTao",
+            "columnName": "ngayTao",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "nguoiDungId",
+            "tinDangId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_yeu_thich_tinDangId",
+            "unique": false,
+            "columnNames": [
+              "tinDangId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_yeu_thich_tinDangId` ON `${TABLE_NAME}` (`tinDangId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "nguoi_dung",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "nguoiDungId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "tin_dang",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "tinDangId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "cuoc_tro_chuyen",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tinDangId` INTEGER NOT NULL, `nguoiMuaId` INTEGER NOT NULL, `nguoiBanId` INTEGER NOT NULL, `tinNhanCuoi` TEXT NOT NULL, `chuaDocNguoiMua` INTEGER NOT NULL, `chuaDocNguoiBan` INTEGER NOT NULL, `capNhatLuc` INTEGER NOT NULL, FOREIGN KEY(`tinDangId`) REFERENCES `tin_dang`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`nguoiMuaId`) REFERENCES `nguoi_dung`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`nguoiBanId`) REFERENCES `nguoi_dung`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tinDangId",
+            "columnName": "tinDangId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nguoiMuaId",
+            "columnName": "nguoiMuaId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nguoiBanId",
+            "columnName": "nguoiBanId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tinNhanCuoi",
+            "columnName": "tinNhanCuoi",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chuaDocNguoiMua",
+            "columnName": "chuaDocNguoiMua",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "chuaDocNguoiBan",
+            "columnName": "chuaDocNguoiBan",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "capNhatLuc",
+            "columnName": "capNhatLuc",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_cuoc_tro_chuyen_tinDangId_nguoiMuaId",
+            "unique": true,
+            "columnNames": [
+              "tinDangId",
+              "nguoiMuaId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_cuoc_tro_chuyen_tinDangId_nguoiMuaId` ON `${TABLE_NAME}` (`tinDangId`, `nguoiMuaId`)"
+          },
+          {
+            "name": "index_cuoc_tro_chuyen_nguoiMuaId",
+            "unique": false,
+            "columnNames": [
+              "nguoiMuaId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_cuoc_tro_chuyen_nguoiMuaId` ON `${TABLE_NAME}` (`nguoiMuaId`)"
+          },
+          {
+            "name": "index_cuoc_tro_chuyen_nguoiBanId",
+            "unique": false,
+            "columnNames": [
+              "nguoiBanId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_cuoc_tro_chuyen_nguoiBanId` ON `${TABLE_NAME}` (`nguoiBanId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "tin_dang",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "tinDangId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "nguoi_dung",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "nguoiMuaId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "nguoi_dung",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "nguoiBanId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "tin_nhan",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `cuocTroChuyenId` INTEGER NOT NULL, `nguoiGuiId` INTEGER NOT NULL, `loai` TEXT NOT NULL, `noiDung` TEXT NOT NULL, `suKien` TEXT, `diaDiem` TEXT, `thoiGianHen` INTEGER, `thoiGian` INTEGER NOT NULL, FOREIGN KEY(`cuocTroChuyenId`) REFERENCES `cuoc_tro_chuyen`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cuocTroChuyenId",
+            "columnName": "cuocTroChuyenId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nguoiGuiId",
+            "columnName": "nguoiGuiId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "loai",
+            "columnName": "loai",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "noiDung",
+            "columnName": "noiDung",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "suKien",
+            "columnName": "suKien",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "diaDiem",
+            "columnName": "diaDiem",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "thoiGianHen",
+            "columnName": "thoiGianHen",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "thoiGian",
+            "columnName": "thoiGian",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_tin_nhan_cuocTroChuyenId",
+            "unique": false,
+            "columnNames": [
+              "cuocTroChuyenId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_tin_nhan_cuocTroChuyenId` ON `${TABLE_NAME}` (`cuocTroChuyenId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "cuoc_tro_chuyen",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "cuocTroChuyenId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "lich_hen",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `cuocTroChuyenId` INTEGER NOT NULL, `tinDangId` INTEGER NOT NULL, `nguoiMuaId` INTEGER NOT NULL, `nguoiBanId` INTEGER NOT NULL, `maTruong` TEXT NOT NULL, `diaDiem` TEXT NOT NULL, `thoiGianHen` INTEGER NOT NULL, `loiNhan` TEXT NOT NULL, `trangThai` TEXT NOT NULL, `nguoiDeXuatId` INTEGER NOT NULL, `lyDoHuy` TEXT, `nguoiHuyId` INTEGER, `soSao` INTEGER, `nhanXet` TEXT, `ngayTao` INTEGER NOT NULL, `ngayChot` INTEGER, `hetHanLuc` INTEGER NOT NULL, FOREIGN KEY(`cuocTroChuyenId`) REFERENCES `cuoc_tro_chuyen`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`tinDangId`) REFERENCES `tin_dang`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cuocTroChuyenId",
+            "columnName": "cuocTroChuyenId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tinDangId",
+            "columnName": "tinDangId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nguoiMuaId",
+            "columnName": "nguoiMuaId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nguoiBanId",
+            "columnName": "nguoiBanId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maTruong",
+            "columnName": "maTruong",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "diaDiem",
+            "columnName": "diaDiem",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thoiGianHen",
+            "columnName": "thoiGianHen",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "loiNhan",
+            "columnName": "loiNhan",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "trangThai",
+            "columnName": "trangThai",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nguoiDeXuatId",
+            "columnName": "nguoiDeXuatId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lyDoHuy",
+            "columnName": "lyDoHuy",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "nguoiHuyId",
+            "columnName": "nguoiHuyId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "soSao",
+            "columnName": "soSao",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "nhanXet",
+            "columnName": "nhanXet",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "ngayTao",
+            "columnName": "ngayTao",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ngayChot",
+            "columnName": "ngayChot",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "hetHanLuc",
+            "columnName": "hetHanLuc",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_lich_hen_cuocTroChuyenId",
+            "unique": false,
+            "columnNames": [
+              "cuocTroChuyenId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_lich_hen_cuocTroChuyenId` ON `${TABLE_NAME}` (`cuocTroChuyenId`)"
+          },
+          {
+            "name": "index_lich_hen_tinDangId",
+            "unique": false,
+            "columnNames": [
+              "tinDangId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_lich_hen_tinDangId` ON `${TABLE_NAME}` (`tinDangId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "cuoc_tro_chuyen",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "cuocTroChuyenId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "tin_dang",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "tinDangId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "thong_bao",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `nguoiNhanId` INTEGER NOT NULL, `loai` TEXT NOT NULL, `tieuDe` TEXT NOT NULL, `noiDung` TEXT NOT NULL, `loaiLienKet` TEXT, `lienKetId` INTEGER, `daDoc` INTEGER NOT NULL, `thoiGian` INTEGER NOT NULL, FOREIGN KEY(`nguoiNhanId`) REFERENCES `nguoi_dung`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nguoiNhanId",
+            "columnName": "nguoiNhanId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "loai",
+            "columnName": "loai",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tieuDe",
+            "columnName": "tieuDe",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "noiDung",
+            "columnName": "noiDung",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "loaiLienKet",
+            "columnName": "loaiLienKet",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "lienKetId",
+            "columnName": "lienKetId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "daDoc",
+            "columnName": "daDoc",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thoiGian",
+            "columnName": "thoiGian",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_thong_bao_nguoiNhanId",
+            "unique": false,
+            "columnNames": [
+              "nguoiNhanId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_thong_bao_nguoiNhanId` ON `${TABLE_NAME}` (`nguoiNhanId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "nguoi_dung",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "nguoiNhanId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "bao_cao",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tinDangId` INTEGER NOT NULL, `nguoiBaoCaoId` INTEGER NOT NULL, `lyDo` TEXT NOT NULL, `ghiChu` TEXT NOT NULL, `trangThai` TEXT NOT NULL, `ngayTao` INTEGER NOT NULL, FOREIGN KEY(`tinDangId`) REFERENCES `tin_dang`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`nguoiBaoCaoId`) REFERENCES `nguoi_dung`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tinDangId",
+            "columnName": "tinDangId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nguoiBaoCaoId",
+            "columnName": "nguoiBaoCaoId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lyDo",
+            "columnName": "lyDo",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ghiChu",
+            "columnName": "ghiChu",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "trangThai",
+            "columnName": "trangThai",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ngayTao",
+            "columnName": "ngayTao",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_bao_cao_tinDangId_nguoiBaoCaoId",
+            "unique": true,
+            "columnNames": [
+              "tinDangId",
+              "nguoiBaoCaoId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_bao_cao_tinDangId_nguoiBaoCaoId` ON `${TABLE_NAME}` (`tinDangId`, `nguoiBaoCaoId`)"
+          },
+          {
+            "name": "index_bao_cao_nguoiBaoCaoId",
+            "unique": false,
+            "columnNames": [
+              "nguoiBaoCaoId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_bao_cao_nguoiBaoCaoId` ON `${TABLE_NAME}` (`nguoiBaoCaoId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "tin_dang",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "tinDangId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "nguoi_dung",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "nguoiBaoCaoId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a9dc4245679769c50fc4e094e117cedc')"
+    ]
+  }
+}

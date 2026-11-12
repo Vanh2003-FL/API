@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bảng "Đánh dấu đã bán": nhập giá chốt thật -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        style="@style/ChuTieuDe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Đánh dấu đã bán" />
+
+    <TextView
+        android:id="@+id/tvTenTin"
+        style="@style/ChuPhu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/oGiaBan"
+        style="@style/ONhap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:hint="Giá bán thực tế"
+        app:suffixText="đ">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/nhapGiaBan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:maxLength="9" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:drawablePadding="10dp"
+        android:text="Giá chốt thật giúp gợi ý giá cho người bán sau chính xác hơn (tin đã bán được tính trọng số gấp đôi)."
+        android:textColor="@color/chu"
+        android:textSize="13sp"
+        app:drawableStartCompat="@drawable/ic_bulb"
+        app:drawableTint="@color/gia" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnXacNhan"
+        style="@style/NutChinh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:text="Xác nhận đã bán" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnHuy"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Huỷ" />
+</LinearLayout>

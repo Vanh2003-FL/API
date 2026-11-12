@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.IntentCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -17,9 +18,11 @@ import com.unimarket.databinding.ActivityChiTietSanPhamBinding
 import com.unimarket.databinding.BottomSheetBaoCaoBinding
 import com.unimarket.databinding.HangMenuBinding
 import com.unimarket.databinding.HangThuocTinhBinding
+import com.unimarket.du_lieu.repository.DangTinRepository
 import com.unimarket.du_lieu.repository.NguoiDungRepository
 import com.unimarket.du_lieu.repository.TinDangRepository
 import com.unimarket.du_lieu.repository.TinDangRepository.KetQuaBaoCao
+import com.unimarket.man_hinh.dang_tin.TinCuaToiActivity
 import com.unimarket.man_hinh.tai_khoan.BoSungHoSo
 import com.unimarket.man_hinh.trang_chu.TinDangAdapter
 import com.unimarket.mo_hinh.NguoiDung
@@ -28,6 +31,7 @@ import com.unimarket.tien_ich.CanhLe
 import com.unimarket.tien_ich.DinhDang
 import com.unimarket.tien_ich.HangSo
 import com.unimarket.tien_ich.LuuAnh
+import com.unimarket.xu_ly_nghiep_vu.GoiYGia
 import kotlinx.coroutines.launch
 
 /**
@@ -40,10 +44,15 @@ class ChiTietSanPhamActivity : AppCompatActivity() {
 
     companion object {
         private const val EXTRA_ID = "tin_dang_id"
+        private const val EXTRA_XEM_TRUOC = "ban_nhap"
 
         fun mo(context: Context, tinDangId: Long) {
             context.startActivity(Intent(context, ChiTietSanPhamActivity::class.java).putExtra(EXTRA_ID, tinDangId))
         }
+
+        /** Mở ở chế độ XEM TRƯỚC một tin chưa lưu (từ màn Đăng tin). Bấm "Đăng tin" sẽ trả về RESULT_OK. */
+        fun intentXemTruoc(context: Context, banNhap: TinDang): Intent =
+            Intent(context, ChiTietSanPhamActivity::class.java).putExtra(EXTRA_XEM_TRUOC, banNhap)
     }
 
     private lateinit var binding: ActivityChiTietSanPhamBinding
@@ -57,6 +66,7 @@ class ChiTietSanPhamActivity : AppCompatActivity() {
     private var daDemLuotXem = false
     private var dsAnh: List<String> = emptyList()
     private var viTriAnh = 0
+    private var banNhap: TinDang? = null   // khác null = đang ở chế độ xem trước
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,6 +91,23 @@ class ChiTietSanPhamActivity : AppCompatActivity() {
         binding.btnGoi.setOnClickListener { lienHe(zalo = false) }
         binding.btnZalo.setOnClickListener { lienHe(zalo = true) }
 
+        binding.tvTinCuaBan.setOnClickListener { TinCuaToiActivity.mo(this, tin?.trangThai ?: HangSo.TIN_DANG_BAN) }
+
+        banNhap = IntentCompat.getSerializableExtra(intent, EXTRA_XEM_TRUOC, TinDang::class.java)
+        if (banNhap != null) {
+            // Chế độ xem trước: "Sửa lại" quay về form, "Đăng tin" báo cho màn Đăng tin
+            binding.btnChat.text = "Sửa lại"
+            binding.btnChat.setIconResource(R.drawable.ic_edit)
+            binding.btnChat.setOnClickListener { finish() }
+            binding.btnDatMua.text = "Đăng tin"
+            binding.btnDatMua.setIconResource(R.drawable.ic_check)
+            binding.btnDatMua.setOnClickListener {
+                setResult(RESULT_OK)
+                finish()
+            }
+            return
+        }
+
         // Chat và Đặt mua: cần hồ sơ đầy đủ (cổng chặn), chức năng thật làm ở Sprint 4
         binding.btnChat.setOnClickListener {
             BoSungHoSo.kiemTra(this) { thongBao("Phòng chat sẽ làm ở Sprint 4") }
@@ -96,6 +123,10 @@ class ChiTietSanPhamActivity : AppCompatActivity() {
     }
 
     private fun taiDuLieu() {
+        banNhap?.let {
+            hienXemTruoc(it)
+            return
+        }
         val id = intent.getLongExtra(EXTRA_ID, -1)
         lifecycleScope.launch {
             var t = repo.layTheoId(id)
@@ -124,7 +155,63 @@ class ChiTietSanPhamActivity : AppCompatActivity() {
             val tuongTu = repo.layTinTuongTu(t)
             binding.tvNhanTuongTu.visibility = if (tuongTu.isEmpty()) View.GONE else View.VISIBLE
             adapterTuongTu.capNhat(tuongTu)
+
+            // Giá thị trường: chạy thuật toán gợi ý giá cho chính món này (không so với chính nó)
+            val kq = DangTinRepository(this@ChiTietSanPhamActivity)
+                .goiYGia(t.tieuDe, t.danhMucCon, t.tinhTrang, t.thanhPho, t.giaGoc, t.namMua, boQuaId = t.id)
+            hienGiaThiTruong(t.gia, if (kq.tuDuLieuThat) kq else null)
         }
+    }
+
+    /** Chế độ xem trước: hiện bản nháp như một tin thật, ẩn các nút chỉ dành cho người mua. */
+    private fun hienXemTruoc(t: TinDang) {
+        lifecycleScope.launch {
+            val nx = NguoiDungRepository(this@ChiTietSanPhamActivity).layNguoiDangNhap()
+            nguoiXem = nx
+            tin = t
+            hienTin(t)
+            hienNguoiBan(t, repo.thongTinNguoiBan(t.nguoiBanId))
+            binding.btnTim.visibility = View.GONE
+            binding.btnChiaSe.visibility = View.GONE
+            binding.btnBaoCao.visibility = View.GONE
+            binding.btnGoi.visibility = View.GONE
+            binding.btnZalo.visibility = View.GONE
+            binding.tvTinCuaBan.visibility = View.GONE
+            binding.btnChat.visibility = View.VISIBLE
+            binding.btnDatMua.visibility = View.VISIBLE
+            binding.btnChat.isEnabled = true
+            binding.btnDatMua.isEnabled = true
+            binding.tvNhanTuongTu.visibility = View.GONE
+            binding.tvDaiThongBao.visibility = View.VISIBLE
+            binding.tvDaiThongBao.text = "Xem trước · tin chưa được đăng"
+            binding.tvThongTinPhu.text = "Vừa xong · 0 lượt xem\n${HangSo.timTruong(t.maTruong)?.ten}, ${t.thanhPho}"
+            // Khoảng giá thị trường lấy từ kết quả gợi ý lúc soạn (chỉ khi dựa trên tin thật)
+            val tuDuLieu = t.doTinCay in listOf("CAO", "TRUNG_BINH", "THAP")
+            hienGiaThiTruong(
+                t.gia,
+                if (tuDuLieu) GoiYGia.KetQua(
+                    giaThap = t.goiYThap ?: 0, giaCao = t.goiYCao ?: 0, soMau = t.soMau ?: 0,
+                    doTinCay = GoiYGia.DoTinCay.valueOf(t.doTinCay!!)
+                ) else null
+            )
+        }
+    }
+
+    /** Khung "Giá thị trường": khoảng giá của các tin tương tự và nhận xét giá đang rao. */
+    private fun hienGiaThiTruong(giaRao: Long, kq: GoiYGia.KetQua?) {
+        if (kq == null || kq.giaCao <= 0) {
+            binding.khungGiaThiTruong.visibility = View.GONE
+            return
+        }
+        binding.khungGiaThiTruong.visibility = View.VISIBLE
+        binding.tvGiaThiTruong.text = "Giá thị trường: ${DinhDang.gia(kq.giaThap)} – ${DinhDang.gia(kq.giaCao)}"
+        val nhanXet = when {
+            giaRao == 0L -> "tin tặng miễn phí"
+            giaRao < kq.giaThap -> "giá này rẻ hơn thị trường"
+            giaRao > kq.giaCao -> "giá này cao hơn thị trường"
+            else -> "giá này nằm trong khoảng hợp lý"
+        }
+        binding.tvNguonGiaThiTruong.text = "Từ ${kq.soMau} tin tương tự trong ${GoiYGia.SO_NGAY_LAY_MAU} ngày · $nhanXet"
     }
 
     // ------------------------------------------------------------------

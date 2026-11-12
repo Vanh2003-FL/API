@@ -124,6 +124,14 @@ object HangSo {
     const val NGUONG_BAO_CAO_TU_AN = 3       // đủ 3 báo cáo thì tin tự ẩn
     const val PHI_DAY_TIN = 10_000L          // phí đẩy tin 3 ngày (mô phỏng doanh thu)
 
+    /** Các gói đẩy tin (thanh toán mô phỏng, không trừ tiền thật). */
+    data class GoiDayTin(val soNgay: Int, val phi: Long, val ten: String)
+
+    val DS_GOI_DAY_TIN = listOf(
+        GoiDayTin(3, 10_000L, "Gói 3 ngày"),
+        GoiDayTin(7, 20_000L, "Gói 7 ngày mùa tốt nghiệp")
+    )
+
     const val MOT_NGAY = 24L * 60 * 60 * 1000
     const val MOT_GIO = 60L * 60 * 1000
 }

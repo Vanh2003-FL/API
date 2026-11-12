@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import java.io.Serializable
 
 /**
  * Bảng tin_dang: mỗi dòng là một món đồ được đăng bán.
@@ -53,10 +54,11 @@ data class TinDang(
     val luotXem: Int = 0,
     val soBaoCao: Int = 0,
     val soLanGiaHan: Int = 0,
-    val soLanDayTin: Int = 0,            // mỗi lần đẩy tin = 10.000đ doanh thu mô phỏng
+    val soLanDayTin: Int = 0,            // số lần người bán mua gói đẩy tin
+    val doanhThuDayTin: Long = 0,        // tổng tiền các gói đẩy tin (thanh toán mô phỏng)
     val dayTinDen: Long? = null,         // tin nổi bật đến thời điểm này
     val tuKhoa: String = "",             // tiêu đề + mô tả viết không dấu, dùng để tìm kiếm
     val ngayTao: Long = System.currentTimeMillis(),
     val ngayCapNhat: Long = System.currentTimeMillis(),
     val ngayHetHan: Long = System.currentTimeMillis() + 30L * 24 * 60 * 60 * 1000
-)
+) : Serializable // Serializable để gửi bản nháp sang màn Xem trước

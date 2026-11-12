@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Một ô ảnh trong lưới ảnh đăng tin: ảnh, nhãn "Ảnh bìa", nút xoá. Cũng dùng làm ô "Thêm ảnh". -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="96dp"
+    android:layout_height="96dp"
+    android:layout_margin="4dp"
+    android:background="@drawable/bg_the">
+
+    <ImageView
+        android:id="@+id/anh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="Ảnh món đồ"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/tvThemAnh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:drawablePadding="4dp"
+        android:gravity="center"
+        android:paddingTop="22dp"
+        android:text="Thêm ảnh"
+        android:textColor="@color/chinh"
+        android:textSize="13sp"
+        android:visibility="gone"
+        app:drawableTopCompat="@drawable/ic_camera"
+        app:drawableTint="@color/chinh" />
+
+    <TextView
+        android:id="@+id/tvAnhBia"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="4dp"
+        android:background="@drawable/bg_nhan"
+        android:backgroundTint="#99000000"
+        android:paddingHorizontal="6dp"
+        android:text="Ảnh bìa"
+        android:textColor="#FFFFFF"
+        android:textSize="11sp"
+        android:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/btnXoaAnh"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="4dp"
+        android:background="@drawable/bg_nut_kinh"
+        android:contentDescription="Xoá ảnh"
+        android:padding="6dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_close"
+        app:tint="@color/chu" />
+</FrameLayout>

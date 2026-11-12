@@ -115,6 +115,7 @@ object DuLieuMau {
                 soBaoCao = soBaoCao,
                 soLanGiaHan = soLanGiaHan,
                 soLanDayTin = if (dayTin) 1 else 0,
+                doanhThuDayTin = if (dayTin) HangSo.PHI_DAY_TIN else 0,
                 dayTinDen = if (dayTin) bayGio + 2 * MOT_NGAY else null,
                 tuKhoa = DinhDang.boDau("$tieuDe $moTa"),
                 ngayTao = ngayTao,

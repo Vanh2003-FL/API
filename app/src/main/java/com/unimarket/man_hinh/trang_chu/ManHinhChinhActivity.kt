@@ -1,7 +1,7 @@
 package com.unimarket.man_hinh.trang_chu
 
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
+import com.unimarket.man_hinh.dang_tin.DangTinActivity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.unimarket.tien_ich.CanhLe
@@ -60,12 +60,6 @@ class ManHinhChinhActivity : AppCompatActivity() {
 
     /** Bấm "Đăng tin": phải đăng nhập và có hồ sơ đầy đủ mới được vào. */
     private fun moDangTin() {
-        BoSungHoSo.kiemTra(this) {
-            AlertDialog.Builder(this)
-                .setTitle("Đăng tin")
-                .setMessage("Hồ sơ của bạn đã đầy đủ. Màn đăng tin 3 bước kèm gợi ý giá sẽ làm ở Sprint 3.")
-                .setPositiveButton("Đã hiểu", null)
-                .show()
-        }
+        BoSungHoSo.kiemTra(this) { DangTinActivity.moMoi(this) }
     }
 }

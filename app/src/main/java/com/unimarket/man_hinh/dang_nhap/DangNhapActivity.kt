@@ -27,22 +27,24 @@ class DangNhapActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Đã đăng nhập rồi → bỏ qua màn này
-        if (PhienDangNhap.daDangNhap(this)) {
-            moManHinhChinh()
-            return
-        }
-
         binding = ActivityDangNhapBinding.inflate(layoutInflater)
         setContentView(binding.root)
         CanhLe.chuaVienHeThong(binding.root)
         repo = NguoiDungRepository(this)
 
-        // Khoá nút cho tới khi nạp xong dữ liệu mẫu (chỉ mất thời gian ở lần chạy đầu)
+        // Khoá nút cho tới khi nạp xong dữ liệu mẫu (chỉ mất thời gian ở lần chạy đầu
+        // hoặc sau khi database được tạo lại do đổi cấu trúc bảng)
         datTrangThaiNut(false)
         lifecycleScope.launch {
             DuLieuMau.napNeuTrong(AppDatabase.layDb(this@DangNhapActivity))
+            // Đã đăng nhập từ trước và tài khoản vẫn còn → vào thẳng màn chính
+            if (PhienDangNhap.daDangNhap(this@DangNhapActivity)) {
+                if (repo.layNguoiDangNhap() != null) {
+                    moManHinhChinh()
+                    return@launch
+                }
+                PhienDangNhap.dangXuat(this@DangNhapActivity) // tài khoản không còn trong DB
+            }
             datTrangThaiNut(true)
         }
 

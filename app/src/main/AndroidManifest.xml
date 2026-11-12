@@ -37,6 +37,12 @@
             android:name=".man_hinh.tim_kiem.TimKiemActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".man_hinh.chi_tiet_san_pham.ChiTietSanPhamActivity" />
+
+        <!-- Bán hàng: đăng tin 3 bước + gợi ý giá, quản lý tin của tôi -->
+        <activity
+            android:name=".man_hinh.dang_tin.DangTinActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".man_hinh.dang_tin.TinCuaToiActivity" />
     </application>
 
 </manifest>

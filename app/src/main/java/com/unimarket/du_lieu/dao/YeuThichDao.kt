@@ -35,6 +35,10 @@ interface YeuThichDao {
     )
     suspend fun layTinDaLuu(nguoiDungId: Long): List<TinDang>
 
+    /** Có bao nhiêu người đã lưu tin này (chỉ số quan tâm của người mua). */
+    @Query("SELECT COUNT(*) FROM yeu_thich WHERE tinDangId = :tinDangId")
+    suspend fun demTheoTin(tinDangId: Long): Int
+
     @Query("SELECT COUNT(*) FROM yeu_thich WHERE nguoiDungId = :nguoiDungId AND tinDangId = :tinDangId")
     suspend fun daLuu(nguoiDungId: Long, tinDangId: Long): Int
 }

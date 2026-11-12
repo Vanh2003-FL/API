@@ -215,6 +215,48 @@
                     android:layout_marginTop="8dp"
                     android:textSize="13sp" />
 
+                <!-- Giá thị trường (từ thuật toán gợi ý giá, chỉ hiện khi có đủ tin tương tự) -->
+                <LinearLayout
+                    android:id="@+id/khungGiaThiTruong"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_canh_bao"
+                    android:backgroundTint="@color/nen_gia"
+                    android:orientation="horizontal"
+                    android:padding="12dp"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_bulb"
+                        app:tint="@color/gia" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvGiaThiTruong"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/chu"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvNguonGiaThiTruong"
+                            style="@style/ChuPhu"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
                 <!-- Thông tin chi tiết (thuộc tính riêng theo danh mục) -->
                 <TextView
                     android:id="@+id/tvNhanThuocTinh"
@@ -382,11 +424,13 @@
 
         <TextView
             android:id="@+id/tvTinCuaBan"
-            style="@style/ChuPhu"
             android:layout_width="match_parent"
             android:layout_height="52dp"
+            android:background="?attr/selectableItemBackground"
             android:gravity="center"
-            android:text="Đây là tin của bạn"
+            android:text="Đây là tin của bạn · Quản lý tin ›"
+            android:textColor="@color/chinh"
+            android:textStyle="bold"
             android:visibility="gone" />
     </LinearLayout>
 </LinearLayout>

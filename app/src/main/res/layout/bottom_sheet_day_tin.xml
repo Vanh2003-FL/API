@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bảng "Đẩy tin lên Nổi bật": chọn gói, thanh toán mô phỏng -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        style="@style/ChuTieuDe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Đẩy tin lên Nổi bật" />
+
+    <TextView
+        style="@style/ChuPhu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Tin hiện ở mục Nổi bật đầu trang chủ trong thành phố của bạn." />
+
+    <RadioGroup
+        android:id="@+id/nhomGoi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_canh_bao"
+        android:padding="10dp"
+        android:text="Thanh toán mô phỏng trong bài tập lớn, không trừ tiền thật. Doanh thu được ghi lại để thống kê."
+        android:textColor="@color/canh_bao"
+        android:textSize="13sp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnThanhToan"
+        style="@style/NutChinh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnHuy"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Huỷ" />
+</LinearLayout>
